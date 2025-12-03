@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="https://via.placeholder.com/120x120/ff3b30/ffffff?text=MyTube" alt="MyTube Logo" width="120"/>
-</p>
+
 
 <h1 align="center">MyTube — Full-Featured YouTube Clone (MERN Stack)</h1>
 
