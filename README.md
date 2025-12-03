@@ -41,3 +41,40 @@ Auth       → JWT (httpOnly cookies)
 Search     → Fuse.js (fuzzy matching)
 Performance→ Custom Bloom Filter (bit array + MurmurHash)
 File Storage → Local (uploads folder) — ready for Cloudinary/S3
+
+Project Structure
+Bashmy_tube/
+├── backend/
+│   ├── routes/           # API routes
+│   ├── models/           # Mongoose schemas
+│   ├── middleware/       # auth, multer, etc.
+│   ├── utils/
+│   │   └── bloomFilter.js  # Custom Bloom Filter implementation
+│   ├── uploads/          # Videos & thumbnails
+│   └── server.js
+└── frontend/
+    ├── src/
+    │   ├── components/
+    │   ├── pages/
+    │   └── App.js
+    └── public/
+
+Installation & Setup
+1. Clone the repository
+Bashgit clone https://github.com/amanComeerciax/my_tube.git
+cd my_tube
+2. Backend Setup
+Bashcd backend
+npm install
+Create .env file:
+envMONGO_URI=mongodb://127.0.0.1:27017/mytube
+JWT_SECRET=your_super_secret_key_here
+PORT=5000
+Start backend:
+Bashnpm run dev
+3. Frontend Setup
+Bashcd ../frontend
+npm install
+npm start
+App will run at: http://localhost:3000
+
