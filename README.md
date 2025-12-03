@@ -1,47 +1,5 @@
 
-  <title>MyTube — MERN YouTube Clone (README)</title>
-  <style>
-    :root{
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --accent:#ff3b30;
-      --muted:#6b7280;
-      --mono: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    body{
-      margin:0;
-      font-family: var(--mono);
-      background:var(--bg);
-      color:#111827;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.6;
-    }
-    .wrap{max-width:1000px;margin:36px auto;padding:24px;}
-    header{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
-    .logo{
-      width:68px;height:68px;border-radius:12px;background:linear-gradient(135deg,#fff 0,#fee);
-      display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:20px;
-      box-shadow:0 6px 18px rgba(0,0,0,0.06);
-    }
-    h1{margin:0;font-size:26px;}
-    .meta{color:var(--muted);margin-top:6px;}
-    section.card{background:var(--card);border-radius:12px;padding:18px;margin-top:18px;box-shadow:0 8px 30px rgba(12,20,40,0.05);}
-    h2{margin:0 0 12px 0;font-size:18px;color:#0f172a;}
-    ul{margin:10px 0 12px 20px;}
-    pre{background:#0f172a;color:#f8fafc;padding:12px;border-radius:8px;overflow:auto;font-size:13px;}
-    code{background:#f3f4f6;padding:2px 6px;border-radius:6px;font-family:monospace;font-size:13px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#f3f4f6;color:#111827;font-weight:600;font-size:13px;margin-right:8px;}
-    footer{margin-top:20px;color:var(--muted);font-size:14px;}
-    .mono{font-family:monospace;font-size:13px;}
-    @media (max-width:760px){
-      .grid{grid-template-columns:1fr;}
-      .logo{width:56px;height:56px;font-size:18px;}
-    }
-  </style>
-</head>
-<body>
+
   <div class="wrap">
     <header>
       <div class="logo">MyTube</div>
