@@ -23,7 +23,6 @@
 | Video Upload & Streaming       | Done    | Range requests, smooth playback |
 | Admin Panel (Full CRUD)        | Done    | Upload, edit title, replace video/thumbnail, delete |
 | Fuzzy Search (Fuse.js)         | Done    | Smart typo-tolerant search |
-| Bloom Filter (Duplicate Check) | Done    | Ultra-fast probable duplicate detection |
 | JWT Authentication             | Done    | Protected admin routes |
 | Responsive UI                  | Done    | Mobile-friendly React frontend |
 
