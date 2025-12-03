@@ -37,7 +37,6 @@ Backend    → Node.js + Express.js
 Database   → MongoDB (Mongoose)
 Auth       → JWT (httpOnly cookies)
 Search     → Fuse.js (fuzzy matching)
-Performance→ Custom Bloom Filter (bit array + MurmurHash)
 File Storage → Local (uploads folder) — ready for Cloudinary/S3
 
 Project Structure
