@@ -16,15 +16,17 @@
 
 ---
 
-### Features
-
-| Feature                        | Status | Description |
-|-------------------------------|--------|-----------|
-| Video Upload & Streaming       | Done    | Range requests, smooth playback |
-| Admin Panel (Full CRUD)        | Done    | Upload, edit title, replace video/thumbnail, delete |
-| Fuzzy Search (Fuse.js)         | Done    | Smart typo-tolerant search |
-| JWT Authentication             | Done    | Protected admin routes |
-| Responsive UI                  | Done    | Mobile-friendly React frontend |
+| Feature                              | Status         | Description                                         |
+| ------------------------------------ | -------------- | --------------------------------------------------- |
+| Video Upload & Streaming             | ✔️ Done        | Range requests, smooth playback                     |
+| Admin Panel (Full CRUD)              | ✔️ Done        | Upload, edit title, replace video/thumbnail, delete |
+| Fuzzy Search (Fuse.js)               | ✔️ Done        | Smart typo-tolerant search                          |
+| JWT Authentication                   | ✔️ Done        | Protected admin routes                              |
+| Responsive UI                        | ✔️ Done        | Mobile-friendly React frontend                      |
+| **Subscribe System (Dynamic)**       | ✔️ Done Today  | Subscribe without page reload, live count update    |
+| **Comments System (Model + Routes)** | ✔️ Added Today | Users can comment on videos (backend implemented)   |
+| **User Profile & Signup Pages**      | ✔️ Added Today | Signup, Profile page, User Upload page in React     |
+| **Bloom Filter Optimization**        | ✔️ Done        | Fast duplicate detection & search performance boost |
 
 ---
 
