@@ -3,7 +3,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home'
 import Watch from './Pages/Watch';
 import Upload from './Pages/Upload';
+import UserUpload from './Pages/UserUpload';
 import Login from './Pages/Login';
+import Signup from './Pages/Signup';
+import Profile from './Pages/Profile';
+
 
 
 
@@ -14,7 +18,10 @@ return (
 <Route path="/" element={<Home/>} />
 <Route path="/watch/:filename" element={<Watch />} />
 <Route path="/Login" element={<Login/>}/>
+<Route path="/Signup" element={<Signup/>}/>
 <Route path="/upload" element={<Upload/>} />
+<Route path="/UserUpload" element={<UserUpload/>} />
+<Route path="/Profile" element={<Profile/>} />
 </Routes>
 </Router>
 );
