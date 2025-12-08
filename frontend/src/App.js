@@ -7,6 +7,8 @@ import UserUpload from './Pages/UserUpload';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Profile from './Pages/Profile';
+import History from './Pages/History';
+
 
 
 
@@ -22,6 +24,8 @@ return (
 <Route path="/upload" element={<Upload/>} />
 <Route path="/UserUpload" element={<UserUpload/>} />
 <Route path="/Profile" element={<Profile/>} />
+<Route path="/history" element={<History />} />
+
 </Routes>
 </Router>
 );

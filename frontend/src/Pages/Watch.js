@@ -1,5 +1,4 @@
 
-
 // import React, { useEffect, useState, useContext } from "react";
 // import { useParams, useNavigate } from "react-router-dom";
 // import axios from "axios";
@@ -18,9 +17,9 @@
 //   const [recommended, setRecommended] = useState([]);
 //   const [comment, setComment] = useState("");
 
-//   /* =======================================================
-//      📌 FETCH VIDEO + CHANNEL + COMMENTS
-//   ======================================================== */
+//   /* =======================
+//       📌 Fetch Video
+//   ======================== */
 //   const fetchVideo = async () => {
 //     const res = await axios.get(`http://localhost:5000/api/videos/by-filename/${filename}`);
 //     setVideo(res.data);
@@ -33,25 +32,52 @@
 //     }
 //   };
 
+//   /* =======================
+//       📌 Fetch Channel
+//   ======================== */
 //   const fetchChannel = async (id) => {
 //     const res = await axios.get(`http://localhost:5000/api/user/profile/${id}`);
 //     setChannel(res.data);
-
-//     if (user) {
-//       setSubscribed(res.data?.subscribers?.includes(user._id));
-//     }
+//     if (user) setSubscribed(res.data.subscribers?.includes(user._id));
 //   };
 
+//   /* =======================
+//       📌 Fetch Comments
+//   ======================== */
 //   const fetchComments = async (id) => {
 //     const res = await axios.get(`http://localhost:5000/api/comments/video/${id}`);
 //     setVideo((p) => ({ ...p, comments: res.data }));
 //   };
 
+//   /* =======================
+//       📌 Smart Recommendations
+//   ======================== */
 //   const fetchRecommended = async () => {
 //     const res = await axios.get("http://localhost:5000/api/videos/all");
-//     setRecommended(res.data.filter((v) => v.filename !== filename));
+
+//     if (video?.tags?.length > 0) {
+//       const related = res.data.filter(
+//         (v) =>
+//           v.filename !== filename &&
+//           v.tags?.some((tag) => video.tags.includes(tag))
+//       );
+
+//       const extra = res.data.filter((v) => v.filename !== filename);
+//       const merged = [...related, ...extra];
+
+//       const unique = merged.filter(
+//         (v, i, arr) => arr.findIndex((x) => x._id === v._id) === i
+//       );
+
+//       setRecommended(unique.slice(0, 15));
+//     } else {
+//       setRecommended(res.data.filter((v) => v.filename !== filename));
+//     }
 //   };
 
+//   /* =======================
+//       📌 Update Views
+//   ======================== */
 //   const updateViews = async () => {
 //     await axios.post(`http://localhost:5000/api/videos/view/${filename}`);
 //   };
@@ -62,75 +88,60 @@
 //     updateViews();
 //   }, [filename]);
 
-//   /* =======================================================
-//      👍 LIKE + 👎 DISLIKE
-//   ======================================================== */
+//   /* =======================
+//       👍 Like + 👎 Dislike
+//   ======================== */
 //   const likeVideo = async () => {
-//     if (!user) return alert("Login to like videos");
+//     if (!user) return alert("Login to like");
 //     const token = localStorage.getItem("token");
-
 //     const res = await axios.post(
 //       `http://localhost:5000/api/videos/like/${video._id}`,
 //       {},
 //       { headers: { Authorization: `Bearer ${token}` } }
 //     );
-
 //     setLikes(res.data.likes.length);
 //     setDislikes(res.data.dislikes.length);
 //   };
 
 //   const dislikeVideo = async () => {
-//     if (!user) return alert("Login to dislike videos");
+//     if (!user) return alert("Login to dislike");
 //     const token = localStorage.getItem("token");
-
 //     const res = await axios.post(
 //       `http://localhost:5000/api/videos/dislike/${video._id}`,
 //       {},
 //       { headers: { Authorization: `Bearer ${token}` } }
 //     );
-
 //     setLikes(res.data.likes.length);
 //     setDislikes(res.data.dislikes.length);
 //   };
 
-//   /* =======================================================
-//      🔔 SUBSCRIBE / UNSUBSCRIBE (NO REDIRECT, LIVE UPDATE)
-//   ======================================================== */
-//   const toggleSubscribe = async () => {
+//   /* =======================
+//       🔔 Subscribe / Unsubscribe
+//   ======================== */
+//   const toggleSubscribe = async (e) => {
+//     e.stopPropagation();
 //     if (!user) return alert("Login to subscribe");
 //     const token = localStorage.getItem("token");
-
 //     const res = await axios.post(
 //       `http://localhost:5000/api/user/subscribe/${channel._id}`,
 //       {},
 //       { headers: { Authorization: `Bearer ${token}` } }
 //     );
-
 //     setSubscribed(res.data.subscribed);
-
-//     // 🔃 Update subscribers count without reload
-//     setChannel((prev) => ({
-//       ...prev,
-//       subscribers: res.data.subscribed
-//         ? [...prev.subscribers, user._id]
-//         : prev.subscribers.filter((id) => id !== user._id)
-//     }));
 //   };
 
-//   /* =======================================================
-//      💬 COMMENTS
-//   ======================================================== */
+//   /* =======================
+//       💬 Comments System
+//   ======================== */
 //   const postComment = async () => {
-//     if (!comment.trim()) return alert("Enter comment");
+//     if (!comment.trim()) return;
 //     if (!user) return alert("Login to comment");
 //     const token = localStorage.getItem("token");
-
 //     await axios.post(
 //       "http://localhost:5000/api/comments/add",
 //       { videoId: video._id, text: comment },
 //       { headers: { Authorization: `Bearer ${token}` } }
 //     );
-
 //     setComment("");
 //     fetchComments(video._id);
 //   };
@@ -138,180 +149,121 @@
 //   const deleteComment = async (cid) => {
 //     if (!user?.isAdmin) return alert("Admin only");
 //     const token = localStorage.getItem("token");
-
 //     await axios.delete(`http://localhost:5000/api/comments/delete/${cid}`, {
 //       headers: { Authorization: `Bearer ${token}` },
 //     });
-
 //     fetchComments(video._id);
 //   };
 
-//   /* =======================================================
-//      ⏳ LOADING
-//   ======================================================== */
-//   if (!video) return <h2 style={{ padding: 20 }}>Loading...</h2>;
+//   /* =======================
+//       ⏳ Loading UI
+//   ======================== */
+//   if (!video) return <h2 style={{ padding: 20 }}>⏳ Loading video...</h2>;
 
-//   /* =======================================================
-//      🎨 UI STYLES
-//   ======================================================== */
-//   const s = {
-//     container: { display: "flex", padding: "20px", gap: "20px" },
-//     playerBox: { flex: 3 },
-//     sideBox: { flex: 1 },
-//     videoPlayer: { width: "100%", borderRadius: "10px" },
-//     title: { fontSize: "22px", fontWeight: "bold", marginTop: "10px" },
-//     meta: { color: "#555", fontSize: "14px", marginBottom: "10px" },
-//     channelBar: {
-//       display: "flex",
-//       justifyContent: "space-between",
-//       alignItems: "center",
-//       background: "#f9f9f9",
-//       padding: "10px 15px",
-//       borderRadius: "10px",
-//       marginTop: "10px",
-//       cursor: "pointer",
-//     },
-//     subscribeBtn: {
-//       padding: "8px 16px",
-//       borderRadius: "8px",
-//       border: "none",
-//       cursor: "pointer",
-//       fontWeight: "600",
-//       background: subscribed ? "#ddd" : "#cc0000",
-//       color: subscribed ? "#000" : "#fff",
-//     },
-//     actionBtn: {
-//       padding: "6px 12px",
-//       borderRadius: "6px",
-//       background: "#eee",
-//       border: "none",
-//       cursor: "pointer",
-//       fontWeight: "600",
-//       marginRight: "10px",
-//     },
-//     card: {
-//       display: "flex",
-//       gap: "10px",
-//       marginBottom: "10px",
-//       cursor: "pointer",
-//       padding: "5px",
-//       borderRadius: "10px",
-//       background: "#fff",
-//       boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-//     },
-//     thumb: {
-//       width: "100px",
-//       height: "60px",
-//       borderRadius: "8px",
-//       objectFit: "cover",
-//     },
-//   };
-
-//   /* =======================================================
-//      📺 RENDER UI
-//   ======================================================== */
 //   return (
-//     <div style={s.container}>
-//       {/* 🎬 MAIN PLAYER */}
-//       <div style={s.playerBox}>
-//         <video src={`http://localhost:5000/api/stream/${video.filename}`} controls autoPlay style={s.videoPlayer} />
+//     <div style={{ display: "flex", gap: 24, padding: 20, color: "#fff", background: "#0f0f0f" }}>
+//       {/* 🎬 MAIN VIDEO SECTION */}
+//       <div style={{ flex: 1, maxWidth: "1000px" }}>
+//         <video
+//           src={`http://localhost:5000/api/stream/${video.filename}`}
+//           controls
+//           autoPlay
+//           style={{ width: "100%", borderRadius: "12px", background: "#000" }}
+//         />
 
-//         <h2 style={s.title}>{video.title}</h2>
+//         <h2 style={{ marginTop: "12px" }}>{video.title}</h2>
 
-//         <div style={s.meta}>
+//         {/* 🎯 Tags */}
+//         {video.tags && video.tags.length > 0 && (
+//           <div style={{ marginTop: "8px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+//             {video.tags.map((t, i) => (
+//               <span
+//                 key={i}
+//                 style={{
+//                   background: "#272727",
+//                   padding: "5px 12px",
+//                   borderRadius: "20px",
+//                   fontSize: "12px",
+//                   color: "#ccc",
+//                 }}
+//               >
+//                 #{t}
+//               </span>
+//             ))}
+//           </div>
+//         )}
+
+//         {/* Views Date */}
+//         <div style={{ marginTop: 6, color: "#ccc" }}>
 //           👁 {video.views} views • {new Date(video.createdAt).toDateString()}
 //         </div>
 
-//         {/* 📺 Channel Bar */}
+//         {/* 👍👎 */}
+//         <div style={{ marginTop: 14 }}>
+//           <button onClick={likeVideo} style={btn}>👍 Like ({likes})</button>
+//           <button onClick={dislikeVideo} style={btn}>👎 Dislike ({dislikes})</button>
+//         </div>
+
+//         {/* 📺 Channel Card */}
 //         {channel && (
-//           <div style={s.channelBar} onClick={() => navigate(`/profile/${channel._id}`)}>
+//           <div
+//             style={channelCard}
+//             onClick={() => navigate(`/profile/${channel._id}`)}
+//           >
 //             <b>📺 {channel.name}</b>
-//             <button style={s.subscribeBtn} onClick={(e) => { e.stopPropagation(); toggleSubscribe(); }}>
+//             <button
+//               style={subscribed ? subBtnSub : subBtn}
+//               onClick={toggleSubscribe}
+//             >
 //               {subscribed ? "Subscribed ✔" : "Subscribe"}
 //             </button>
 //           </div>
 //         )}
 
-//         {/* 👍👎 Like Dislike */}
-//         <button style={s.actionBtn} onClick={likeVideo}>👍 Like ({likes})</button>
-//         <button style={s.actionBtn} onClick={dislikeVideo}>👎 Dislike ({dislikes})</button>
-
 //         {/* 💬 Comments */}
-//         <div style={{ marginTop: "25px" }}>
-//           <h3>💬 Comments</h3>
+//         <div style={{ marginTop: 20 }}>
+//           <h3>💬 Comments ({video.comments?.length || 0})</h3>
 
 //           {user && (
-//             <>
-//               <textarea
-//                 style={{ width: "100%", height: "60px", padding: "10px", borderRadius: "8px", border: "1px solid #ddd" }}
-//                 placeholder="Add a public comment..."
+//             <div style={{ marginBottom: 10 }}>
+//               <input
+//                 type="text"
 //                 value={comment}
 //                 onChange={(e) => setComment(e.target.value)}
-//               ></textarea>
-
-//               <button
-//                 style={{
-//                   padding: "6px 12px",
-//                   borderRadius: "6px",
-//                   background: "#ff0000",
-//                   color: "#fff",
-//                   border: "none",
-//                   cursor: "pointer",
-//                   marginTop: "5px",
-//                 }}
-//                 onClick={postComment}
-//               >
-//                 Comment
-//               </button>
-//             </>
+//                 placeholder="Write a comment..."
+//                 style={input}
+//                 onKeyPress={(e) => e.key === "Enter" && postComment()}
+//               />
+//               <button onClick={postComment} style={postBtn}>Post</button>
+//             </div>
 //           )}
 
 //           {video.comments?.map((c) => (
-//             <div
-//               key={c._id}
-//               style={{
-//                 marginTop: "15px",
-//                 paddingBottom: "10px",
-//                 borderBottom: "1px solid #ddd",
-//               }}
-//             >
-//               <b>{c.user}</b>{" "}
-//               <span style={{ color: "#777", fontSize: "12px" }}>
-//                 {new Date(c.createdAt).toLocaleDateString()}
-//               </span>
+//             <div key={c._id} style={{ padding: 10, borderBottom: "1px solid #333" }}>
+//               <b>{c.user}</b> • <span style={{ color: "#777" }}>{new Date(c.createdAt).toLocaleDateString()}</span>
 //               <p>{c.text}</p>
 //               {user?.isAdmin && (
-//                 <button
-//                   style={{
-//                     padding: "3px 8px",
-//                     borderRadius: "4px",
-//                     background: "#222",
-//                     color: "#fff",
-//                     border: "none",
-//                     cursor: "pointer",
-//                     fontSize: "12px",
-//                   }}
-//                   onClick={() => deleteComment(c._id)}
-//                 >
-//                   Delete
-//                 </button>
+//                 <button onClick={() => deleteComment(c._id)} style={delBtn}>Delete</button>
 //               )}
 //             </div>
 //           ))}
 //         </div>
 //       </div>
 
-//       {/* 📌 Recommended Section */}
-//       <div style={s.sideBox}>
+//       {/* 📌 Recommended */}
+//       <div style={{ width: 400 }}>
 //         <h3>🔔 Recommended</h3>
-//         {recommended.map((v) => (
-//           <a key={v._id} href={`/watch/${v.filename}`} style={{ textDecoration: "none", color: "black" }}>
-//             <div style={s.card}>
-//               <img src={`http://localhost:5000/uploads/${v.thumbnail}`} style={s.thumb} alt="thumb" />
-//               <div>
-//                 <p style={{ fontSize: "14px", fontWeight: "600" }}>{v.title}</p>
-//                 <p style={{ fontSize: "12px", color: "#777" }}>👁 {v.views} views</p>
-//               </div>
+//         {recommended.slice(0, 12).map((v) => (
+//           <a
+//             key={v._id}
+//             href={`/watch/${v.filename}`}
+//             onClick={(e) => { e.preventDefault(); navigate(`/watch/${v.filename}`); }}
+//             style={recCard}
+//           >
+//             <img src={`http://localhost:5000/uploads/${v.thumbnail}`} style={thumb} alt="" />
+//             <div>
+//               <p style={{ fontSize: 14, fontWeight: 600 }}>{v.title}</p>
+//               <span style={{ fontSize: 12, color: "#ccc" }}>{v.views} views</span>
 //             </div>
 //           </a>
 //         ))}
@@ -320,7 +272,20 @@
 //   );
 // }
 
-import React, { useEffect, useState, useContext } from "react";
+// /* =======================
+//    🎨 Styles
+// ======================= */
+// const btn = { marginRight: 10, padding: "6px 12px", borderRadius: 6, background: "#333", border: "none", color: "#fff" };
+// const channelCard = { marginTop: 15, display: "flex", justifyContent: "space-between", background: "#1f1f1f", padding: "10px 15px", borderRadius: 10 };
+// const subBtn = { padding: "8px 16px", borderRadius: 8, background: "#cc0000", color: "#fff", border: "none", cursor: "pointer" };
+// const subBtnSub = { padding: "8px 16px", borderRadius: 8, background: "#555", color: "#eee", border: "none", cursor: "pointer" };
+// const input = { width: "100%", padding: 8, borderRadius: 6, border: "1px solid #444", background: "#111", color: "#fff" };
+// const postBtn = { marginTop: 6, padding: "6px 12px", borderRadius: 6, background: "#ff0000", color: "#fff", border: "none" };
+// const delBtn = { padding: "3px 8px", background: "#900", color: "#fff", borderRadius: 4, border: "none" };
+// const recCard = { display: "flex", gap: 10, textDecoration: "none", color: "#fff", padding: 5, borderRadius: 10, background: "#111", marginBottom: 12 };
+// const thumb = { width: 120, height: 70, borderRadius: 8, objectFit: "cover" };
+
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
@@ -329,21 +294,35 @@ export default function Watch() {
   const { filename } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const videoRef = useRef(null);
 
   const [video, setVideo] = useState(null);
   const [channel, setChannel] = useState(null);
   const [subscribed, setSubscribed] = useState(false);
   const [likes, setLikes] = useState(0);
   const [dislikes, setDislikes] = useState(0);
+  const [userLiked, setUserLiked] = useState(false);
+  const [userDisliked, setUserDisliked] = useState(false);
   const [recommended, setRecommended] = useState([]);
   const [comment, setComment] = useState("");
+  const [showDescription, setShowDescription] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
 
-  // Fetch everything
+  /* =======================
+      📌 Fetch Video
+  ======================== */
   const fetchVideo = async () => {
     const res = await axios.get(`http://localhost:5000/api/videos/by-filename/${filename}`);
     setVideo(res.data);
     setLikes(res.data.likes?.length || 0);
     setDislikes(res.data.dislikes?.length || 0);
+    
+    if (user) {
+      setUserLiked(res.data.likes?.includes(user._id));
+      setUserDisliked(res.data.dislikes?.includes(user._id));
+    }
 
     if (res.data.uploadedBy?._id) {
       fetchChannel(res.data.uploadedBy._id);
@@ -351,33 +330,84 @@ export default function Watch() {
     }
   };
 
+  /* =======================
+      📌 Fetch Channel
+  ======================== */
   const fetchChannel = async (id) => {
     const res = await axios.get(`http://localhost:5000/api/user/profile/${id}`);
     setChannel(res.data);
     if (user) setSubscribed(res.data.subscribers?.includes(user._id));
   };
 
+  /* =======================
+      📌 Fetch Comments
+  ======================== */
   const fetchComments = async (id) => {
     const res = await axios.get(`http://localhost:5000/api/comments/video/${id}`);
     setVideo((p) => ({ ...p, comments: res.data }));
   };
 
-  const fetchRecommended = async () => {
-    const res = await axios.get("http://localhost:5000/api/videos/all");
-    setRecommended(res.data.filter((v) => v.filename !== filename));
+  const addToHistory = async () => {
+    if (user && video) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+          `http://localhost:5000/api/user/watch-history/add/${video._id}`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Failed to add to history:", err);
+      }
+    }
   };
 
+  /* =======================
+      📌 Smart Recommendations
+  ======================== */
+  const fetchRecommended = async () => {
+    const res = await axios.get("http://localhost:5000/api/videos/all");
+
+    if (video?.tags?.length > 0) {
+      const related = res.data.filter(
+        (v) =>
+          v.filename !== filename &&
+          v.tags?.some((tag) => video.tags.includes(tag))
+      );
+
+      const extra = res.data.filter((v) => v.filename !== filename);
+      const merged = [...related, ...extra];
+
+      const unique = merged.filter(
+        (v, i, arr) => arr.findIndex((x) => x._id === v._id) === i
+      );
+
+      setRecommended(unique.slice(0, 15));
+    } else {
+      setRecommended(res.data.filter((v) => v.filename !== filename));
+    }
+  };
+
+  /* =======================
+      📌 Update Views
+  ======================== */
   const updateViews = async () => {
     await axios.post(`http://localhost:5000/api/videos/view/${filename}`);
   };
 
   useEffect(() => {
     fetchVideo();
-    fetchRecommended();
     updateViews();
+    addToHistory(); 
   }, [filename]);
 
-  // Actions
+  useEffect(() => {
+    if (video) fetchRecommended();
+  }, [video]);
+
+  /* =======================
+      👍 Like + 👎 Dislike
+  ======================== */
   const likeVideo = async () => {
     if (!user) return alert("Login to like");
     const token = localStorage.getItem("token");
@@ -388,6 +418,8 @@ export default function Watch() {
     );
     setLikes(res.data.likes.length);
     setDislikes(res.data.dislikes.length);
+    setUserLiked(res.data.likes.includes(user._id));
+    setUserDisliked(res.data.dislikes.includes(user._id));
   };
 
   const dislikeVideo = async () => {
@@ -400,8 +432,13 @@ export default function Watch() {
     );
     setLikes(res.data.likes.length);
     setDislikes(res.data.dislikes.length);
+    setUserLiked(res.data.likes.includes(user._id));
+    setUserDisliked(res.data.dislikes.includes(user._id));
   };
 
+  /* =======================
+      🔔 Subscribe / Unsubscribe
+  ======================== */
   const toggleSubscribe = async (e) => {
     e.stopPropagation();
     if (!user) return alert("Login to subscribe");
@@ -412,19 +449,15 @@ export default function Watch() {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     setSubscribed(res.data.subscribed);
-    setChannel(prev => ({
-      ...prev,
-      subscribersCount: res.data.subscribed
-        ? prev.subscribersCount + 1
-        : prev.subscribersCount - 1
-    }));
   };
 
+  /* =======================
+      💬 Comments System
+  ======================== */
   const postComment = async () => {
     if (!comment.trim()) return;
     if (!user) return alert("Login to comment");
     const token = localStorage.getItem("token");
-
     await axios.post(
       "http://localhost:5000/api/comments/add",
       { videoId: video._id, text: comment },
@@ -443,116 +476,259 @@ export default function Watch() {
     fetchComments(video._id);
   };
 
-  if (!video) return (
-    <div className="loading">Loading video...</div>
-  );
+  /* =======================
+      🎬 Video Controls
+  ======================== */
+  const changePlaybackSpeed = (speed) => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = speed;
+      setPlaybackSpeed(speed);
+      setShowSpeedMenu(false);
+    }
+  };
+
+  const toggleTheaterMode = () => {
+    setIsTheaterMode(!isTheaterMode);
+  };
+
+  /* =======================
+      📋 Share Video
+  ======================== */
+  const shareVideo = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    alert("Link copied to clipboard! 📋");
+  };
+
+  /* =======================
+      ⏳ Loading UI
+  ======================== */
+  if (!video) return <h2 style={{ padding: 20, color: "#fff" }}>⏳ Loading video...</h2>;
 
   return (
-    <div className="watch-page">
-      <div className="watch-main">
-        {/* Video Player */}
-        <div className="video-player-container">
-          <video
-            src={`http://localhost:5000/api/stream/${video.filename}`}
-            controls
-            autoPlay
-            className="video-player"
-          />
-        </div>
-
-        {/* Video Info */}
-        <div className="video-info">
-          <h1 className="video-title">{video.title}</h1>
-
-          <div className="video-stats">
-            <span>{video.views?.toLocaleString() || 0} views</span>
-            <span>•</span>
-            <span>{new Date(video.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+    <div style={{ background: "#0f0f0f", minHeight: "100vh", color: "#fff" }}>
+      <div style={{ 
+        display: "flex", 
+        gap: 24, 
+        padding: 20,
+        maxWidth: isTheaterMode ? "100%" : "1800px",
+        margin: "0 auto"
+      }}>
+        {/* 🎬 MAIN VIDEO SECTION */}
+        <div style={{ flex: 1, maxWidth: isTheaterMode ? "100%" : "1200px" }}>
+          {/* Video Player */}
+          <div style={{ position: "relative" }}>
+            <video
+              ref={videoRef}
+              src={`http://localhost:5000/api/stream/${video.filename}`}
+              controls
+              autoPlay
+              style={{ 
+                width: "100%", 
+                borderRadius: "12px", 
+                background: "#000",
+                maxHeight: isTheaterMode ? "80vh" : "650px"
+              }}
+            />
+            
+            {/* Custom Controls Overlay */}
+            <div style={controlsOverlay}>
+              <button onClick={toggleTheaterMode} style={controlBtn} title="Theater mode">
+                {isTheaterMode ? "📺 Exit Theater" : "🖥️ Theater Mode"}
+              </button>
+              
+              <div style={{ position: "relative" }}>
+                <button 
+                  onClick={() => setShowSpeedMenu(!showSpeedMenu)} 
+                  style={controlBtn}
+                  title="Playback speed"
+                >
+                  ⚡ {playbackSpeed}x
+                </button>
+                
+                {showSpeedMenu && (
+                  <div style={speedMenu}>
+                    {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(speed => (
+                      <div 
+                        key={speed}
+                        onClick={() => changePlaybackSpeed(speed)}
+                        style={{
+                          ...speedMenuItem,
+                          background: playbackSpeed === speed ? "#ff0000" : "transparent"
+                        }}
+                      >
+                        {speed}x {playbackSpeed === speed && "✓"}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Action Bar */}
-          <div className="action-bar">
-            <div className="like-dislike">
-              <button onClick={likeVideo} className="like-btn">
-                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.96 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-                <span>{likes}</span>
-              </button>
-              <button onClick={dislikeVideo} className="dislike-btn">
-                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.58-6.59c.37-.37.59-.86.59-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          {/* Video Title */}
+          <h2 style={{ marginTop: "16px", fontSize: "20px", fontWeight: 600 }}>{video.title}</h2>
+
+          {/* Video Info Bar */}
+          <div style={infoBar}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#aaa", fontSize: "14px" }}>
+                👁 {video.views?.toLocaleString() || 0} views
+              </span>
+              <span style={{ color: "#666" }}>•</span>
+              <span style={{ color: "#aaa", fontSize: "14px" }}>
+                {new Date(video.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+
+            <div style={{ display: "flex", gap: 8 }}>
+              {/* Like/Dislike */}
+              <div style={actionButtonGroup}>
+                <button 
+                  onClick={likeVideo} 
+                  style={{
+                    ...actionButton,
+                    background: userLiked ? "#ff0000" : "#272727"
+                  }}
+                >
+                  👍 {likes.toLocaleString()}
+                </button>
+                <div style={{ width: 1, height: 24, background: "#555" }}></div>
+                <button 
+                  onClick={dislikeVideo} 
+                  style={{
+                    ...actionButton,
+                    background: userDisliked ? "#ff0000" : "#272727"
+                  }}
+                >
+                  👎 {dislikes.toLocaleString()}
+                </button>
+              </div>
+
+              {/* Share */}
+              <button onClick={shareVideo} style={actionButtonSingle}>
+                🔗 Share
               </button>
             </div>
           </div>
 
+          {/* Tags */}
+          {video.tags && video.tags.length > 0 && (
+            <div style={tagsContainer}>
+              {video.tags.map((t, i) => (
+                <span key={i} style={tag}>
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Channel Card */}
           {channel && (
-            <div className="channel-card" onClick={() => navigate(`/profile/${channel._id}`)}>
-              <div className="channel-info">
-                <div className="channel-avatar">
-                  {channel.name.charAt(0).toUpperCase()}
+            <div style={channelCard}>
+              <div 
+                style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", flex: 1 }}
+                onClick={() => navigate(`/profile/${channel._id}`)}
+              >
+                <div style={channelAvatar}>
+                  {channel.name?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="channel-name">{channel.name}</h3>
-                  <p className="subscriber-count">
-                    {channel.subscribersCount || channel.subscribers?.length || 0} subscribers
-                  </p>
+                  <div style={{ fontWeight: 600, fontSize: "16px" }}>{channel.name}</div>
+                  <div style={{ color: "#aaa", fontSize: "12px" }}>
+                    {channel.subscribers?.length || 0} subscribers
+                  </div>
                 </div>
               </div>
               <button
-                className={`subscribe-btn ${subscribed ? "subscribed" : ""}`}
+                style={subscribed ? subscribedBtn : subscribeBtn}
                 onClick={toggleSubscribe}
               >
-                {subscribed ? "Subscribed" : "Subscribe"}
+                {subscribed ? (
+                  <>🔔 Subscribed</>
+                ) : (
+                  <>Subscribe</>
+                )}
               </button>
             </div>
           )}
 
           {/* Description */}
-          <div className="description-box">
-            <p>{video.description || "No description available."}</p>
+          <div style={descriptionBox}>
+            <div 
+              style={{ 
+                maxHeight: showDescription ? "none" : "80px", 
+                overflow: "hidden",
+                whiteSpace: "pre-wrap",
+                lineHeight: "1.6"
+              }}
+            >
+              {video.description || "No description available."}
+            </div>
+            <button 
+              onClick={() => setShowDescription(!showDescription)}
+              style={showMoreBtn}
+            >
+              {showDescription ? "Show less" : "Show more"}
+            </button>
           </div>
 
-          {/* Comments Section */}
-          <div className="comments-section">
-            <h3>{video.comments?.length || 0} Comments</h3>
+          {/* 💬 Comments Section */}
+          <div style={{ marginTop: 24 }}>
+            <h3 style={{ fontSize: "20px", marginBottom: 16 }}>
+              {video.comments?.length || 0} Comments
+            </h3>
 
-            {user && (
-              <div className="comment-input-box">
-                <div className="user-avatar-small">
-                  {user.username?.charAt(0).toUpperCase() || "U"}
+            {user ? (
+              <div style={{ marginBottom: 24 }}>
+                <div style={commentInputContainer}>
+                  <div style={commentAvatar}>
+                    {user.username?.charAt(0).toUpperCase()}
+                  </div>
+                  <input
+                    type="text"
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Add a comment..."
+                    style={commentInput}
+                    onKeyPress={(e) => e.key === "Enter" && postComment()}
+                  />
                 </div>
-                <input
-                  type="text"
-                  placeholder="Add a comment..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && postComment()}
-                />
-                <button onClick={postComment} className="post-comment-btn">
-                  Comment
-                </button>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 8 }}>
+                  <button onClick={() => setComment("")} style={cancelBtn}>Cancel</button>
+                  <button 
+                    onClick={postComment} 
+                    style={comment.trim() ? commentPostBtn : commentPostBtnDisabled}
+                    disabled={!comment.trim()}
+                  >
+                    Comment
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ padding: 16, background: "#272727", borderRadius: 8, marginBottom: 24 }}>
+                Sign in to leave a comment
               </div>
             )}
 
-            <div className="comments-list">
+            {/* Comments List */}
+            <div>
               {video.comments?.map((c) => (
-                <div key={c._id} className="comment">
-                  <div className="comment-avatar">
-                    {c.user?.charAt(0).toUpperCase() || "A"}
+                <div key={c._id} style={commentCard}>
+                  <div style={commentAvatar}>
+                    {c.user?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="comment-content">
-                    <div className="comment-header">
-                      <span className="comment-username">{c.user}</span>
-                      <span className="comment-date">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontWeight: 600, fontSize: "13px" }}>{c.user}</span>
+                      <span style={{ color: "#aaa", fontSize: "12px" }}>
                         {new Date(c.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <p className="comment-text">{c.text}</p>
+                    <p style={{ margin: 0, lineHeight: "1.5", fontSize: "14px" }}>{c.text}</p>
                     {user?.isAdmin && (
-                      <button
-                        className="delete-comment"
-                        onClick={() => deleteComment(c._id)}
-                      >
-                        Delete
+                      <button onClick={() => deleteComment(c._id)} style={deleteCommentBtn}>
+                        🗑️ Delete
                       </button>
                     )}
                   </div>
@@ -561,364 +737,297 @@ export default function Watch() {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Recommended Videos Sidebar */}
-      <div className="recommended-sidebar">
-        <h3>Recommended</h3>
-        {recommended.slice(0, 12).map((v) => (
-          <a
-            key={v._id}
-            href={`/watch/${v.filename}`}
-            className="recommended-card"
-            onClick={(e) => { e.preventDefault(); navigate(`/watch/${v.filename}`); }}
-          >
-            <img
-              src={`http://localhost:5000/uploads/${v.thumbnail}`}
-              alt={v.title}
-              className="rec-thumbnail"
-            />
-            <div className="rec-info">
-              <h4 className="rec-title">{v.title}</h4>
-              {/* <p className="rec-channel">{v.uploadedBy?.name || "Unknown"}</p> */}
-              <p className="rec-meta">
-                {v.views?.toLocaleString() || 0} views • {new Date(v.createdAt).toLocaleDateString()}
-              </p>
+        {/* 📌 Recommended Videos Sidebar */}
+        {!isTheaterMode && (
+          <div style={{ width: 400, flexShrink: 0 }}>
+            <h3 style={{ fontSize: "18px", marginBottom: 16 }}>Recommended</h3>
+            <div>
+              {recommended.slice(0, 15).map((v) => (
+                <div
+                  key={v._id}
+                  onClick={() => navigate(`/watch/${v.filename}`)}
+                  style={recommendedCard}
+                >
+                  <img 
+                    src={`http://localhost:5000/uploads/${v.thumbnail}`} 
+                    style={recommendedThumb} 
+                    alt={v.title}
+                  />
+                  <div style={{ flex: 1 }}>
+                    <p style={recommendedTitle}>{v.title}</p>
+                    <p style={recommendedMeta}>
+                      {v.uploadedBy?.name || "Unknown"}
+                    </p>
+                    <p style={recommendedMeta}>
+                      {v.views?.toLocaleString() || 0} views • {new Date(v.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          </a>
-        ))}
+          </div>
+        )}
       </div>
-
-      {/* Beautiful Inline CSS (move to CSS file later) */}
-      <style jsx>{`
-        .watch-page {
-          display: flex;
-          gap: 24px;
-          max-width: 1600px;
-          margin: 0 auto;
-          padding: 20px;
-          color: #fff;
-          background: #0f0f0f;
-          min-height: 100vh;
-        }
-
-        .watch-main {
-          flex: 1;
-          max-width: 1000px;
-        }
-
-        .video-player-container {
-          border-radius: 16px;
-          overflow: hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-          margin-bottom: 20px;
-        }
-
-        .video-player {
-          width: 100%;
-          aspect-ratio: 16 / 9;
-          background: #000;
-        }
-
-        .video-title {
-          font-size: 22px;
-          font-weight: 600;
-          margin: 16px 0 8px;
-          line-height: 1.3;
-        }
-
-        .video-stats {
-          color: #aaa;
-          font-size: 14px;
-          margin-bottom: 16px;
-        }
-
-        .action-bar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 16px 0;
-          border-bottom: 1px solid #333;
-          margin-bottom: 20px;
-        }
-
-        .like-dislike {
-          display: flex;
-          background: #272727;
-          border-radius: 50px;
-          overflow: hidden;
-        }
-
-        .like-btn, .dislike-btn {
-          padding: 10px 24px;
-          background: transparent;
-          border: none;
-          color: #fff;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 15px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .like-btn:hover { background: #3ea6ff; }
-        .dislike-btn:hover { background: #f33; }
-
-        .like-btn svg, .dislike-btn svg {
-          width: 20px;
-          height: 20px;
-        }
-
-        .channel-card {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          background: #1f1f1f;
-          padding: 16px;
-          border-radius: 16px;
-          margin: 20px 0;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .channel-card:hover {
-          background: #272727;
-        }
-
-        .channel-info {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .channel-avatar {
-          width: 50px;
-          height: 50px;
-          background: linear-gradient(135deg, #ff0033, #ff6b6b);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 20px;
-        }
-
-        .channel-name {
-          font-size: 18px;
-          font-weight: 600;
-        }
-
-        .subscriber-count {
-          color: #aaa;
-          font-size: 13px;
-        }
-
-        .subscribe-btn {
-          padding: 10px 24px;
-          border-radius: 50px;
-          font-weight: 600;
-          border: none;
-          cursor: pointer;
-          background: #ff0033;
-          color: white;
-          transition: all 0.3s;
-        }
-
-        .subscribe-btn.subscribed {
-          background: #3f3f3f;
-          color: #aaa;
-        }
-
-        .subscribe-btn:hover {
-          background: #e6002e;
-          transform: scale(1.05);
-        }
-
-        .description-box {
-          background: #1f1f1f;
-          padding: 16px;
-          border-radius: 12px;
-          margin: 20px 0;
-          line-height: 1.5;
-        }
-
-        .comments-section h3 {
-          margin: 30px 0 20px;
-          font-size: 20px;
-        }
-
-        .comment-input-box {
-          display: flex;
-          gap: 12px;
-          margin: 20px 0;
-          align-items: flex-start;
-        }
-
-        .user-avatar-small {
-          width: 40px;
-          height: 40px;
-          background: #ff0033;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          flex-shrink: 0;
-        }
-
-        .comment-input-box input {
-          flex: 1;
-          background: transparent;
-          border: none;
-          border-bottom: 2px solid #444;
-          padding: 10px 0;
-          color: white;
-          font-size: 15px;
-        }
-
-        .comment-input-box input:focus {
-          border-color: #ff0033;
-          outline: none;
-        }
-
-        .post-comment-btn {
-          padding: 8px 20px;
-          background: #ff0033;
-          color: white;
-          border: none;
-          border-radius: 20px;
-          cursor: pointer;
-          font-weight: 600;
-        }
-
-        .comments-list {
-          margin-top: 20px;
-        }
-
-        .comment {
-          display: flex;
-          gap: 12px;
-          padding: 16px 0;
-          border-bottom: 1px solid #333;
-        }
-
-        .comment-avatar {
-          width: 40px;
-          height: 40px;
-          background: #333;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          flex-shrink: 0;
-        }
-
-        .comment-content {
-          flex: 1;
-        }
-
-        .comment-header {
-          display: flex;
-          gap: 8px;
-          font-size: 13px;
-          color: #aaa;
-          margin-bottom: 4px;
-        }
-
-        .comment-username {
-          color: white;
-          font-weight: 600;
-        }
-
-        .comment-text {
-          margin-top: 4px;
-          line-height: 1.4;
-        }
-
-        .delete-comment {
-          margin-top: 8px;
-          padding: 4px 12px;
-          background: #c00;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          font-size: 12px;
-          cursor: pointer;
-        }
-
-        .recommended-sidebar {
-          width: 400px;
-          flex-shrink: 0;
-        }
-
-        .recommended-sidebar h3 {
-          margin-bottom: 16px;
-          font-size: 18px;
-        }
-
-        .recommended-card {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 16px;
-          text-decoration: none;
-          color: white;
-          border-radius: 12px;
-          overflow: hidden;
-          transition: background 0.2s;
-        }
-
-        .recommended-card:hover {
-          background: #272727;
-        }
-
-        .rec-thumbnail {
-          width: 168px;
-          height: 94px;
-          object-fit: cover;
-          border-radius: 8px;
-          flex-shrink: 0;
-        }
-
-        .rec-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
-        .rec-title {
-          font-size: 14px;
-          font-weight: 600;
-          line-height: 1.3;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .rec-channel, .rec-meta {
-          font-size: 13px;
-          color: #aaa;
-          margin-top: 4px;
-        }
-
-        @media (max-width: 1024px) {
-          .watch-page {
-            flex-direction: column;
-          }
-          .recommended-sidebar {
-            width: 100%;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .recommended-sidebar {
-            display: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }
+
+/* =======================
+   🎨 Styles
+======================= */
+const controlsOverlay = {
+  position: "absolute",
+  top: 12,
+  right: 12,
+  display: "flex",
+  gap: 8,
+  zIndex: 10
+};
+
+const controlBtn = {
+  padding: "8px 12px",
+  background: "rgba(0,0,0,0.8)",
+  border: "none",
+  borderRadius: 8,
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "13px",
+  fontWeight: 600
+};
+
+const speedMenu = {
+  position: "absolute",
+  top: "100%",
+  right: 0,
+  marginTop: 4,
+  background: "rgba(28,28,28,0.98)",
+  backdropFilter: "blur(10px)",
+  borderRadius: 8,
+  overflow: "hidden",
+  minWidth: 100,
+  boxShadow: "0 4px 20px rgba(0,0,0,0.5)"
+};
+
+const speedMenuItem = {
+  padding: "10px 16px",
+  cursor: "pointer",
+  fontSize: "13px",
+  transition: "background 0.2s"
+};
+
+const infoBar = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginTop: 12,
+  paddingBottom: 12,
+  borderBottom: "1px solid #333"
+};
+
+const actionButtonGroup = {
+  display: "flex",
+  alignItems: "center",
+  background: "#272727",
+  borderRadius: 24,
+  overflow: "hidden"
+};
+
+const actionButton = {
+  padding: "10px 20px",
+  border: "none",
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: 600,
+  transition: "background 0.2s"
+};
+
+const actionButtonSingle = {
+  ...actionButton,
+  background: "#272727",
+  borderRadius: 24
+};
+
+const tagsContainer = {
+  display: "flex",
+  gap: 8,
+  flexWrap: "wrap",
+  marginTop: 12
+};
+
+const tag = {
+  background: "#272727",
+  padding: "6px 14px",
+  borderRadius: 20,
+  fontSize: "12px",
+  color: "#aaa",
+  fontWeight: 500
+};
+
+const channelCard = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  background: "#0f0f0f",
+  padding: "16px 0",
+  marginTop: 16,
+  borderRadius: 12
+};
+
+const channelAvatar = {
+  width: 48,
+  height: 48,
+  borderRadius: "50%",
+  background: "linear-gradient(135deg, #ff0000, #ff6b6b)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "20px",
+  fontWeight: "bold"
+};
+
+const subscribeBtn = {
+  padding: "10px 24px",
+  background: "#ff0000",
+  border: "none",
+  borderRadius: 24,
+  color: "#fff",
+  fontSize: "14px",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "background 0.2s"
+};
+
+const subscribedBtn = {
+  ...subscribeBtn,
+  background: "#272727"
+};
+
+const descriptionBox = {
+  background: "#272727",
+  padding: 16,
+  borderRadius: 12,
+  marginTop: 16
+};
+
+const showMoreBtn = {
+  background: "none",
+  border: "none",
+  color: "#fff",
+  cursor: "pointer",
+  marginTop: 8,
+  fontWeight: 600,
+  fontSize: "14px"
+};
+
+const commentInputContainer = {
+  display: "flex",
+  gap: 12,
+  alignItems: "flex-start"
+};
+
+const commentAvatar = {
+  width: 40,
+  height: 40,
+  borderRadius: "50%",
+  background: "linear-gradient(135deg, #666, #999)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "16px",
+  fontWeight: "bold",
+  flexShrink: 0
+};
+
+const commentInput = {
+  flex: 1,
+  background: "transparent",
+  border: "none",
+  borderBottom: "1px solid #555",
+  color: "#fff",
+  padding: "8px 0",
+  fontSize: "14px",
+  outline: "none"
+};
+
+const cancelBtn = {
+  padding: "8px 16px",
+  background: "transparent",
+  border: "none",
+  borderRadius: 20,
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: 600
+};
+
+const commentPostBtn = {
+  padding: "8px 16px",
+  background: "#ff0000",
+  border: "none",
+  borderRadius: 20,
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "14px",
+  fontWeight: 600
+};
+
+const commentPostBtnDisabled = {
+  ...commentPostBtn,
+  background: "#272727",
+  cursor: "not-allowed"
+};
+
+const commentCard = {
+  display: "flex",
+  gap: 12,
+  padding: "16px 0",
+  borderBottom: "1px solid #272727"
+};
+
+const deleteCommentBtn = {
+  marginTop: 8,
+  padding: "4px 12px",
+  background: "#900",
+  border: "none",
+  borderRadius: 16,
+  color: "#fff",
+  cursor: "pointer",
+  fontSize: "12px"
+};
+
+const recommendedCard = {
+  display: "flex",
+  gap: 12,
+  marginBottom: 12,
+  cursor: "pointer",
+  padding: 8,
+  borderRadius: 8,
+  transition: "background 0.2s"
+};
+
+const recommendedThumb = {
+  width: 168,
+  height: 94,
+  borderRadius: 8,
+  objectFit: "cover",
+  flexShrink: 0
+};
+
+const recommendedTitle = {
+  margin: 0,
+  fontSize: "14px",
+  fontWeight: 600,
+  lineHeight: "1.4",
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden"
+};
+
+const recommendedMeta = {
+  margin: "4px 0 0 0",
+  fontSize: "12px",
+  color: "#aaa"
+};

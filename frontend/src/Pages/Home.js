@@ -1155,46 +1155,1033 @@
 //   );
 // }
 
-import React, { useEffect, useState, useContext } from "react";
+// import React, { useEffect, useState, useContext } from "react";
+// import axios from "axios";
+// import { AuthContext } from "../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
+
+// export default function Home() {
+//   const [videos, setVideos] = useState([]);
+//   const [search, setSearch] = useState("");
+//   const [filtered, setFiltered] = useState([]);
+
+//   const { user, logout } = useContext(AuthContext);
+//   const navigate = useNavigate();
+
+//   const fetchVideos = async () => {
+//     const res = await axios.get("http://localhost:5000/api/videos/all");
+//     setVideos(res.data);
+//     setFiltered(res.data);
+//   };
+
+//   useEffect(() => {
+//     fetchVideos();
+//   }, []);
+
+//   useEffect(() => {
+//     const searchVideos = async () => {
+//       if (search.trim() === "") {
+//         setFiltered(videos);
+//         return;
+//       }
+//       const res = await axios.get(
+//         `http://localhost:5000/api/search?query=${search}`
+//       );
+//       setFiltered(res.data);
+//     };
+//     searchVideos();
+//   }, [search, videos]);
+
+//   return (
+//     <>
+//       {/* NAVBAR - Modern YouTube Style */}
+//       <nav className="navbar">
+//         <div className="nav-left">
+//           <h1 className="logo" onClick={() => navigate("/")}>
+//             MyTube
+//           </h1>
+//         </div>
+
+//         <div className="nav-center">
+//           <div className="search-container">
+//             <input
+//               type="text"
+//               placeholder="Search videos..."
+//               value={search}
+//               onChange={(e) => setSearch(e.target.value)}
+//               className="search-input"
+//             />
+//             <button className="search-btn">
+//               <svg viewBox="0 0 24 24" width="20" height="20">
+//                 <path
+//                   fill="currentColor"
+//                   d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+//                 />
+//               </svg>
+//             </button>
+//           </div>
+//         </div>
+
+//         <div className="nav-right">
+//           {user && (
+//             <>
+//               <button
+//                 className="icon-btn"
+//                 onClick={() => navigate("/UserUpload")}
+//                 title="Upload"
+//               >
+//                 <svg viewBox="0 0 24 24" width="24" height="24">
+//                   <path
+//                     fill="currentColor"
+//                     d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z"
+//                   />
+//                 </svg>
+//               </button>
+
+//               <button
+//                 className="profile-btn"
+//                 onClick={() => navigate("/profile")}
+//               >
+//                 <div className="avatar">
+//                   {user.username?.charAt(0).toUpperCase() || "U"}
+//                 </div>
+//               </button>
+//             </>
+//           )}
+
+//           {user ? (
+//             <button className="logout-btn" onClick={() => { logout(); navigate("/"); }}>
+//               Logout
+//             </button>
+//           ) : (
+//             <button className="login-btn" onClick={() => navigate("/login")}>
+//               Login
+//             </button>
+//           )}
+//         </div>
+//       </nav>
+
+//       {/* MAIN CONTENT */}
+//       <main className="main-content">
+//         <h2 className="section-title">Latest Videos</h2>
+
+//         {filtered.length === 0 ? (
+//           <p className="no-videos">No videos found...</p>
+//         ) : (
+//           <div className="video-grid">
+//             {filtered.map((v) => (
+//               <div
+//                 key={v._id}
+//                 className="video-card"
+//                 onClick={() => navigate(`/watch/${v.filename}`)}
+//               >
+//                 <div className="thumbnail-wrapper">
+//                   <img
+//                     src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                     alt={v.title}
+//                     className="thumbnail"
+//                   />
+//                   <div className="play-overlay">
+//                     <svg viewBox="0 0 72 72" width="48" height="48">
+//                       <circle cx="36" cy="36" r="34" fill="rgba(0,0,0,0.6)" />
+//                       <path
+//                         fill="#fff"
+//                         d="M28 24l24 12-24 12z"
+//                       />
+//                     </svg>
+//                   </div>
+//                 </div>
+
+//                 <div className="video-info">
+//                   <h3 className="video-title">{v.title}</h3>
+//                   <p className="video-meta">
+//                     {v.views || 0} views • {new Date(v.createdAt).toLocaleDateString()}
+//                   </p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </main>
+
+//       {/* Inline CSS (You can move this to a separate CSS file later) */}
+//       <style jsx>{`
+//         * {
+//           margin: 0;
+//           padding: 0;
+//           box-sizing: border-box;
+//         }
+
+//         body {
+//           font-family: 'Segoe UI', Roboto, sans-serif;
+//           background: #0f0f0f;
+//           color: #fff;
+//         }
+
+//         .navbar {
+//           position: sticky;
+//           top: 0;
+//           z-index: 100;
+//           background: rgba(15, 15, 15, 0.95);
+//           backdrop-filter: blur(12px);
+//           padding: 0 20px;
+//           height: 70px;
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+//           border-bottom: 1px solid #333;
+//         }
+
+//         .nav-left .logo {
+//           font-size: 28px;
+//           font-weight: 800;
+//           color: #ff0033;
+//           cursor: pointer;
+//           letter-spacing: -1px;
+//         }
+
+//         .nav-center {
+//           flex: 1;
+//           max-width: 720px;
+//           margin: 0 40px;
+//         }
+
+//         .search-container {
+//           display: flex;
+//           height: 46px;
+//           background: #1f1f1f;
+//           border-radius: 50px;
+//           overflow: hidden;
+//           border: 1px solid #333;
+//           box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+//         }
+
+//         .search-input {
+//           flex: 1;
+//           padding: 0 20px;
+//           background: transparent;
+//           border: none;
+//           color: #fff;
+//           font-size: 16px;
+//           outline: none;
+//         }
+
+//         .search-btn {
+//           width: 64px;
+//           background: #333;
+//           border: none;
+//           color: #aaa;
+//           cursor: pointer;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           transition: background 0.2s;
+//         }
+
+//         .search-btn:hover {
+//           background: #ff0033;
+//           color: white;
+//         }
+
+//         .nav-right {
+//           display: flex;
+//           align-items: center;
+//           gap: 16px;
+//         }
+
+//         .icon-btn {
+//           background: transparent;
+//           border: none;
+//           color: #fff;
+//           cursor: pointer;
+//           padding: 8px;
+//           border-radius: 50%;
+//           transition: background 0.2s;
+//         }
+
+//         .icon-btn:hover {
+//           background: rgba(255,255,255,0.1);
+//         }
+
+//         .avatar {
+//           width: 40px;
+//           height: 40px;
+//           background: linear-gradient(135deg, #ff0033, #ff6b6b);
+//           border-radius: 50%;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           font-weight: bold;
+//           font-size: 18px;
+//           color: white;
+//         }
+
+//         .login-btn, .logout-btn {
+//           padding: 10px 24px;
+//           border-radius: 50px;
+//           font-weight: 600;
+//           font-size: 15px;
+//           cursor: pointer;
+//           transition: all 0.3s;
+//           border: none;
+//         }
+
+//         .login-btn {
+//           background: #ff0033;
+//           color: white;
+//         }
+
+//         .logout-btn {
+//           background: transparent;
+//           color: #ff0033;
+//           border: 2px solid #ff0033 !important;
+//         }
+
+//         .login-btn:hover {
+//           background: #e6002e;
+//           transform: translateY(-2px);
+//           box-shadow: 0 6px 15px rgba(255,0,51,0.3);
+//         }
+
+//         .logout-btn:hover {
+//           background: rgba(255,0,51,0.1);
+//         }
+
+//         .main-content {
+//           max-width: 1400px;
+//           margin: 0 auto;
+//           padding: 30px 20px;
+//         }
+
+//         .section-title {
+//           font-size: 26px;
+//           font-weight: 600;
+//           margin-bottom: 30px;
+//           color: #fff;
+//         }
+
+//         .video-grid {
+//           display: grid;
+//           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+//           gap: 24px;
+//         }
+
+//         .video-card {
+//           background: #1a1a1a;
+//           border-radius: 16px;
+//           overflow: hidden;
+//           cursor: pointer;
+//           transition: transform 0.3s, box-shadow 0.3s;
+//         }
+
+//         .video-card:hover {
+//           transform: translateY(-10px);
+//           box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+//         }
+
+//         .thumbnail-wrapper {
+//           position: relative;
+//           width: 100%;
+//           height: 200px;
+//           overflow: hidden;
+//         }
+
+//         .thumbnail {
+//           width: 100%;
+//           height: 100%;
+//           object-fit: cover;
+//           transition: transform 0.4s;
+//         }
+
+//         .video-card:hover .thumbnail {
+//           transform: scale(1.08);
+//         }
+
+//         .play-overlay {
+//           position: absolute;
+//           inset: 0;
+//           background: rgba(0,0,0,0.4);
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           opacity: 0;
+//           transition: opacity 0.3s;
+//         }
+
+//         .video-card:hover .play-overlay {
+//           opacity: 1;
+//         }
+
+//         .video-info {
+//           padding: 14px;
+//         }
+
+//         .video-title {
+//           font-size: 16px;
+//           font-weight: 600;
+//           line-height: 1.4;
+//           margin-bottom: 8px;
+//           display: -webkit-box;
+//           -webkit-line-clamp: 2;
+//           -webkit-box-orient: vertical;
+//           overflow: hidden;
+//         }
+
+//         .video-meta {
+//           font-size: 13px;
+//           color: #aaa;
+//         }
+
+//         .no-videos {
+//           text-align: center;
+//           padding: 60px;
+//           font-size: 20px;
+//           color: #666;
+//         }
+
+//         @media (max-width: 768px) {
+//           .nav-center {
+//             display: none;
+//           }
+//           .video-grid {
+//             grid-template-columns: 1fr;
+//           }
+//         }
+//       `}</style>
+//     </>
+//   );
+// }
+
+// import React, { useEffect, useState, useContext } from "react";
+// import axios from "axios";
+// import { AuthContext } from "../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
+
+// export default function Home() {
+//   const [videos, setVideos] = useState([]);
+//   const [search, setSearch] = useState("");
+//   const [filtered, setFiltered] = useState([]);
+//   const [isListening, setIsListening] = useState(false);
+
+//   const { user, logout } = useContext(AuthContext);
+//   const navigate = useNavigate();
+
+//   const fetchVideos = async () => {
+//     const res = await axios.get("http://localhost:5000/api/videos/all");
+//     setVideos(res.data);
+//     setFiltered(res.data);
+//   };
+
+//   useEffect(() => {
+//     fetchVideos();
+//   }, []);
+
+//   useEffect(() => {
+//     const searchVideos = async () => {
+//       if (search.trim() === "") {
+//         setFiltered(videos);
+//         return;
+//       }
+//       const res = await axios.get(
+//         `http://localhost:5000/api/search?query=${search}`
+//       );
+//       setFiltered(res.data);
+//     };
+//     searchVideos();
+//   }, [search, videos]);
+
+//   // Voice search functionality
+//   const startVoiceSearch = () => {
+//     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+//       alert('Voice search is not supported in your browser. Please try Chrome or Edge.');
+//       return;
+//     }
+
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     const recognition = new SpeechRecognition();
+    
+//     recognition.continuous = false;
+//     recognition.interimResults = false;
+//     recognition.lang = 'en-US';
+
+//     recognition.onstart = () => {
+//       setIsListening(true);
+//     };
+
+//     recognition.onresult = (event) => {
+//       const transcript = event.results[0][0].transcript;
+//       setSearch(transcript);
+//       setIsListening(false);
+//     };
+
+//     recognition.onerror = (event) => {
+//       console.error('Speech recognition error:', event.error);
+//       setIsListening(false);
+//       if (event.error === 'no-speech') {
+//         alert('No speech detected. Please try again.');
+//       }
+//     };
+
+//     recognition.onend = () => {
+//       setIsListening(false);
+//     };
+
+//     recognition.start();
+//   };
+
+//   return (
+//     <>
+//       {/* NAVBAR - Modern YouTube Style */}
+//       <nav className="navbar">
+//         <div className="nav-left">
+//           <h1 className="logo" onClick={() => navigate("/")}>
+//             MyTube
+//           </h1>
+//         </div>
+
+//         <div className="nav-center">
+//           <div className="search-container">
+//             <input
+//               type="text"
+//               placeholder="Search videos..."
+//               value={search}
+//               onChange={(e) => setSearch(e.target.value)}
+//               className="search-input"
+//             />
+//             <button 
+//               className={`voice-btn ${isListening ? 'listening' : ''}`}
+//               onClick={startVoiceSearch}
+//               title="Voice search"
+//             >
+//               <svg viewBox="0 0 24 24" width="20" height="20">
+//                 <path
+//                   fill="currentColor"
+//                   d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"
+//                 />
+//                 <path
+//                   fill="currentColor"
+//                   d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"
+//                 />
+//               </svg>
+//             </button>
+//             <button className="search-btn">
+//               <svg viewBox="0 0 24 24" width="20" height="20">
+//                 <path
+//                   fill="currentColor"
+//                   d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+//                 />
+//               </svg>
+//             </button>
+//           </div>
+//         </div>
+
+//         <div className="nav-right">
+//           {user && (
+//             <>
+//               <button
+//                 className="icon-btn"
+//                 onClick={() => navigate("/UserUpload")}
+//                 title="Upload"
+//               >
+//                 <svg viewBox="0 0 24 24" width="24" height="24">
+//                   <path
+//                     fill="currentColor"
+//                     d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z"
+//                   />
+//                 </svg>
+//               </button>
+
+//               <button
+//                 className="profile-btn"
+//                 onClick={() => navigate("/profile")}
+//               >
+//                 <div className="avatar">
+//                   {user.username?.charAt(0).toUpperCase() || "U"}
+//                 </div>
+//               </button>
+//             </>
+//           )}
+
+//           {user ? (
+//             <button className="logout-btn" onClick={() => { logout(); navigate("/"); }}>
+//               Logout
+//             </button>
+//           ) : (
+//             <button className="login-btn" onClick={() => navigate("/login")}>
+//               Login
+//             </button>
+//           )}
+//         </div>
+//       </nav>
+
+//       {/* MAIN CONTENT */}
+//       <main className="main-content">
+//         <h2 className="section-title">Latest Videos</h2>
+
+//         {filtered.length === 0 ? (
+//           <p className="no-videos">No videos found...</p>
+//         ) : (
+//           <div className="video-grid">
+//             {filtered.map((v) => (
+//               <div
+//                 key={v._id}
+//                 className="video-card"
+//                 onClick={() => navigate(`/watch/${v.filename}`)}
+//               >
+//                 <div className="thumbnail-wrapper">
+//                   <img
+//                     src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                     alt={v.title}
+//                     className="thumbnail"
+//                   />
+//                   <div className="play-overlay">
+//                     <svg viewBox="0 0 72 72" width="48" height="48">
+//                       <circle cx="36" cy="36" r="34" fill="rgba(0,0,0,0.6)" />
+//                       <path
+//                         fill="#fff"
+//                         d="M28 24l24 12-24 12z"
+//                       />
+//                     </svg>
+//                   </div>
+//                 </div>
+
+//                 <div className="video-info">
+//                   <h3 className="video-title">{v.title}</h3>
+//                   <p className="video-meta">
+//                     {v.views || 0} views • {new Date(v.createdAt).toLocaleDateString()}
+//                   </p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         )}
+//       </main>
+
+//       {/* Inline CSS */}
+//       <style jsx>{`
+//         * {
+//           margin: 0;
+//           padding: 0;
+//           box-sizing: border-box;
+//         }
+
+//         body {
+//           font-family: 'Segoe UI', Roboto, sans-serif;
+//           background: #0f0f0f;
+//           color: #fff;
+//         }
+
+//         .navbar {
+//           position: sticky;
+//           top: 0;
+//           z-index: 100;
+//           background: rgba(15, 15, 15, 0.95);
+//           backdrop-filter: blur(12px);
+//           padding: 0 20px;
+//           height: 70px;
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+//           border-bottom: 1px solid #333;
+//         }
+
+//         .nav-left .logo {
+//           font-size: 28px;
+//           font-weight: 800;
+//           color: #ff0033;
+//           cursor: pointer;
+//           letter-spacing: -1px;
+//         }
+
+//         .nav-center {
+//           flex: 1;
+//           max-width: 720px;
+//           margin: 0 40px;
+//         }
+
+//         .search-container {
+//           display: flex;
+//           height: 46px;
+//           background: #1f1f1f;
+//           border-radius: 50px;
+//           overflow: hidden;
+//           border: 1px solid #333;
+//           box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+//         }
+
+//         .search-input {
+//           flex: 1;
+//           padding: 0 20px;
+//           background: transparent;
+//           border: none;
+//           color: #fff;
+//           font-size: 16px;
+//           outline: none;
+//         }
+
+//         .voice-btn {
+//           width: 50px;
+//           background: transparent;
+//           border: none;
+//           color: #aaa;
+//           cursor: pointer;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           transition: all 0.3s;
+//           border-right: 1px solid #333;
+//         }
+
+//         .voice-btn:hover {
+//           background: rgba(255,255,255,0.1);
+//           color: #fff;
+//         }
+
+//         .voice-btn.listening {
+//           color: #ff0033;
+//           animation: pulse 1.5s infinite;
+//         }
+
+//         @keyframes pulse {
+//           0%, 100% {
+//             opacity: 1;
+//             transform: scale(1);
+//           }
+//           50% {
+//             opacity: 0.6;
+//             transform: scale(1.1);
+//           }
+//         }
+
+//         .search-btn {
+//           width: 64px;
+//           background: #333;
+//           border: none;
+//           color: #aaa;
+//           cursor: pointer;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           transition: background 0.2s;
+//         }
+
+//         .search-btn:hover {
+//           background: #ff0033;
+//           color: white;
+//         }
+
+//         .nav-right {
+//           display: flex;
+//           align-items: center;
+//           gap: 16px;
+//         }
+
+//         .icon-btn {
+//           background: transparent;
+//           border: none;
+//           color: #fff;
+//           cursor: pointer;
+//           padding: 8px;
+//           border-radius: 50%;
+//           transition: background 0.2s;
+//         }
+
+//         .icon-btn:hover {
+//           background: rgba(255,255,255,0.1);
+//         }
+
+//         .profile-btn {
+//           background: transparent;
+//           border: none;
+//           cursor: pointer;
+//           padding: 0;
+//         }
+
+//         .avatar {
+//           width: 40px;
+//           height: 40px;
+//           background: linear-gradient(135deg, #ff0033, #ff6b6b);
+//           border-radius: 50%;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           font-weight: bold;
+//           font-size: 18px;
+//           color: white;
+//         }
+
+//         .login-btn, .logout-btn {
+//           padding: 10px 24px;
+//           border-radius: 50px;
+//           font-weight: 600;
+//           font-size: 15px;
+//           cursor: pointer;
+//           transition: all 0.3s;
+//           border: none;
+//         }
+
+//         .login-btn {
+//           background: #ff0033;
+//           color: white;
+//         }
+
+//         .logout-btn {
+//           background: transparent;
+//           color: #ff0033;
+//           border: 2px solid #ff0033 !important;
+//         }
+
+//         .login-btn:hover {
+//           background: #e6002e;
+//           transform: translateY(-2px);
+//           box-shadow: 0 6px 15px rgba(255,0,51,0.3);
+//         }
+
+//         .logout-btn:hover {
+//           background: rgba(255,0,51,0.1);
+//         }
+
+//         .main-content {
+//           max-width: 1400px;
+//           margin: 0 auto;
+//           padding: 30px 20px;
+//         }
+
+//         .section-title {
+//           font-size: 26px;
+//           font-weight: 600;
+//           margin-bottom: 30px;
+//           color: #fff;
+//         }
+
+//         .video-grid {
+//           display: grid;
+//           grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+//           gap: 24px;
+//         }
+
+//         .video-card {
+//           background: #1a1a1a;
+//           border-radius: 16px;
+//           overflow: hidden;
+//           cursor: pointer;
+//           transition: transform 0.3s, box-shadow 0.3s;
+//         }
+
+//         .video-card:hover {
+//           transform: translateY(-10px);
+//           box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+//         }
+
+//         .thumbnail-wrapper {
+//           position: relative;
+//           width: 100%;
+//           height: 200px;
+//           overflow: hidden;
+//         }
+
+//         .thumbnail {
+//           width: 100%;
+//           height: 100%;
+//           object-fit: cover;
+//           transition: transform 0.4s;
+//         }
+
+//         .video-card:hover .thumbnail {
+//           transform: scale(1.08);
+//         }
+
+//         .play-overlay {
+//           position: absolute;
+//           inset: 0;
+//           background: rgba(0,0,0,0.4);
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           opacity: 0;
+//           transition: opacity 0.3s;
+//         }
+
+//         .video-card:hover .play-overlay {
+//           opacity: 1;
+//         }
+
+//         .video-info {
+//           padding: 14px;
+//         }
+
+//         .video-title {
+//           font-size: 16px;
+//           font-weight: 600;
+//           line-height: 1.4;
+//           margin-bottom: 8px;
+//           display: -webkit-box;
+//           -webkit-line-clamp: 2;
+//           -webkit-box-orient: vertical;
+//           overflow: hidden;
+//         }
+
+//         .video-meta {
+//           font-size: 13px;
+//           color: #aaa;
+//         }
+
+//         .no-videos {
+//           text-align: center;
+//           padding: 60px;
+//           font-size: 20px;
+//           color: #666;
+//         }
+
+//         @media (max-width: 768px) {
+//           .nav-center {
+//             display: none;
+//           }
+//           .video-grid {
+//             grid-template-columns: 1fr;
+//           }
+//         }
+//       `}</style>
+//     </>
+//   );
+// }
+
+import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+
+// TRENDING LOGIC CONSTANTS
+const TRENDING_DAYS_WINDOW = 7;
+const RECENCY_WEIGHT = 1000;
+const TOP_N = 50;
 
 export default function Home() {
   const [videos, setVideos] = useState([]);
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [isListening, setIsListening] = useState(false);
 
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const recognitionRef = useRef(null);
 
+  const categories = [
+    "All", "Trending", "Gaming", "Music", "Education", "Entertainment",
+    "Sports", "Technology", "Cooking", "Travel", "Vlogs", "News",
+    "Comedy", "Animation", "Science", "Fashion", "Fitness", "Other"
+  ];
+
+  // Trending score: views + recency boost
+  const computeTrendingScore = (v) => {
+    const views = Number(v.views || 0);
+    const createdAt = v.createdAt ? new Date(v.createdAt) : new Date();
+    const daysSinceUpload = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    const recencyBoost = Math.max(0, TRENDING_DAYS_WINDOW - daysSinceUpload);
+    return views + recencyBoost * RECENCY_WEIGHT;
+  };
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = "en-US";
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setSearch(transcript);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error("Voice recognition error:", event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  const startVoiceSearch = () => {
+    if (!recognitionRef.current) {
+      alert("Voice search not supported in your browser. Try Chrome or Edge.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // Fetch videos based on selected category
   const fetchVideos = async () => {
-    const res = await axios.get("http://localhost:5000/api/videos/all");
-    setVideos(res.data);
-    setFiltered(res.data);
+    try {
+      setLoading(true);
+      let res;
+
+      if (selectedCategory === "All") {
+        res = await axios.get("http://localhost:5000/api/videos/recommended");
+      } else if (selectedCategory === "Trending") {
+        res = await axios.get("http://localhost:5000/api/videos/recommended");
+        const allVideos = res.data || [];
+        const scored = allVideos
+          .map(v => ({ ...v, trendingScore: computeTrendingScore(v) }))
+          .sort((a, b) => b.trendingScore - a.trendingScore)
+          .slice(0, TOP_N);
+        setVideos(scored);
+        setFiltered(scored);
+        setLoading(false);
+        return;
+      } else {
+        res = await axios.get(`http://localhost:5000/api/videos/category/${selectedCategory}`);
+      }
+
+      const data = res.data || [];
+      setVideos(data);
+      setFiltered(data);
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchVideos();
-  }, []);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [selectedCategory]);
 
+  // Search functionality
   useEffect(() => {
     const searchVideos = async () => {
       if (search.trim() === "") {
         setFiltered(videos);
         return;
       }
-      const res = await axios.get(
-        `http://localhost:5000/api/search?query=${search}`
-      );
-      setFiltered(res.data);
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/search?query=${encodeURIComponent(search)}`
+        );
+        setFiltered(res.data);
+      } catch (error) {
+        console.error("Search error:", error);
+        setFiltered(videos);
+      }
     };
     searchVideos();
   }, [search, videos]);
 
   return (
     <>
-      {/* NAVBAR - Modern YouTube Style */}
+      {/* NAVBAR */}
       <nav className="navbar">
         <div className="nav-left">
           <h1 className="logo" onClick={() => navigate("/")}>
@@ -1211,6 +2198,22 @@ export default function Home() {
               onChange={(e) => setSearch(e.target.value)}
               className="search-input"
             />
+            <button
+              className={`voice-btn ${isListening ? "listening" : ""}`}
+              onClick={startVoiceSearch}
+              title="Search with voice"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path
+                  fill="currentColor"
+                  d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"
+                />
+                <path
+                  fill="currentColor"
+                  d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"
+                />
+              </svg>
+            </button>
             <button className="search-btn">
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path
@@ -1225,30 +2228,24 @@ export default function Home() {
         <div className="nav-right">
           {user && (
             <>
-              <button
-                className="icon-btn"
-                onClick={() => navigate("/UserUpload")}
-                title="Upload"
-              >
+              <button className="icon-btn" onClick={() => navigate("/UserUpload")} title="Upload">
                 <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path
-                    fill="currentColor"
-                    d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z"
-                  />
+                  <path fill="currentColor" d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z" />
                 </svg>
               </button>
-
-              <button
-                className="profile-btn"
-                onClick={() => navigate("/profile")}
-              >
+              <button className="profile-btn" onClick={() => navigate("/profile")}>
                 <div className="avatar">
                   {user.username?.charAt(0).toUpperCase() || "U"}
                 </div>
               </button>
             </>
           )}
-
+          <button
+            className={`trending-btn ${selectedCategory === "Trending" ? "active" : ""}`}
+            onClick={() => setSelectedCategory("Trending")}
+          >
+            Trending
+          </button>
           {user ? (
             <button className="logout-btn" onClick={() => { logout(); navigate("/"); }}>
               Logout
@@ -1261,12 +2258,35 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* CATEGORY BAR */}
+      <div className="category-bar">
+        {categories.map((category) => (
+          <button
+            key={category}
+            className={`category-btn ${selectedCategory === category ? "active" : ""}`}
+            onClick={() => setSelectedCategory(category)}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+
       {/* MAIN CONTENT */}
       <main className="main-content">
-        <h2 className="section-title">Latest Videos</h2>
+        <h2 className="section-title">
+          {selectedCategory === "All" ? "Recommended for You" : selectedCategory === "Trending" ? "Trending Videos" : `${selectedCategory} Videos`}
+          <span className="video-count"> • {filtered.length} videos</span>
+        </h2>
 
-        {filtered.length === 0 ? (
-          <p className="no-videos">No videos found...</p>
+        {loading ? (
+          <div className="loading">
+            <div className="spinner"></div>
+            <p>Loading videos...</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <p className="no-videos">
+            {search ? `No results for "${search}"` : "No videos found in this category..."}
+          </p>
         ) : (
           <div className="video-grid">
             {filtered.map((v) => (
@@ -1280,21 +2300,24 @@ export default function Home() {
                     src={`http://localhost:5000/uploads/${v.thumbnail}`}
                     alt={v.title}
                     className="thumbnail"
+                    onError={(e) => e.target.src = "/fallback-thumbnail.jpg"}
                   />
                   <div className="play-overlay">
                     <svg viewBox="0 0 72 72" width="48" height="48">
                       <circle cx="36" cy="36" r="34" fill="rgba(0,0,0,0.6)" />
-                      <path
-                        fill="#fff"
-                        d="M28 24l24 12-24 12z"
-                      />
+                      <path fill="#fff" d="M28 24l24 12-24 12z" />
                     </svg>
                   </div>
+                  {v.category && (
+                    <div className="category-badge">{v.category}</div>
+                  )}
                 </div>
-
                 <div className="video-info">
                   <h3 className="video-title">{v.title}</h3>
                   <p className="video-meta">
+                    {v.uploadedBy?.name && (
+                      <span className="channel-name">{v.uploadedBy.name}</span>
+                    )}
                     {v.views || 0} views • {new Date(v.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -1304,248 +2327,105 @@ export default function Home() {
         )}
       </main>
 
-      {/* Inline CSS (You can move this to a separate CSS file later) */}
+      {/* Full Inline CSS */}
       <style jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        body {
-          font-family: 'Segoe UI', Roboto, sans-serif;
-          background: #0f0f0f;
-          color: #fff;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #fff; }
 
         .navbar {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          background: rgba(15, 15, 15, 0.95);
-          backdrop-filter: blur(12px);
-          padding: 0 20px;
-          height: 70px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border-bottom: 1px solid #333;
+          position: sticky; top: 0; z-index: 100; background: rgba(15,15,15,0.95);
+          backdrop-filter: blur(12px); padding: 0 20px; height: 70px; display: flex;
+          align-items: center; justify-content: space-between; border-bottom: 1px solid #333;
         }
+        .nav-left .logo { font-size: 28px; font-weight: 800; color: #ff0033; cursor: pointer; letter-spacing: -1px; }
+        .nav-center { flex: 1; max-width: 720px; margin: 0 40px; }
+        .search-container { display: flex; height: 46px; background: #1f1f1f; border-radius: 50px;
+          overflow: hidden; border: 1px solid #333; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .search-input { flex: 1; padding: 0 20px; background: transparent; border: none;
+          color: #fff; font-size: 16px; outline: none; }
+        .voice-btn { width: 50px; background: transparent; border: none; color: #aaa;
+          cursor: pointer; display: flex; align-items: center; justify-content: center;
+          transition: all 0.3s; border-right: 1px solid #333; }
+        .voice-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .voice-btn.listening { color: #ff0033; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .search-btn { width: 64px; background: #333; border: none; color: #aaa;
+          cursor: pointer; display: flex; align-items: center; justify-content: center;
+          transition: background 0.2s; }
+        .search-btn:hover { background: #ff0033; color: white; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .icon-btn, .profile-btn { background: transparent; border: none; color: #fff;
+          cursor: pointer; padding: 8px; border-radius: 50%; transition: background 0.2s; }
+        .icon-btn:hover { background: rgba(255,255,255,0.1); }
+        .avatar { width: 40px; height: 40px; background: linear-gradient(135deg,#ff0033,#ff6b6b);
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-weight: bold; font-size: 18px; color: white; }
+        .trending-btn { padding: 8px 16px; border-radius: 20px; background: transparent;
+          color: #ffb3b3; border: 1px solid transparent; cursor: pointer; font-weight: 600;
+          transition: all 0.2s; }
+        .trending-btn:hover { background: rgba(255,0,51,0.08); }
+        .trending-btn.active { background: linear-gradient(135deg,#ff0033,#ff6b6b);
+          color: white; box-shadow: 0 6px 18px rgba(255,0,51,0.24); }
+        .login-btn, .logout-btn { padding: 10px 24px; border-radius: 50px; font-weight: 600;
+          font-size: 15px; cursor: pointer; transition: all 0.3s; border: none; }
+        .login-btn { background: #ff0033; color: white; }
+        .logout-btn { background: transparent; color: #ff0033; border: 2px solid #ff0033; }
+        .login-btn:hover { background: #e6002e; transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(255,0,51,0.3); }
+        .logout-btn:hover { background: rgba(255,0,51,0.1); }
 
-        .nav-left .logo {
-          font-size: 28px;
-          font-weight: 800;
-          color: #ff0033;
-          cursor: pointer;
-          letter-spacing: -1px;
+        .category-bar {
+          position: sticky; top: 70px; z-index: 90; background: rgba(15,15,15,0.95);
+          backdrop-filter: blur(12px); padding: 12px 20px; display: flex; gap: 12px;
+          overflow-x: auto; border-bottom: 1px solid #333; scrollbar-width: thin;
         }
+        .category-bar::-webkit-scrollbar { height: 6px; }
+        .category-bar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        .category-btn { padding: 8px 18px; background: #2a2a2a; color: #fff; border: none;
+          border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer;
+          white-space: nowrap; transition: all 0.3s; flex-shrink: 0; }
+        .category-btn:hover { background: #3a3a3a; transform: translateY(-2px); }
+        .category-btn.active { background: linear-gradient(135deg,#ff0033,#ff6b6b);
+          box-shadow: 0 4px 12px rgba(255,0,51,0.4); }
 
-        .nav-center {
-          flex: 1;
-          max-width: 720px;
-          margin: 0 40px;
-        }
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 30px 20px; }
+        .section-title { font-size: 26px; font-weight: 600; margin-bottom: 30px;
+          display: flex; align-items: center; gap: 12px; }
+        .video-count { font-size: 14px; color: #aaa; }
+        .loading { text-align: center; padding: 80px 20px; }
+        .spinner { width: 50px; height: 50px; border: 4px solid #333;
+          border-top-color: #ff0033; border-radius: 50%; animation: spin 1s linear infinite;
+          margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .search-container {
-          display: flex;
-          height: 46px;
-          background: #1f1f1f;
-          border-radius: 50px;
-          overflow: hidden;
-          border: 1px solid #333;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .search-input {
-          flex: 1;
-          padding: 0 20px;
-          background: transparent;
-          border: none;
-          color: #fff;
-          font-size: 16px;
-          outline: none;
-        }
-
-        .search-btn {
-          width: 64px;
-          background: #333;
-          border: none;
-          color: #aaa;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.2s;
-        }
-
-        .search-btn:hover {
-          background: #ff0033;
-          color: white;
-        }
-
-        .nav-right {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .icon-btn {
-          background: transparent;
-          border: none;
-          color: #fff;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 50%;
-          transition: background 0.2s;
-        }
-
-        .icon-btn:hover {
-          background: rgba(255,255,255,0.1);
-        }
-
-        .avatar {
-          width: 40px;
-          height: 40px;
-          background: linear-gradient(135deg, #ff0033, #ff6b6b);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 18px;
-          color: white;
-        }
-
-        .login-btn, .logout-btn {
-          padding: 10px 24px;
-          border-radius: 50px;
-          font-weight: 600;
-          font-size: 15px;
-          cursor: pointer;
-          transition: all 0.3s;
-          border: none;
-        }
-
-        .login-btn {
-          background: #ff0033;
-          color: white;
-        }
-
-        .logout-btn {
-          background: transparent;
-          color: #ff0033;
-          border: 2px solid #ff0033 !important;
-        }
-
-        .login-btn:hover {
-          background: #e6002e;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba(255,0,51,0.3);
-        }
-
-        .logout-btn:hover {
-          background: rgba(255,0,51,0.1);
-        }
-
-        .main-content {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 30px 20px;
-        }
-
-        .section-title {
-          font-size: 26px;
-          font-weight: 600;
-          margin-bottom: 30px;
-          color: #fff;
-        }
-
-        .video-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 24px;
-        }
-
-        .video-card {
-          background: #1a1a1a;
-          border-radius: 16px;
-          overflow: hidden;
-          cursor: pointer;
-          transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .video-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .thumbnail-wrapper {
-          position: relative;
-          width: 100%;
-          height: 200px;
-          overflow: hidden;
-        }
-
-        .thumbnail {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.4s;
-        }
-
-        .video-card:hover .thumbnail {
-          transform: scale(1.08);
-        }
-
-        .play-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,0.4);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .video-card:hover .play-overlay {
-          opacity: 1;
-        }
-
-        .video-info {
-          padding: 14px;
-        }
-
-        .video-title {
-          font-size: 16px;
-          font-weight: 600;
-          line-height: 1.4;
-          margin-bottom: 8px;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .video-meta {
-          font-size: 13px;
-          color: #aaa;
-        }
-
-        .no-videos {
-          text-align: center;
-          padding: 60px;
-          font-size: 20px;
-          color: #666;
-        }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 24px; }
+        .video-card { background: #1a1a1a; border-radius: 16px; overflow: hidden;
+          cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .video-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .thumbnail-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; }
+        .thumbnail { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .video-card:hover .thumbnail { transform: scale(1.08); }
+        .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+          display: flex; align-items: center; justify-content: center; opacity: 0;
+          transition: opacity 0.3s; }
+        .video-card:hover .play-overlay { opacity: 1; }
+        .category-badge { position: absolute; top: 12px; right: 12px; background: rgba(255,0,51,0.95);
+          color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px;
+          font-weight: 600; backdrop-filter: blur(10px); }
+        .video-info { padding: 14px; }
+        .video-title { font-size: 16px; font-weight: 600; line-height: 1.4; margin-bottom: 8px;
+          display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+          overflow: hidden; }
+        .video-meta { font-size: 13px; color: #aaa; }
+        .channel-name { display: block; color: #fff; font-weight: 500; margin-bottom: 4px; }
+        .no-videos { text-align: center; padding: 60px; font-size: 20px; color: #666; }
 
         @media (max-width: 768px) {
-          .nav-center {
-            display: none;
-          }
-          .video-grid {
-            grid-template-columns: 1fr;
-          }
+          .nav-center { display: none; }
+          .video-grid { grid-template-columns: 1fr; }
+          .category-bar { padding: 12px 10px; gap: 8px; }
+          .category-btn { padding: 6px 14px; font-size: 13px; }
         }
       `}</style>
     </>
