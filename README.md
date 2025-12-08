@@ -16,18 +16,24 @@
 
 ---
 
-| Feature                              | Status         | Description                                         |
-| ------------------------------------ | -------------- | --------------------------------------------------- |
-| Video Upload & Streaming             | ✔️ Done        | Range requests, smooth playback                     |
-| Admin Panel (Full CRUD)              | ✔️ Done        | Upload, edit title, replace video/thumbnail, delete |
-| Fuzzy Search (Fuse.js)               | ✔️ Done        | Smart typo-tolerant search                          |
-| JWT Authentication                   | ✔️ Done        | Protected admin routes                              |
-| Responsive UI                        | ✔️ Done        | Mobile-friendly React frontend                      |
-| **Subscribe System (Dynamic)**       | ✔️ Done Today  | Subscribe without page reload, live count update    |
-| **Comments System (Model + Routes)** | ✔️ Added Today | Users can comment on videos (backend implemented)   |
-| **User Profile & Signup Pages**      | ✔️ Added Today | Signup, Profile page, User Upload page in React     |
-| **Bloom Filter Optimization**        | ✔️ Done        | Fast duplicate detection & search performance boost |
-
+| Feature                                           | Status         | Description                                                   |
+| ------------------------------------------------- | -------------- | ------------------------------------------------------------- |
+| 📥 **Video Upload & Streaming**                   | ✔️ Complete    | Range requests, smooth video playback with thumbnails         |
+| ⚙️ **Admin Panel (Full CRUD)**                    | ✔️ Complete    | Upload videos, edit title, replace video/thumbnail, delete    |
+| 🔎 **Fuzzy Search (Fuse.js)**                     | ✔️ Complete    | Typo-tolerant search on Home page                             |
+| 🔐 **JWT Authentication**                         | ✔️ Complete    | Login, secure routes, token-based protection                  |
+| 📱 **Responsive UI**                              | ✔️ Complete    | Modern YouTube-style layout (dark UI + animations)            |
+| ⭐ **Subscribe System (Dynamic)**                 | ✔️ Added Today | Subscribe button updates instantly + backend relational store |
+| 💬 **Comments System (Full)**                     | ✔️ Added Today | Post/Delete comments, admin delete, live refresh              |
+| 🙋‍♂️ **User Profile Page (Dynamic)**                | ✔️ Added Today | Shows uploaded videos & subscriber count                      |
+| 🎥 **User Video Upload (Not Admin)**              | ✔️ Added Today | Normal users can upload from their own page                   |
+| 🧠 **Bloom Filter Optimization**                  | ✔️ Complete    | Prevent duplicate titles instantly                            |
+| 🎙 **Voice Search (Mic Input)**                   | ✔️ Added Today | YouTube-style mic search on Home page                         |
+| 🏷 **Recommended Algorithm (Basic)**              | ✔️ Added Today | Shows related videos after watching                           |
+| 🧲 **Auto-Update Views, Likes, Dislikes**         | ✔️ Complete    | Counts update live without reload                             |
+| 🧾 **Channel Card UI (Subscribe + Profile Link)** | ✔️ Added Today | Live count, clickable profile, styled UI                      |
+| ⚡ **Live Counters**                               | ✔️ Added Today | Subscribers, likes, dislikes, views all update live           |
+🎬 Video Category System                            | ⭐ Added Today | Category stored & searchable                                  |
 ---
 
 ### Tech Stack
