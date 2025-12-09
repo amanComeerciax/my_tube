@@ -276,15 +276,62 @@ router.get("/category/:category", async (req, res) => {
 /* ===========================
  📌 4. GET RECOMMENDED (Top views)
 =========================== */
+// router.get("/recommended", async (req, res) => {
+//   try {
+//     const videos = await Video.find()
+//       .populate("uploadedBy", "name")
+//       .sort({ views: -1, createdAt: -1 })
+//       .limit(20);
+//     res.json(videos);
+//   } catch (err) {
+//     console.error("Get recommended error:", err);
+//     res.status(500).json({ message: "Failed to load recommended videos" });
+//   }
+// });
+/* ===========================
+ 📌 4. SMART RECOMMENDED SYSTEM (Like YouTube)
+=========================== */
 router.get("/recommended", async (req, res) => {
   try {
-    const videos = await Video.find()
-      .populate("uploadedBy", "name")
-      .sort({ views: -1, createdAt: -1 })
-      .limit(20);
-    res.json(videos);
+    const userId = req.query.userId || null;
+
+    let videos = await Video.find().populate("uploadedBy", "name");
+
+    // No user logged in → Show trending first
+    if (!userId) {
+      const trending = videos
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 30);
+      return res.json(trending);
+    }
+
+    // If user logged in → Personalized mix
+    const History = require("../models/WatchHistory");
+    const historyData = await History.find({ user: userId }).populate("video");
+
+    const historyVideos = historyData.map(h => h.video);
+
+    // Extract favorite categories & tags from history
+    const favCategories = new Set(historyVideos.map(v => v?.category));
+    const favTags = new Set(historyVideos.flatMap(v => v?.tags || []));
+
+    const recommended = videos
+      .filter(v =>
+        favCategories.has(v.category) ||
+        v.tags?.some(tag => favTags.has(tag))
+      )
+      .sort((a, b) => b.views - a.views);
+
+    const trendingBackup = videos.sort((a, b) => b.views - a.views);
+
+    // Mix recommended + trending fallback
+    const finalFeed = [...recommended, ...trendingBackup]
+      .filter((v, i, arr) => arr.findIndex(x => x._id.equals(v._id)) === i)
+      .slice(0, 50);
+
+    res.json(finalFeed);
   } catch (err) {
-    console.error("Get recommended error:", err);
+    console.error("Smart recommended error:", err);
     res.status(500).json({ message: "Failed to load recommended videos" });
   }
 });
@@ -492,7 +539,33 @@ router.put(
     }
   }
 );
+router.put("/:id", auth, upload.single("thumbnail"), async (req, res) => {
+  try {
+    const { title, category, description } = req.body;
+    const updateData = { title, category, description };
 
+    if (req.file) updateData.thumbnail = req.file.filename;
+
+    await Video.findByIdAndUpdate(req.params.id, updateData);
+
+    res.json({ message: "Video updated ✔" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Update Failed ❌" });
+  }
+});
+
+/* ===========================
+ 📌 DELETE VIDEO
+=========================== */
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    await Video.findByIdAndDelete(req.params.id);
+    res.json({ message: "Video deleted ❌" });
+  } catch {
+    res.status(500).json({ message: "Delete failed" });
+  }
+});
 /* ===========================
  📌 12. UPDATE VIDEO FILE
 =========================== */
