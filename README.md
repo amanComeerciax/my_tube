@@ -16,25 +16,27 @@
 
 ---
 
-| Feature                                           | Status         | Description                                                   |
-| ------------------------------------------------- | -------------- | ------------------------------------------------------------- |
-| 📥 **Video Upload & Streaming**                   | ✔️ Complete    | Range requests, smooth video playback with thumbnails         |
-| ⚙️ **Admin Panel (Full CRUD)**                    | ✔️ Complete    | Upload videos, edit title, replace video/thumbnail, delete    |
-| 🔎 **Fuzzy Search (Fuse.js)**                     | ✔️ Complete    | Typo-tolerant search on Home page                             |
-| 🔐 **JWT Authentication**                         | ✔️ Complete    | Login, secure routes, token-based protection                  |
-| 📱 **Responsive UI**                              | ✔️ Complete    | Modern YouTube-style layout (dark UI + animations)            |
-| ⭐ **Subscribe System (Dynamic)**                 | ✔️ Added Today | Subscribe button updates instantly + backend relational store |
-| 💬 **Comments System (Full)**                     | ✔️ Added Today | Post/Delete comments, admin delete, live refresh              |
-| 🙋‍♂️ **User Profile Page (Dynamic)**                | ✔️ Added Today | Shows uploaded videos & subscriber count                      |
-| 🎥 **User Video Upload (Not Admin)**              | ✔️ Added Today | Normal users can upload from their own page                   |
-| 🧠 **Bloom Filter Optimization**                  | ✔️ Complete    | Prevent duplicate titles instantly                            |
-| 🎙 **Voice Search (Mic Input)**                   | ✔️ Added Today | YouTube-style mic search on Home page                         |
-| 🏷 **Recommended Algorithm (Basic)**              | ✔️ Added Today | Shows related videos after watching                           |
-| 🧲 **Auto-Update Views, Likes, Dislikes**         | ✔️ Complete    | Counts update live without reload                             |
-| 🧾 **Channel Card UI (Subscribe + Profile Link)** | ✔️ Added Today | Live count, clickable profile, styled UI                      |
-| ⚡ **Live Counters**                               | ✔️ Added Today | Subscribers, likes, dislikes, views all update live           |
-🎬 Video Category System                            | ⭐ Added Today | Category stored & searchable                                  |
----
+| Feature                                            | Status        | Description                                                                     |
+| -------------------------------------------------- | ------------- | ------------------------------------------------------------------------------- |
+| 📥 **Video Upload & Streaming**                    | ✔️ Complete   | Range requests for smooth streaming + thumbnail previews                        |
+| ⚙️ **Admin Panel (Full CRUD)**                     | ✔️ Complete   | Upload videos, edit title/category/description, replace video/thumbnail, delete |
+| 🔎 **Fuzzy Search (Fuse.js)**                      | ✔️ Complete   | Smart typo-tolerant search across titles & tags                                 |
+| 🔐 **JWT Authentication**                          | ✔️ Complete   | Secure login/signup, protected upload & CRUD                                    |
+| 📱 **Responsive UI (YouTube Style)**               | ✔️ Complete   | Modern dark UI, sidebar, animations, hover effects                              |
+| ⭐ **Subscribe System (Dynamic)**                   | ✔️ Complete   | Real-time subscribe/unsubscribe, live counter update                           |
+| 💬 **Comments System (Full)**                      | ✔️ Complete   | Comment, delete comment, admin delete, auto-refresh                             |
+| 🙋‍♂️ **User Profile Page (Dynamic)**                  | ✔️ Complete   | Shows uploaded videos, subscribers, channel info                                   |
+| 🎥 **User Video Upload (Normal User)**             | ✔️ Complete   | Users can upload videos from their profile                                      |
+| 🏷️ **Category & Tags System**                     | ⭐ Added Today | Video Category + Tags stored, filtered, searchable                              |
+| 🧠 **Bloom Filter Optimization**                   | ✔️ Complete   | Prevent duplicate titles instantly before DB hit                                |
+| 🎙 **Mic Voice Search Input**                      | ⭐ Added Today | YouTube-style voice search using Web Speech API                                |
+| 🧩 **Recommended Algorithm (Smart)**               | ⭐ Added Today | History + Tags + Category based personalized feed                              |
+| 🎞️ **Hover Video Preview (Upcoming)**             |  Complete    | Auto-play preview on Home hover (YouTube style)                                   |
+| 🧲 **Auto Likes/Dislikes/Views Counter**           | ✔️ Complete   | Live count update without reload                                                |
+| 👀 **Watch History (Add/Delete/Clear)**            | ⭐ Added Today | View, remove single video, clear all history                                    |
+| 👤 **Channel Card UI (Clickable + Live Counters)** | ✔️ Complete   | Clickable profile, real-time subscriber updates                                 |
+| ⚡ **Live UI Counters Everywhere**                  | ✔️ Complete   | Views, Likes, Dislikes, Subscribers auto-update                                 |
+
 
 ### Tech Stack
 
