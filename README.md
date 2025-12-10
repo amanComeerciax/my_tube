@@ -25,17 +25,20 @@
 | 📱 **Responsive UI (YouTube Style)**               | ✔️ Complete   | Modern dark UI, sidebar, animations, hover effects                              |
 | ⭐ **Subscribe System (Dynamic)**                   | ✔️ Complete   | Real-time subscribe/unsubscribe, live counter update                           |
 | 💬 **Comments System (Full)**                      | ✔️ Complete   | Comment, delete comment, admin delete, auto-refresh                             |
-| 🙋‍♂️ **User Profile Page (Dynamic)**                  | ✔️ Complete   | Shows uploaded videos, subscribers, channel info                                   |
+| 🙋‍♂️ **User Profile Page (Dynamic)**                  | ✔️ Complete   | Shows uploaded videos, subscribers, channel info                               |
 | 🎥 **User Video Upload (Normal User)**             | ✔️ Complete   | Users can upload videos from their profile                                      |
 | 🏷️ **Category & Tags System**                     | ⭐ Added Today | Video Category + Tags stored, filtered, searchable                              |
 | 🧠 **Bloom Filter Optimization**                   | ✔️ Complete   | Prevent duplicate titles instantly before DB hit                                |
 | 🎙 **Mic Voice Search Input**                      | ⭐ Added Today | YouTube-style voice search using Web Speech API                                |
-| 🧩 **Recommended Algorithm (Smart)**               | ⭐ Added Today | History + Tags + Category based personalized feed                              |
+| 🧩 **Recommended Algorithm (Smart) Similarity  Matrix             | ⭐ Added Today | History + Tags + Category based personalized feed          |
 | 🎞️ **Hover Video Preview (Upcoming)**             |  Complete    | Auto-play preview on Home hover (YouTube style)                                   |
 | 🧲 **Auto Likes/Dislikes/Views Counter**           | ✔️ Complete   | Live count update without reload                                                |
-| 👀 **Watch History (Add/Delete/Clear)**            | ⭐ Added Today | View, remove single video, clear all history                                    |
+| 👀 **Watch History (Add/Delete/Clear)**            | ⭐ Added Today | View, remove single video, clear all history                                   |
 | 👤 **Channel Card UI (Clickable + Live Counters)** | ✔️ Complete   | Clickable profile, real-time subscriber updates                                 |
 | ⚡ **Live UI Counters Everywhere**                  | ✔️ Complete   | Views, Likes, Dislikes, Subscribers auto-update                                 |
+|⚡️ Video Upload (Chunking)** | **✔ Complete** |
+| Video AutoPlay Next |   **✔ Complete** |
+
 
 
 ### Tech Stack
