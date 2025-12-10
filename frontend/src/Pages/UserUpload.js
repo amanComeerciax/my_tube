@@ -780,10 +780,366 @@
 //   }
 // };
 
+// import React, { useState, useContext, useRef } from "react";
+// import axios from "axios";
+// import { AuthContext } from "../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
+
+// export default function UserUpload() {
+//   const { user } = useContext(AuthContext);
+//   const navigate = useNavigate();
+
+//   const [title, setTitle] = useState("");
+//   const [description, setDescription] = useState("");
+//   const [tags, setTags] = useState("");
+//   const [category, setCategory] = useState("");
+//   const [video, setVideo] = useState(null);
+//   const [thumbnail, setThumbnail] = useState(null);
+
+//   const [videoPreview, setVideoPreview] = useState(null);
+//   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [uploadProgress, setUploadProgress] = useState(0);
+//   const [currentStep, setCurrentStep] = useState(1);
+
+//   // File input refs
+//   const videoInputRef = useRef(null);
+//   const thumbnailInputRef = useRef(null);
+
+//   // Category Options
+//   const categories = [
+//     "Gaming", "Music", "Education", "Entertainment", "Sports", "Technology",
+//     "Cooking", "Travel", "Vlogs", "News", "Comedy", "Animation", "Science",
+//     "Fashion", "Fitness", "Other"
+//   ];
+
+//   // If not logged in
+//   if (!user) {
+//     return (
+//       <div style={styles.loginRequired}>
+//         <div style={styles.loginCard}>
+//           <h2 style={{ marginBottom: 10 }}>⚠ Login Required</h2>
+//           <p style={{ color: "#aaa", marginBottom: 20 }}>
+//             You must be logged in to upload videos.
+//           </p>
+//           <button style={styles.loginButton} onClick={() => navigate("/login")}>
+//             Go to Login
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Select Video
+//   const handleVideoSelect = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setVideo(file);
+//       setVideoPreview(URL.createObjectURL(file));
+//       setCurrentStep(2);
+//       e.target.value = "";
+//     }
+//   };
+
+//   // Select Thumbnail
+//   const handleThumbnailSelect = (e) => {
+//     const file = e.target.files[0];
+//     if (file) {
+//       setThumbnail(file);
+//       setThumbnailPreview(URL.createObjectURL(file));
+//       e.target.value = "";
+//     }
+//   };
+
+//   // Upload Handler
+//   const handleUpload = async () => {
+//     if (!title.trim() || !video || !thumbnail || !category) {
+//       alert("⚠ Title, category, video & thumbnail are required!");
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append("title", title.trim());
+//     formData.append("description", description);
+//     formData.append("tags", tags);
+//     formData.append("category", category);
+//     formData.append("video", video);
+//     formData.append("thumbnail", thumbnail);
+
+//     try {
+//       setLoading(true);
+//       setUploadProgress(0);
+
+//       const token = localStorage.getItem("token");
+//       await axios.post("http://localhost:5000/api/videos/upload", formData, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "multipart/form-data",
+//         },
+//         onUploadProgress: (e) => {
+//           setUploadProgress(Math.round((e.loaded * 100) / e.total));
+//         },
+//       });
+
+//       alert("🎉 Your video is uploaded!");
+//       navigate("/profile");
+//     } catch (err) {
+//       alert("Upload Failed ❌ " + (err.response?.data?.message || err.message));
+//     } finally {
+//       setLoading(false);
+//       setUploadProgress(0);
+//     }
+//   };
+
+//   return (
+//     <div style={styles.container}>
+//       {/* HEADER */}
+//       <div style={styles.header}>
+//         <button style={styles.backButton} onClick={() => navigate(-1)}>←</button>
+//         <h1 style={styles.headerTitle}>Upload Video</h1>
+//       </div>
+
+//       <div style={styles.content}>
+        
+//         {/* STEP 1: Upload Video */}
+//         {currentStep === 1 && (
+//           <div style={styles.uploadArea}>
+//             <input
+//               ref={videoInputRef}
+//               type="file"
+//               accept="video/*"
+//               onChange={handleVideoSelect}
+//               style={{ display: "none" }}
+//             />
+//             <div style={styles.uploadLabel} onClick={() => videoInputRef.current?.click()}>
+//               <h3>Select video to upload</h3>
+//               <p style={{ color: "#aaa" }}>Click to select or drag & drop</p>
+//               <button style={styles.selectButton}>Select File</button>
+//             </div>
+//           </div>
+//         )}
+
+//         {/* STEP 2 & 3: Form + Preview */}
+//         {currentStep > 1 && (
+//           <div style={styles.formArea}>
+//             {/* FORM */}
+//             <div style={styles.formContainer}>
+
+//               <div style={styles.formGroup}>
+//                 <label style={styles.label}>Title*</label>
+//                 <input
+//                   style={styles.input}
+//                   type="text"
+//                   maxLength={100}
+//                   placeholder="Enter video title"
+//                   value={title}
+//                   onChange={(e) => setTitle(e.target.value)}
+//                 />
+//               </div>
+
+//               <div style={styles.formGroup}>
+//                 <label style={styles.label}>Category*</label>
+//                 <select
+//                   style={styles.input}
+//                   value={category}
+//                   onChange={(e) => setCategory(e.target.value)}
+//                 >
+//                   <option value="">Select Category</option>
+//                   {categories.map((c) => (
+//                     <option key={c} value={c}>{c}</option>
+//                   ))}
+//                 </select>
+//               </div>
+
+//               <div style={styles.formGroup}>
+//                 <label style={styles.label}>Description</label>
+//                 <textarea
+//                   style={styles.textarea}
+//                   rows={4}
+//                   maxLength={500}
+//                   placeholder="Say something about your video..."
+//                   value={description}
+//                   onChange={(e) => setDescription(e.target.value)}
+//                 ></textarea>
+//               </div>
+
+//               <div style={styles.formGroup}>
+//                 <label style={styles.label}>Tags</label>
+//                 <input
+//                   style={styles.input}
+//                   type="text"
+//                   placeholder="music, comedy, tech"
+//                   value={tags}
+//                   onChange={(e) => setTags(e.target.value)}
+//                 />
+//               </div>
+
+//               {/* THUMBNAIL */}
+//               <div style={styles.formGroup}>
+//                 <label style={styles.label}>Thumbnail*</label>
+
+//                 {!thumbnailPreview ? (
+//                   <div
+//                     style={styles.thumbnailUploadBox}
+//                     onClick={() => thumbnailInputRef.current?.click()}
+//                   >
+//                     <p style={{ color: "#aaa" }}>Click to upload thumbnail</p>
+//                   </div>
+//                 ) : (
+//                   <div>
+//                     <img src={thumbnailPreview} alt="Thumbnail" style={styles.thumbnailImage} />
+//                     <button
+//                       style={styles.changeThumbnailBtn}
+//                       onClick={() => thumbnailInputRef.current?.click()}
+//                     >
+//                       Change Thumbnail
+//                     </button>
+//                   </div>
+//                 )}
+
+//                 <input
+//                   ref={thumbnailInputRef}
+//                   type="file"
+//                   accept="image/*"
+//                   onChange={handleThumbnailSelect}
+//                   style={{ display: "none" }}
+//                 />
+//               </div>
+
+//               {/* ACTIONS */}
+//               <div style={styles.actionButtons}>
+//                 <button style={styles.cancelButton} onClick={() => navigate(-1)}>Cancel</button>
+//                 <button
+//                   style={styles.previewButton}
+//                   onClick={() => setCurrentStep(3)}
+//                   disabled={!title || !thumbnail || !category}
+//                 >
+//                   Preview
+//                 </button>
+
+//                 <button
+//                   style={{
+//                     ...styles.uploadButton,
+//                     opacity: (!title || !thumbnail || !category) ? 0.5 : 1,
+//                   }}
+//                   disabled={!title || !thumbnail || !category || loading}
+//                   onClick={handleUpload}
+//                 >
+//                   {loading ? `Uploading... ${uploadProgress}%` : "Upload"}
+//                 </button>
+//               </div>
+
+//               {/* Progress Bar */}
+//               {loading && (
+//                 <div style={styles.progressContainer}>
+//                   <div style={styles.progressBar}>
+//                     <div style={{ ...styles.progressFill, width: `${uploadProgress}%` }}></div>
+//                   </div>
+//                 </div>
+//               )}
+//             </div>
+
+//             {/* VIDEO PREVIEW */}
+//             <div style={styles.previewSidebar}>
+//               <h4 style={styles.previewTitle}>Preview</h4>
+//               {videoPreview && <video src={videoPreview} controls style={styles.videoPreview} />}
+//               <button
+//                 style={styles.changeVideoBtn}
+//                 onClick={() => { setVideo(null); setVideoPreview(null); setCurrentStep(1); }}
+//               >
+//                 Change Video
+//               </button>
+//             </div>
+//           </div>
+//         )}
+
+//         {/* FINAL PREVIEW STEP */}
+//         {currentStep === 3 && (
+//           <div style={{ textAlign: "center", marginTop: 40 }}>
+//             <h2>💯 Looks Good?</h2>
+//             <img src={thumbnailPreview} alt="thumbnail" style={{ width: "60%", borderRadius: 10 }} />
+//             <h3 style={{ marginTop: 20 }}>{title}</h3>
+//             <p style={{ color: "#aaa" }}>{description || "No description"}</p>
+
+//             {tags && (
+//               <p>
+//                 {tags.split(",").map((t, i) => (
+//                   <span key={i} style={styles.previewTag}>#{t.trim()}</span>
+//                 ))}
+//               </p>
+//             )}
+
+//             <p style={{ marginTop: 10, fontSize: 15 }}>📌 Category: {category}</p>
+
+//             <button style={styles.backToEditBtn} onClick={() => setCurrentStep(2)}>🔙 Edit</button>
+
+//             <button
+//               style={styles.uploadButton}
+//               onClick={handleUpload}
+//               disabled={loading}
+//             >
+//               {loading ? `Publishing... ${uploadProgress}%` : "Publish Video 🚀"}
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+
+// /* 🎨 STYLES */
+// const styles = {
+//   container: { minHeight: "100vh", background: "#0f0f0f", color: "white" },
+//   header: { padding: "16px 24px", borderBottom: "1px solid #333", display: "flex", gap: 10 },
+//   backButton: { background: "transparent", border: "none", color: "white", cursor: "pointer" },
+//   headerTitle: { fontSize: 20, fontWeight: 600 },
+
+//   loginRequired: { display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#0f0f0f" },
+//   loginCard: { background: "#1a1a1a", padding: 40, borderRadius: 12, textAlign: "center" },
+//   loginButton: { marginTop: 16, padding: "10px 24px", background: "#ff0000", border: "none", color: "#fff", borderRadius: 8, cursor: "pointer" },
+
+//   content: { maxWidth: 1300, margin: "0 auto", padding: 30 },
+//   uploadArea: { background: "#1a1a1a", height: 400, display: "flex", justifyContent: "center", alignItems: "center", borderRadius: 12 },
+//   uploadLabel: { textAlign: "center", cursor: "pointer" },
+//   selectButton: { marginTop: 20, padding: "10px 24px", background: "#3ea6ff", borderRadius: 8, border: "none", color: "#fff" },
+
+//   formArea: { display: "grid", gridTemplateColumns: "1fr 400px", gap: 30 },
+//   formContainer: { background: "#1a1a1a", padding: 36, borderRadius: 12 },
+//   formGroup: { marginBottom: 20 },
+//   label: { marginBottom: 6, display: "block", fontSize: 14, fontWeight: 600 },
+//   input: { width: "100%", padding: "12px", borderRadius: 8, background: "#272727", border: "1px solid #333", color: "white" },
+//   textarea: { width: "100%", padding: "12px", borderRadius: 8, background: "#272727", border: "1px solid #333", color: "white", resize: "vertical" },
+
+//   thumbnailUploadBox: { border: "2px dashed #444", padding: 30, borderRadius: 12, textAlign: "center", cursor: "pointer" },
+//   thumbnailImage: { width: "100%", borderRadius: 8 },
+//   changeThumbnailBtn: { marginTop: 12, padding: "8px 16px", background: "#333", color: "#fff", borderRadius: 8, border: "none", cursor: "pointer" },
+
+//   actionButtons: { display: "flex", justifyContent: "flex-end", gap: 10, paddingTop: 20, borderTop: "1px solid #333" },
+//   cancelButton: { background: "transparent", border: "1px solid #333", color: "#fff", padding: "10px 24px", borderRadius: 8, cursor: "pointer" },
+//   previewButton: { background: "#444", color: "#fff", border: "none", padding: "10px 24px", borderRadius: 8 },
+//   uploadButton: { background: "#ff0000", border: "none", padding: "10px 24px", borderRadius: 8, color: "#fff", cursor: "pointer", fontWeight: 600 },
+
+//   progressContainer: { marginTop: 16 },
+//   progressBar: { width: "100%", height: 6, background: "#333", borderRadius: 4 },
+//   progressFill: { height: "100%", background: "#ff0000" },
+
+//   previewSidebar: { background: "#1a1a1a", padding: 24, borderRadius: 12 },
+//   previewTitle: { marginBottom: 10, fontSize: 16 },
+//   videoPreview: { width: "100%", borderRadius: 8, marginBottom: 10 },
+//   changeVideoBtn: { width: "100%", padding: "10px 0", background: "#333", border: "none", borderRadius: 8, color: "white", cursor: "pointer" },
+
+//   previewTag: { display: "inline-block", background: "#333", padding: "5px 10px", borderRadius: 12, marginRight: 6, marginTop: 6 },
+//   backToEditBtn: { background: "transparent", color: "#3ea6ff", border: "none", marginTop: 20, cursor: "pointer" }
+// };
+
 import React, { useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+
+// Configuration for Chunking
+const CHUNK_SIZE = 1024 * 1024 * 5; // 5MB per chunk
 
 export default function UserUpload() {
   const { user } = useContext(AuthContext);
@@ -795,12 +1151,16 @@ export default function UserUpload() {
   const [category, setCategory] = useState("");
   const [video, setVideo] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
+  
+  // New state to hold the filename returned by the server for the thumbnail
+  const [thumbnailFilename, setThumbnailFilename] = useState(null); 
 
   const [videoPreview, setVideoPreview] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(1);
+  const [uploadId, setUploadId] = useState(null); // Unique ID for the entire upload session
 
   // File input refs
   const videoInputRef = useRef(null);
@@ -815,6 +1175,7 @@ export default function UserUpload() {
 
   // If not logged in
   if (!user) {
+    // ... (Login Required block remains the same)
     return (
       <div style={styles.loginRequired}>
         <div style={styles.loginCard}>
@@ -836,6 +1197,8 @@ export default function UserUpload() {
     if (file) {
       setVideo(file);
       setVideoPreview(URL.createObjectURL(file));
+      // Generate a unique ID for this upload session
+      setUploadId(Date.now().toString() + '-' + file.name.replace(/[^a-zA-Z0-9]/g, ''));
       setCurrentStep(2);
       e.target.value = "";
     }
@@ -851,45 +1214,121 @@ export default function UserUpload() {
     }
   };
 
-  // Upload Handler
+  // ----------------------------------------------------
+  // CORE CHUNKING LOGIC
+  // ----------------------------------------------------
+
+  const uploadChunk = async (chunk, index, totalChunks, token) => {
+    const formData = new FormData();
+    formData.append("chunk", chunk);
+    formData.append("chunkIndex", index);
+    formData.append("totalChunks", totalChunks);
+    formData.append("uploadId", uploadId);
+    
+    // Send all video metadata with every chunk (essential for the final chunk)
+    formData.append("title", title.trim());
+    formData.append("description", description);
+    formData.append("tags", tags);
+    formData.append("category", category);
+    formData.append("thumbnailFilename", thumbnailFilename); // The key from the first step!
+
+    const res = await axios.post(
+      "http://localhost:5000/api/videos/upload/chunk", // 🎯 NEW CHUNK UPLOAD URL
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (e) => {
+          // Calculate progress based on total file size, not just this chunk
+          const percent = Math.round(((index * CHUNK_SIZE + e.loaded) * 100) / video.size);
+          setUploadProgress(Math.min(percent, 99)); 
+        },
+      }
+    );
+
+    return res.data;
+  };
+
+  const handleFullChunkUpload = async (token) => {
+    const totalChunks = Math.ceil(video.size / CHUNK_SIZE);
+
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, video.size);
+      const chunk = video.slice(start, end);
+
+      try {
+        const data = await uploadChunk(chunk, i, totalChunks, token);
+        
+        if (i === totalChunks - 1) {
+          // Final check after the last chunk
+          setUploadProgress(100);
+          alert("🎉 Your video is uploaded and assembled!");
+          navigate(`/watch/${data.video.filename}`); // Navigate to the video page
+        }
+      } catch (chunkError) {
+        alert(`Chunk ${i}/${totalChunks} Upload Failed ❌. Please try again.`);
+        console.error("Chunk upload failed:", chunkError);
+        setLoading(false);
+        setUploadProgress(0);
+        return; // Abort the whole process
+      }
+    }
+  };
+
+  // Main Upload Handler (now handles two steps: Thumbnail then Chunks)
   const handleUpload = async () => {
     if (!title.trim() || !video || !thumbnail || !category) {
       alert("⚠ Title, category, video & thumbnail are required!");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("title", title.trim());
-    formData.append("description", description);
-    formData.append("tags", tags);
-    formData.append("category", category);
-    formData.append("video", video);
-    formData.append("thumbnail", thumbnail);
+    setLoading(true);
+    setUploadProgress(0);
+    const token = localStorage.getItem("token");
 
     try {
-      setLoading(true);
-      setUploadProgress(0);
+      // ------------------------------------------------
+      // STEP 1: UPLOAD THUMBNAIL (Non-chunking)
+      // ------------------------------------------------
+      setUploadProgress(1);
+      const thumbFormData = new FormData();
+      thumbFormData.append("thumbnail", thumbnail);
 
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/videos/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (e) => {
-          setUploadProgress(Math.round((e.loaded * 100) / e.total));
-        },
-      });
+      const thumbRes = await axios.post(
+        "http://localhost:5000/api/videos/upload/thumbnail", // 🎯 NEW THUMBNAIL URL
+        thumbFormData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      
+      const uploadedFilename = thumbRes.data.filename;
+      setThumbnailFilename(uploadedFilename); // Save the filename for the video chunks
 
-      alert("🎉 Your video is uploaded!");
-      navigate("/profile");
+      // ------------------------------------------------
+      // STEP 2: UPLOAD VIDEO CHUNKS
+      // ------------------------------------------------
+      await handleFullChunkUpload(token);
+
     } catch (err) {
       alert("Upload Failed ❌ " + (err.response?.data?.message || err.message));
+      console.error("Main upload handler error:", err);
     } finally {
       setLoading(false);
       setUploadProgress(0);
     }
   };
+
+
+  // ----------------------------------------------------
+  // RENDER LOGIC
+  // ----------------------------------------------------
 
   return (
     <div style={styles.container}>
@@ -925,6 +1364,7 @@ export default function UserUpload() {
             {/* FORM */}
             <div style={styles.formContainer}>
 
+              {/* ... (Form Groups for Title, Category, Description, Tags remain the same) ... */}
               <div style={styles.formGroup}>
                 <label style={styles.label}>Title*</label>
                 <input
@@ -1035,6 +1475,9 @@ export default function UserUpload() {
                   <div style={styles.progressBar}>
                     <div style={{ ...styles.progressFill, width: `${uploadProgress}%` }}></div>
                   </div>
+                  <p style={{ fontSize: 12, marginTop: 5, color: '#ff0000' }}>
+                     {uploadProgress < 10 ? 'Uploading Thumbnail...' : 'Uploading Video Chunks...'}
+                  </p>
                 </div>
               )}
             </div>
@@ -1088,7 +1531,7 @@ export default function UserUpload() {
 }
 
 
-/* 🎨 STYLES */
+/* 🎨 STYLES (Styles block remains the same) */
 const styles = {
   container: { minHeight: "100vh", background: "#0f0f0f", color: "white" },
   header: { padding: "16px 24px", borderBottom: "1px solid #333", display: "flex", gap: 10 },

@@ -1,5 +1,14 @@
 {
-  "dependencies": {
-    "react-icons": "^5.5.0"
+  "name": "my_tube",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && nodemon server.js",
+    "client": "cd frontend && npm start",
+    "build-matrix": "node backend/jobs/buildSimilarityMatrix.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

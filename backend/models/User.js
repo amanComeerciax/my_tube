@@ -89,6 +89,8 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
+    
+
     // 📺 Watch History (FIXED with default = [])
     watchHistory: {
       type: [
