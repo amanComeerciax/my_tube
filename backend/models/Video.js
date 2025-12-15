@@ -65,6 +65,135 @@
 
 // models/Video.js  ← TERA PURANA MODEL, AB PERFECT BAN GAYA!
 
+// const mongoose = require("mongoose");
+
+// const videoSchema = new mongoose.Schema(
+//   {
+//     title: {
+//       type: String,
+//       required: true,
+//       trim: true,
+//       maxlength: 200,
+//     },
+//     description: {
+//       type: String,
+//       default: "",
+//       maxlength: 5000,
+//     },
+
+//     // Video File
+//     filename: {
+//       type: String,
+//       required: true,
+//       unique: true,           // ← Bahut zaroori! /similar/:filename ke liye
+//     },
+//     thumbnail: {
+//       type: String,
+//       required: true,
+//     },
+//     url: {
+//       type: String,
+//       required: true,
+//     },
+//     size: {
+//       type: Number,           // bytes mein
+//     },
+
+//     // Uploaded By
+//     uploadedBy: {
+//       type: mongoose.Schema.Types.ObjectId,
+//       ref: "User",
+//       required: true,
+//       index: true,            // ← Channel ke videos fast load
+//     },
+
+//     // Category
+//     category: {
+//       type: String,
+//       required: true,
+//       enum: [
+//         "Gaming", "Music", "Education", "Entertainment", "Sports",
+//         "Technology", "Cooking", "Travel", "Vlogs", "News",
+//         "Comedy", "Animation", "Science", "Fashion", "Fitness", "Other"
+//       ],
+//       default: "Other",
+//       index: true,            // ← Category page fast
+//     },
+
+//     // Tags – AI Recommendation ke liye
+//     tags: {
+//       type: [String],
+//       default: [],
+//       lowercase: true,        // ← Similarity matrix ke liye best
+//       index: true,            // ← Super important for fast search
+//     },
+
+//     // Likes & Dislikes
+//     likes: [
+//       {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "User",
+//       },
+//     ],
+//     dislikes: [
+//       {
+//         type: mongoose.Schema.Types.ObjectId,
+//         ref: "User",
+//       },
+//     ],
+
+//     // Views
+//     views: {
+//       type: Number,
+//       default: 0,
+//       min: 0,
+//       index: true,            // ← Trending ke liye
+//     },
+
+//     processing: {
+//       type: Boolean,
+//       default: true
+//     },
+//     processedAt: Date,
+//     captions: {
+//       type: String, // example: 64af...e12.vtt
+//     },
+    
+//     captionsStatus: {
+//       type: String,
+//       enum: ["pending", "ready", "no-audio", "error"],
+//       default: "pending"
+//     },
+
+//     // Future ke liye (optional but recommended)
+//     watchTime: {
+//       type: Number,
+//       default: 0,
+//     },
+//     avgWatchPercentage: {
+//       type: Number,
+//       default: 0,
+//       min: 0,
+//       max: 100,
+//     },
+//   },
+//   {
+//     timestamps: true, // createdAt, updatedAt
+//   }
+// );
+
+// // =======================
+// // BEST INDEXES FOR SPEED & RECOMMENDATION
+// // =======================
+// videoSchema.index({ filename: 1 });                    // for /by-filename & /similar
+// videoSchema.index({ uploadedBy: 1, createdAt: -1 });   // channel videos
+// videoSchema.index({ category: 1, views: -1 });         // category pages
+// videoSchema.index({ tags: 1 });                        // similarity matrix ke liye
+// videoSchema.index({ views: -1, createdAt: -1 });       // trending
+// videoSchema.index({ createdAt: -1 });                  // newest first
+
+// module.exports = mongoose.model("Video", videoSchema);
+
 const mongoose = require("mongoose");
 
 const videoSchema = new mongoose.Schema(
@@ -75,6 +204,7 @@ const videoSchema = new mongoose.Schema(
       trim: true,
       maxlength: 200,
     },
+
     description: {
       type: String,
       default: "",
@@ -85,26 +215,26 @@ const videoSchema = new mongoose.Schema(
     filename: {
       type: String,
       required: true,
-      unique: true,           // ← Bahut zaroori! /similar/:filename ke liye
+      unique: true, // ✅ unique index ONLY here
     },
+
     thumbnail: {
       type: String,
       required: true,
     },
+
     url: {
       type: String,
       required: true,
     },
-    size: {
-      type: Number,           // bytes mein
-    },
+
+    size: Number,
 
     // Uploaded By
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,            // ← Channel ke videos fast load
     },
 
     // Category
@@ -117,44 +247,50 @@ const videoSchema = new mongoose.Schema(
         "Comedy", "Animation", "Science", "Fashion", "Fitness", "Other"
       ],
       default: "Other",
-      index: true,            // ← Category page fast
     },
 
-    // Tags – AI Recommendation ke liye
+    // Tags (AI / Recommendation)
     tags: {
       type: [String],
       default: [],
-      lowercase: true,        // ← Similarity matrix ke liye best
-      index: true,            // ← Super important for fast search
+      lowercase: true,
     },
 
     // Likes & Dislikes
-    likes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    dislikes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
     // Views
     views: {
       type: Number,
       default: 0,
       min: 0,
-      index: true,            // ← Trending ke liye
     },
 
-    // Future ke liye (optional but recommended)
+    // Processing & Captions
+    processing: {
+      type: Boolean,
+      default: true,
+    },
+
+    processedAt: Date,
+
+    captions: {
+      type: String, // example: 66f1c9a9c2.vtt
+    },
+
+    captionsStatus: {
+      type: String,
+      enum: ["pending", "ready", "no-audio", "error"],
+      default: "pending",
+    },
+
+    // Analytics (future)
     watchTime: {
       type: Number,
       default: 0,
     },
+
     avgWatchPercentage: {
       type: Number,
       default: 0,
@@ -163,18 +299,18 @@ const videoSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // createdAt, updatedAt
+    timestamps: true,
   }
 );
 
 // =======================
-// BEST INDEXES FOR SPEED & RECOMMENDATION
+// 🔥 INDEXES (ONE PLACE ONLY)
 // =======================
-videoSchema.index({ filename: 1 });                    // for /by-filename & /similar
-videoSchema.index({ uploadedBy: 1, createdAt: -1 });   // channel videos
-videoSchema.index({ category: 1, views: -1 });         // category pages
-videoSchema.index({ tags: 1 });                        // similarity matrix ke liye
-videoSchema.index({ views: -1, createdAt: -1 });       // trending
-videoSchema.index({ createdAt: -1 });                  // newest first
+videoSchema.index({ filename: 1 });                     // by-filename, similar
+videoSchema.index({ uploadedBy: 1, createdAt: -1 });    // channel videos
+videoSchema.index({ category: 1, views: -1 });          // category pages
+videoSchema.index({ tags: 1 });                         // recommendation
+videoSchema.index({ views: -1, createdAt: -1 });        // trending
+videoSchema.index({ createdAt: -1 });                   // latest videos
 
 module.exports = mongoose.model("Video", videoSchema);

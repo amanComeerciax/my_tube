@@ -1687,6 +1687,8 @@
 
 const express = require("express");
 const router = express.Router();
+const { Worker } = require("worker_threads");
+
 // fs को promises API के साथ import करें (Async/Await के लिए)
 const fs = require("fs").promises; 
 const fsSync = require("fs"); // Synchronous version for simple checks (e.g., directory existence)
@@ -1791,26 +1793,170 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
     }
 };
 
+// Video Processing With Multithreding 
+
+// function startVideoProcessingWorker(video) {
+//   const worker = new Worker(
+//     path.join(__dirname, "../workers/videoWorker.js")
+//   );
+
+//   worker.postMessage({
+//     videoId: video._id.toString(),
+//     filename: video.filename,
+//     thumbnail: video.thumbnail
+//   });
+
+//   worker.on("message", async (msg) => {
+//     console.log("✅ Worker finished:", msg);
+
+//     // Optional: processing done flag
+//     if (msg.success) {
+//       await Video.findByIdAndUpdate(video._id, {
+//         processing: false,
+//         processedAt: new Date()
+//       });
+//     }
+//   });
+
+//   worker.on("error", (err) => {
+//     console.error("❌ Worker error:", err);
+//   });
+// }
+
+function startVideoProcessingWorker(video) {
+  const worker = new Worker(
+    path.join(__dirname, "../workers/videoWorker.js"),
+    {
+      workerData: {
+        videoId: video._id.toString(),
+        filename: video.filename,
+        thumbnail: video.thumbnail
+      }
+    }
+  );
+
+  worker.on("message", async (msg) => {
+    console.log("🎬 Video Worker:", msg);
+
+    if (msg.success) {
+      await Video.findByIdAndUpdate(video._id, {
+        processing: false,
+        processedAt: new Date()
+      });
+    }
+  });
+
+  worker.on("error", (err) => {
+    console.error("❌ Video worker error:", err);
+  });
+}
+
+
+
+// function startCaptionWorker(video) {
+
+function startCaptionWorker(video) {
+  const worker = new Worker(
+    path.join(__dirname, "../workers/captionWorker.js"),
+    {
+      workerData: {
+        videoId: video._id.toString(),
+        filename: video.filename
+      }
+    }
+  );
+
+  worker.on("message", async (msg) => {
+    console.log("📝 Caption Worker:", msg);
+
+    if (msg.success && msg.captionFile) {
+      await Video.findByIdAndUpdate(video._id, {
+        captions: msg.captionFile,
+        captionsStatus: "ready"
+      });
+    }
+
+    if (msg.reason === "no-audio") {
+      await Video.findByIdAndUpdate(video._id, {
+        captionsStatus: "no-audio"
+      });
+    }
+  });
+
+  worker.on("error", (err) => {
+    console.error("❌ Caption worker error:", err);
+  });
+}
+
+//   const worker = new Worker(
+//     path.join(__dirname, "../workers/captionWorker.js")
+//   );
+
+//   worker.postMessage({
+//     videoId: video._id.toString(),
+//     filename: video.filename
+//   });
+
+//   worker.on("message", async (msg) => {
+//     console.log("📝 Caption Worker:", msg);
+
+//     if (msg.success) {
+//       await Video.findByIdAndUpdate(video._id, {
+//         captions: msg.captionFile
+//       });
+//     }
+//   });
+
+//   worker.on("error", (err) => {
+//     console.error("❌ Caption worker error:", err);
+//   });
+// }
+
+
+
+
 
 // =======================
 // 1. UPLOAD VIDEO ROUTES (Replaced old /upload with chunking)
 // =======================
 
 // 📌 नया रूट: थंबनेल अपलोड के लिए (यह client को thumbnail filename देता है)
+// router.post("/upload/thumbnail", auth, chunkUpload.single("thumbnail"), async (req, res) => {
+//   try {
+//     if (!req.file) return res.status(400).json({ message: "Thumbnail file required" });
+    
+//     const newFilename = Date.now() + "_" + req.file.originalname;
+//     // Multer ने फाइल को temp_chunks में सहेजा होगा, उसे uploads में ले जाएं
+//     await fs.rename(req.file.path, path.join("uploads", newFilename));
+
+//     res.json({ message: "Thumbnail uploaded successfully", filename: newFilename });
+//   } catch (error) {
+//     console.error("Thumbnail upload error:", error);
+//     res.status(500).json({ message: "Thumbnail upload failed" });
+//   }
+// });
 router.post("/upload/thumbnail", auth, chunkUpload.single("thumbnail"), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "Thumbnail file required" });
-    
+    console.log("FILE RECEIVED:", req.file);
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Thumbnail file required" });
+    }
+
     const newFilename = Date.now() + "_" + req.file.originalname;
-    // Multer ने फाइल को temp_chunks में सहेजा होगा, उसे uploads में ले जाएं
+
     await fs.rename(req.file.path, path.join("uploads", newFilename));
 
-    res.json({ message: "Thumbnail uploaded successfully", filename: newFilename });
+    res.json({
+      message: "Thumbnail uploaded successfully",
+      filename: newFilename
+    });
   } catch (error) {
     console.error("Thumbnail upload error:", error);
     res.status(500).json({ message: "Thumbnail upload failed" });
   }
 });
+
 
 
 // 📌 मुख्य चंक अपलोड हैंडलर
@@ -1825,8 +1971,17 @@ router.post("/upload/chunk", auth, chunkUpload.single('chunk'), async (req, res)
             title, description, category, tags, thumbnailFilename
         } = req.body;
         
-        if (!chunkIndex || !totalChunks || !uploadId || !title || !thumbnailFilename) {
-            return res.status(400).json({ message: "Missing required metadata." });
+        // if (!chunkIndex || !totalChunks || !uploadId || !title || !thumbnailFilename) {
+        //     return res.status(400).json({ message: "Missing required metadata." });
+        // }
+        if (
+          chunkIndex === undefined ||
+          totalChunks === undefined ||
+          !uploadId ||
+          !title ||
+          !thumbnailFilename
+        ) {
+          return res.status(400).json({ message: "Missing required metadata." });
         }
         
         const chunkIndexInt = parseInt(chunkIndex);
@@ -1846,14 +2001,38 @@ router.post("/upload/chunk", auth, chunkUpload.single('chunk'), async (req, res)
         await fs.rename(req.file.path, chunkSavePath); 
         
         // यदि यह अंतिम चंक है, तो फ़ाइल को जोड़ें और डेटाबेस अपडेट करें
-        if (chunkIndexInt === totalChunksInt - 1) {
-            const video = await reassembleChunks(
-                uploadId, finalFilename, totalChunksInt, 
-                title, description, category, tags, thumbnailFilename, req.user.id
-            );
+        // if (chunkIndexInt === totalChunksInt - 1) {
+        //     const video = await reassembleChunks(
+        //         uploadId, finalFilename, totalChunksInt, 
+        //         title, description, category, tags, thumbnailFilename, req.user.id
+        //     );
             
-            return res.json({ message: "Upload complete and file assembled.", video });
+        //     return res.json({ message: "Upload complete and file assembled.", video });
+        // }
+        if (chunkIndexInt === totalChunksInt - 1) {
+          const video = await reassembleChunks(
+            uploadId,
+            finalFilename,
+            totalChunksInt,
+            title,
+            description,
+            category,
+            tags,
+            thumbnailFilename,
+            req.user.id
+          );
+        
+          // 🧠 START MULTITHREADING HERE
+          startVideoProcessingWorker(video);
+
+          startCaptionWorker(video);
+        
+          return res.json({
+            message: "Upload complete. Video processing started in background.",
+            video
+          });
         }
+        
         
         res.json({ message: `Chunk ${chunkIndexInt}/${totalChunksInt} received.`, uploadId, filename: finalFilename });
 
