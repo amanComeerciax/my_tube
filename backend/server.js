@@ -94,10 +94,23 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/captions", express.static(path.join(__dirname, "captions")));
+// app.use("/captions", express.static(path.join(__dirname, "captions")));
 
 /* ================= ROUTES ================= */
 app.get("/", (req, res) => res.send("My_tube Running"));
+
+app.get("/captions/:file", (req, res) => {
+  const filePath = path.join(__dirname, "captions", req.params.file);
+
+  if (!require("fs").existsSync(filePath)) {
+    return res.status(404).send("Caption file not found");
+  }
+
+  res.setHeader("Content-Type", "text/vtt; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache");
+  res.sendFile(filePath);
+});
+
 
 app.use("/api/videos", videosRoutes);
 app.use("/api/stream", streamRoutes);
@@ -106,6 +119,8 @@ app.use("/api/search", searchRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/subscribe", subscriptionRoute);
+
+
 
 /* ================= HTTP + SOCKET SERVER ================= */
 const server = http.createServer(app);

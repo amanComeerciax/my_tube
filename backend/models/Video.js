@@ -275,10 +275,18 @@ const videoSchema = new mongoose.Schema(
 
     processedAt: Date,
 
+    // captions: {
+    //   type: String, // example: 66f1c9a9c2.vtt
+    // },
+    
     captions: {
-      type: String, // example: 66f1c9a9c2.vtt
+      base: { type: String },           // 693fd.vtt
+      languages: {
+        hi: { type: String },           // 693fd.hi.vtt
+        gu: { type: String },           // 693fd.gu.vtt
+        mr: { type: String }            // future ready
+      }
     },
-
     captionsStatus: {
       type: String,
       enum: ["pending", "ready", "no-audio", "error"],
