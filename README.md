@@ -38,7 +38,11 @@
 | ⚡ **Live UI Counters Everywhere**                  | ✔️ Complete   | Views, Likes, Dislikes, Subscribers auto-update                                 |
 |⚡️ Video Upload (Chunking)** | **✔ Complete** |
 | Video AutoPlay Next |   **✔ Complete** |
-
+Multi-Quality Transcoding	⭐ Added Today	FFmpeg worker auto-generates 720p & 480p MP4 versions on upload.
+⚙️ Smart Streaming Route	⭐ Added Today	Backend /stream route now matches requests to specific quality files using underscore logic.
+📶 Adaptive Auto-Quality	⭐ Added Today	Speed-sensing logic detects 4G/3G and auto-switches to the best resolution.
+🔄 Seamless Quality Switch	⭐ Added Today	Quality changes without restarting the video by syncing currentTime.
+⏳ Quality Loading State	⭐ Added Today	Added isQualitySwitching state to show a spinner during resolution changes.
 
 
 ### Tech Stack
