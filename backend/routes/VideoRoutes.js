@@ -2170,6 +2170,112 @@ router.get("/similar/:filename", async (req, res) => {
   }
 });
 
+// Is code ko apne video routes file mein add/replace karein
+// router.get("/stream/:filename", async (req, res) => {
+//   try {
+//     const { filename } = req.params;
+//     const { q } = req.query; // Quality parameter: 480p, 720p
+
+//     let filePath = path.join("uploads", filename);
+
+//     // Agar quality request ki gayi hai aur wo file exist karti hai
+//     if (q && q !== 'auto' && q !== 'original') {
+//       const qualityPath = path.join("uploads", `${q}_${filename}`);
+//       if (fsSync.existsSync(qualityPath)) {
+//         filePath = qualityPath;
+//       }
+//     }
+
+//     const stat = await fs.stat(filePath);
+//     const fileSize = stat.size;
+//     const range = req.headers.range;
+
+//     if (range) {
+//       const parts = range.replace(/bytes=/, "").split("-");
+//       const start = parseInt(parts[0], 10);
+//       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+//       const chunksize = (end - start) + 1;
+//       const file = fsSync.createReadStream(filePath, { start, end });
+//       res.writeHead(206, {
+//         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+//         'Accept-Ranges': 'bytes',
+//         'Content-Length': chunksize,
+//         'Content-Type': 'video/mp4',
+//       });
+//       file.pipe(res);
+//     } else {
+//       res.writeHead(200, {
+//         'Content-Length': fileSize,
+//         'Content-Type': 'video/mp4',
+//       });
+//       fsSync.createReadStream(filePath).pipe(res);
+//     }
+//   } catch (err) {
+//     console.error("Streaming error:", err);
+//     res.status(500).send("Streaming error");
+//   }
+// });
+
+router.get("/stream/:filename", async (req, res) => {
+  const { filename } = req.params;
+  const { q } = req.query;
+
+  console.log(`\n--- Quality Request ---`);
+  console.log(`Original: ${filename} | Q: ${q}`);
+
+  try {
+    // process.cwd() hamesha project ke root (backend/) folder ko point karta hai
+    const uploadsDir = path.join(process.cwd(), "uploads");
+    let finalPath = path.join(uploadsDir, filename);
+
+    if (q && q !== 'auto' && q !== 'original') {
+      const parsed = path.parse(filename);
+      // Exact same logic as your worker
+      const cleanName = parsed.name.replace(/[^a-z0-9]/gi, '_');
+      const qualityFileName = `${q}_${cleanName}.mp4`;
+      const qualityPath = path.join(uploadsDir, qualityFileName);
+
+      console.log(`🔍 Searching for: ${qualityFileName}`);
+
+      if (fsSync.existsSync(qualityPath)) {
+        finalPath = qualityPath;
+        console.log(`✅ MATCH FOUND: Serving ${q}`);
+      } else {
+        console.log(`❌ NOT FOUND: File missing in folder. Serving original.`);
+      }
+    }
+
+    const stat = await fs.stat(finalPath);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+
+    if (range) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunksize = (end - start) + 1;
+      const file = fsSync.createReadStream(finalPath, { start, end });
+      
+      res.writeHead(206, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunksize,
+        'Content-Type': 'video/mp4',
+      });
+      file.pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+      });
+      fsSync.createReadStream(finalPath).pipe(res);
+    }
+  } catch (err) {
+    console.error("🔥 Stream Error:", err.message);
+    res.status(500).send("Streaming error");
+  }
+});
+
 // =======================
 // 6. LIKE (No Change)
 // =======================

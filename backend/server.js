@@ -85,6 +85,7 @@ const subscriptionRoute = require("./routes/subscriptionRoutes");
 const BloomFilter = require("./utils/bloomFilter");
 const Video = require("./models/Video");
 
+
 const bloom = new BloomFilter(8000);
 
 const app = express();
@@ -122,12 +123,19 @@ app.use("/api/subscribe", subscriptionRoute);
 
 
 
+
 /* ================= HTTP + SOCKET SERVER ================= */
 const server = http.createServer(app);
 
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST"]
+//   }
+// });
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
@@ -157,9 +165,13 @@ mongoose
     global.videoBloom = bloom;
     console.log("🌸 Bloom filter loaded");
 
-    server.listen(PORT, () =>
+    // server.listen(PORT, () =>
+    //   console.log(`🚀 Server running on port ${PORT}`)
+    // );
+    server.listen(PORT, "0.0.0.0", () =>
       console.log(`🚀 Server running on port ${PORT}`)
     );
+    
   })
   .catch(err => console.error(err));
 
