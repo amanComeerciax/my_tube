@@ -69,6 +69,24 @@ router.post("/register", async (req, res) => {
   res.json({ message: "Registered Successfully" });
 });
 
+// // 🔑 LOGIN
+// router.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const user = await User.findOne({ email });
+//   if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+//   const match = await bcrypt.compare(password, user.password);
+//   if (!match) return res.status(400).json({ message: "Invalid credentials" });
+
+//   const token = jwt.sign(
+//     { id: user._id, name: user.name, isAdmin: user.isAdmin },
+//     process.env.JWT_SECRET,
+//     { expiresIn: "7d" }
+//   );
+
+//   res.json({ token, user });
+// });
 // 🔑 LOGIN
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -79,14 +97,27 @@ router.post("/login", async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
+  // 🔹 auto-expire premium (IMPORTANT)
+  if (user.isPremium && user.premiumUntil && user.premiumUntil < new Date()) {
+    user.isPremium = false;
+    user.premiumUntil = null;
+    await user.save();
+  }
+
   const token = jwt.sign(
-    { id: user._id, name: user.name, isAdmin: user.isAdmin },
+    {
+      id: user._id,
+      name: user.name,
+      isAdmin: user.isAdmin,
+      isPremium: user.isPremium, // ⭐ NEW
+    },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
 
   res.json({ token, user });
 });
+
 
 // 👥 SUBSCRIBE / UNSUBSCRIBE
 router.post("/subscribe/:id", auth, async (req, res) => {

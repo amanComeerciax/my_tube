@@ -8,6 +8,10 @@ import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Profile from './Pages/Profile';
 import History from './Pages/History';
+import AdminUploadAd from "./Pages/AdminUploadAd";
+import RevenueDashboard from './Pages/RevenueDashboard';
+
+
 
 
 
@@ -25,6 +29,8 @@ return (
 <Route path="/UserUpload" element={<UserUpload/>} />
 <Route path="/Profile" element={<Profile/>} />
 <Route path="/history" element={<History />} />
+<Route path="/admin/upload-ad" element={<AdminUploadAd />} />
+<Route path="/revenue-dashboard" element={<RevenueDashboard />} />
 
 </Routes>
 </Router>

@@ -1527,7 +1527,8 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function Profile() {
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
+   const { user, updateUser } = useContext(AuthContext);
   const [profileUser, setProfileUser] = useState(null);
   const [videos, setVideos] = useState([]);
   const [history, setHistory] = useState([]);
@@ -1645,6 +1646,71 @@ export default function Profile() {
     setEditDescription(video.description || "");
     setEditThumbnail(null);
   };
+  //razorpay 
+
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+// premium subscribe
+
+const buyPremium = async () => {
+  const res = await loadRazorpay();
+  if (!res) {
+    alert("Razorpay SDK failed to load");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+
+    // 1️⃣ Create order
+    const orderRes = await axios.post(
+      "http://localhost:5000/api/premium/create-order",
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const options = {
+      key: "rzp_test_Rsy2Mkp6CDaqGs", // test key
+      amount: orderRes.data.amount,
+      currency: "INR",
+      name: "MyTube Premium",
+      description: "1 Month Premium Subscription",
+      order_id: orderRes.data.id,
+
+      handler: async function (response) {
+        // 2️⃣ Verify payment
+        const verifyRes = await axios.post(
+          "http://localhost:5000/api/premium/verify",
+          response,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        // 3️⃣ Update user globally
+        updateUser({
+          ...user,
+          isPremium: true,
+          premiumUntil: verifyRes.data.premiumUntil,
+        });
+
+        alert("⭐ Premium Activated!");
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (err) {
+    console.error(err);
+    alert("Payment failed");
+  }
+};
+
 
   // Update video
   const handleUpdateVideo = async (e) => {
@@ -1733,7 +1799,16 @@ export default function Profile() {
             </div>
 
             <div style={styles.channelInfo}>
-              <h1 style={styles.channelName}>{profileUser.name}</h1>
+              {/* <h1 style={styles.channelName}>{profileUser.name}</h1> */}
+              <h1 style={styles.channelName}>
+  {profileUser.name}
+  {isOwnProfile && user?.isPremium && (
+    <span style={{ marginLeft: 10, color: "#facc15", fontSize: 18 }}>
+      ⭐ Premium
+    </span>
+  )}
+</h1>
+
               <div style={styles.channelStats}>
                 <span>@{profileUser.name?.toLowerCase().replace(/\s+/g, '')}</span>
                 <span style={styles.dot}>•</span>
@@ -1747,18 +1822,23 @@ export default function Profile() {
             </div>
           </div>
 
-          <div style={styles.actionButtons}>
+          {/* <div style={styles.actionButtons}>
             {isOwnProfile ? (
               <>
                 <button 
                   style={styles.uploadButton} 
                   onClick={() => navigate("/UserUpload")}
                 >
+
+
+
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z"/>
                   </svg>
                   Upload Video
                 </button>
+
+
                 <button style={styles.iconButton} title="Manage channel">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
@@ -1782,7 +1862,56 @@ export default function Profile() {
                 )}
               </button>
             )}
-          </div>
+          </div> */}
+          <div style={styles.actionButtons}>
+  {isOwnProfile ? (
+    <>
+      {/* ⬆️ Upload Button */}
+      <button 
+        style={styles.uploadButton} 
+        onClick={() => navigate("/UserUpload")}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14 13h-4v4H8v-4H4v-2h4V7h2v4h4v2zm-2-9H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm6 16H6V6h12v14z"/>
+        </svg>
+        Upload Video
+      </button>
+
+      {/* ⭐ GO PREMIUM BUTTON (ONLY IF NOT PREMIUM) */}
+      {!user?.isPremium && (
+        <button
+          style={{
+            padding: "12px 24px",
+            background: "linear-gradient(135deg,#facc15,#f97316)",
+            border: "none",
+            borderRadius: 24,
+            fontWeight: 700,
+            cursor: "pointer",
+            color: "#000",
+          }}
+          onClick={buyPremium}
+        >
+          ⭐ Go Premium ₹99
+        </button>
+      )}
+
+      {/* ⚙️ Manage Channel */}
+      <button style={styles.iconButton} title="Manage channel">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
+      </button>
+    </>
+  ) : (
+    <button 
+      style={subscribed ? styles.subscribedButton : styles.subscribeButton}
+      onClick={toggleSubscribe}
+    >
+      {subscribed ? "Subscribed" : "Subscribe"}
+    </button>
+  )}
+</div>
+
         </div>
       </div>
 
