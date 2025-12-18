@@ -16,56 +16,35 @@
 
 ---
 
-🎥 Core Video Platform
-Feature	Status	Description
-📥 Video Upload & Streaming	✔️ Complete	HTTP range requests for smooth streaming + thumbnail previews
-⚡ Chunked Video Upload	✔️ Complete	Stable large file uploads using chunk-based strategy
-🎞 Multi-Quality Transcoding	⭐ Added Today	FFmpeg worker auto-generates 720p & 480p MP4
-⚙️ Smart Streaming Route	⭐ Added Today	/stream dynamically serves correct quality
-📶 Adaptive Auto-Quality	⭐ Added Today	Network-based auto quality (4G → 720p, 3G → 480p)
-🔄 Seamless Quality Switch	⭐ Added Today	Quality switch without restart using currentTime sync
-⏳ Quality Switch Loader	⭐ Added Today	Loader shown during quality change
-⏭ Auto-Play Next Video	✔️ Complete	Plays next recommended video automatically
-🎞 Hover Video Preview	✔️ Complete	YouTube-style hover autoplay preview
-👤 Users & Channels
-Feature	Status	Description
-🔐 JWT Authentication	✔️ Complete	Secure login/signup & protected routes
-🙋‍♂️ Dynamic User Profile	✔️ Complete	Channel info, subscribers, uploaded videos
-👤 Channel Card UI	✔️ Complete	Clickable channel cards with live counters
-⭐ Subscribe System (Live)	✔️ Complete	Real-time subscribe/unsubscribe without reload
-👀 Watch History Management	⭐ Added Today	View, delete single video, or clear all history
-💬 Engagement & Social
-Feature	Status	Description
-💬 Comments System (Full)	✔️ Complete	Add/delete comments, moderation support
-🧲 Live Likes / Dislikes / Views	✔️ Complete	Auto-update counters in real-time
-⚡ Live UI Counters Everywhere	✔️ Complete	Views, likes, subs update instantly
-🔎 Discovery & Intelligence
-Feature	Status	Description
-🔎 Fuzzy Search (Fuse.js)	✔️ Complete	Typo-tolerant smart search
-🏷 Category & Tags System	⭐ Added Today	Stored, filtered & searchable
-🧠 Bloom Filter Optimization	✔️ Complete	Prevents duplicate titles before DB hit
-🧩 Smart Recommendation Algorithm	⭐ Added Today	Personalized feed using history + tags + category
-🎙 Voice Search (Mic Input)	⭐ Added Today	YouTube-style voice search (Web Speech API)
-🛠 Admin & Creator Tools
-Feature	Status	Description
-⚙️ Admin Panel (Full CRUD)	✔️ Complete	Upload, edit, replace, delete videos
-🎥 User Video Upload	✔️ Complete	Normal users can upload videos
-🛠 Ad Management Panel	⭐ Added Today	Upload, edit, activate/deactivate ads
-🎯 Targeted Ads System	⭐ Added Today	Ads based on category / video / global
-⏭ Skip-After Ads	⭐ Added Today	Skip button after defined seconds
-🚫 Premium Ad-Free Viewing	⭐ Added Today	Premium users see no ads
-📢 Ads, Revenue & Monetization (🔥 BIG FEATURE)
-Feature	Status	Description
-📺 Pre-Roll Video Ads	⭐ Added Today	Ads play before main video
-👁 Ad View Tracking	⭐ Added Today	View counted after minimum watch time
-👆 Ad Click Tracking	⭐ Added Today	Clicks tracked on CTA
-💰 Ad Revenue Calculation	⭐ Added Today	Earnings generated per ad
-📊 Ad Analytics Dashboard	⭐ Added Today	Views, clicks, CTR per ad
-💸 Revenue Dashboard (Admin)	⭐ Added Today	Total revenue, top ads, performance
-⭐ Premium Purchase (Razorpay)	⭐ Added Today	Users can buy Premium (Test mode ready)
-
-
-
+| Feature                                | Status        | Description                                                                     |
+| -------------------------------------- | ------------- | ------------------------------------------------------------------------------- |
+| 📥 **Video Upload & Streaming**        | ✔️ Complete   | Range requests for smooth streaming + thumbnail previews                        |
+| ⚙️ **Admin Panel (Full CRUD)**         | ✔️ Complete   | Upload videos, edit title/category/description, replace video/thumbnail, delete |
+| 🔎 **Fuzzy Search (Fuse.js)**          | ✔️ Complete   | Smart typo-tolerant search across titles & tags                                 |
+| 🔐 **JWT Authentication**              | ✔️ Complete   | Secure login/signup, protected upload & CRUD routes                             |
+| 📱 **Responsive UI (YouTube Style)**   | ✔️ Complete   | Modern dark UI, sidebar, animations, hover effects                              |
+| ⭐ **Subscribe System (Dynamic)**       | ✔️ Complete   | Real-time subscribe/unsubscribe with live counter update                        |
+| 💬 **Comments System (Full)**          | ✔️ Complete   | Add/delete comments, admin moderation, auto-refresh                             |
+| 🙋‍♂️ **User Profile Page (Dynamic)**  | ✔️ Complete   | Uploaded videos, subscriber count, channel info                                 |
+| 🎥 **User Video Upload (Normal User)** | ✔️ Complete   | Users can upload videos directly from profile                                   |
+| 🏷️ **Category & Tags System**         | ⭐ Added Today | Categories & tags stored, filtered & searchable                                 |
+| 🧠 **Bloom Filter Optimization**       | ✔️ Complete   | Prevents duplicate titles instantly before DB hit                               |
+| 🎙 **Voice Search (Mic Input)**        | ⭐ Added Today | YouTube-style voice search using Web Speech API                                 |
+| 🧩 **Smart Recommendation Algorithm**  | ⭐ Added Today | Personalized feed using history + tags + category                               |
+| 🎞️ **Hover Video Preview**            | ✔️ Complete   | Auto-play preview on hover (YouTube-style UX)                                   |
+| 🧲 **Auto Likes / Dislikes / Views**   | ✔️ Complete   | Live counters update without page reload                                        |
+| 👀 **Watch History Management**        | ⭐ Added Today | View, remove single video, or clear all history                                 |
+| 👤 **Channel Card UI**                 | ✔️ Complete   | Clickable channel cards with live subscriber count                              |
+| ⚡ **Live UI Counters Everywhere**      | ✔️ Complete   | Views, likes, dislikes & subscribers update in real-time                        |
+| ⚡ **Chunked Video Upload**             | ✔️ Complete   | Large file upload using chunking for stability                                  |
+| ⏭ **Video Auto-Play Next**             | ✔️ Complete   | Automatically plays next recommended video                                      |
+| Feature                          | Status        | Description                                                 |
+| -------------------------------- | ------------- | ----------------------------------------------------------- |
+| 🎞 **Multi-Quality Transcoding** | ⭐ Added Today | FFmpeg worker auto-generates **720p & 480p MP4** versions   |
+| ⚙️ **Smart Streaming Route**     | ⭐ Added Today | `/stream` route maps correct quality using underscore logic |
+| 📶 **Adaptive Auto-Quality**     | ⭐ Added Today | Detects network speed (4G / 3G) & selects best resolution   |
+| 🔄 **Seamless Quality Switch**   | ⭐ Added Today | Quality changes without restart using `currentTime` sync    |
+| ⏳ **Quality Switching Loader**   | ⭐ Added Today | `isQualitySwitching` state shows spinner during switch      |   
 ### Tech Stack
 
 ```text
