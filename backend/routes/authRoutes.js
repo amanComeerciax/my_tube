@@ -119,6 +119,26 @@ router.post("/login", async (req, res) => {
 });
 
 
+router.post("/google-login", async (req, res) => {
+  const { email, name, avatar } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        name,
+        email,
+        avatar,
+        password: Math.random().toString(36).slice(-10), // Random pass
+      });
+      await user.save();
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    res.json({ token, user });
+  } catch (err) {
+    res.status(500).json({ message: "Auth Error" });
+  }
+});
+
 // 👥 SUBSCRIBE / UNSUBSCRIBE
 router.post("/subscribe/:id", auth, async (req, res) => {
   const channelId = req.params.id;

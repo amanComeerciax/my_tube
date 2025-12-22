@@ -267,6 +267,24 @@ const videoSchema = new mongoose.Schema(
       min: 0,
     },
 
+    // 🔥 SHORTS SUPPORT
+isShort: {
+  type: Boolean,
+  default: false,
+},
+
+aspectRatio: {
+  type: String,
+  enum: ["16:9", "9:16"],
+  default: "16:9",
+},
+
+duration: {
+  type: Number, // seconds
+  default: 0,
+},
+
+
     // Processing & Captions
     processing: {
       type: Boolean,

@@ -119,16 +119,37 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
         // 3. डेटाबेस में वीडियो एंट्री बनाएं
         const tagArray = tags ? tags.split(",").map(t => t.trim().toLowerCase()).filter(Boolean) : [];
         
-        const video = await Video.create({
-            title,
-            description: description || "",
-            category: category || "Other",
-            filename: finalFilename, 
-            thumbnail: thumbnailFilename, 
-            url: `/uploads/${finalFilename}`,
-            uploadedBy: uploadedBy,
-            tags: tagArray,
-        });
+        // const video = await Video.create({
+        //     title,
+        //     description: description || "",
+        //     category: category || "Other",
+        //     filename: finalFilename, 
+        //     thumbnail: thumbnailFilename, 
+        //     url: `/uploads/${finalFilename}`,
+        //     uploadedBy: uploadedBy,
+        //     tags: tagArray,
+        // });
+
+        // ⏱️ duration & 📐 aspect ratio frontend se nahi aa rahe
+// abhi simple logic use karte hain (safe start)
+
+const isShort = true; // 👈 TEMP (next step me auto banayenge)
+
+const video = await Video.create({
+  title,
+  description: description || "",
+  category: category || "Other",
+  filename: finalFilename,
+  thumbnail: thumbnailFilename,
+  url: `/uploads/${finalFilename}`,
+  uploadedBy,
+  tags: tagArray,
+
+  // 🔥 SHORTS FIELDS
+  isShort,
+  aspectRatio: "9:16",
+  duration: 60 // abhi dummy, next step me real
+});
 
         console.log(`Video assembled and saved: ${finalFilename}`);
         return video;
@@ -476,6 +497,24 @@ router.get("/recommended", auth, async (req, res) => {
 });
 
 // =======================
+// 🔥 GET SHORTS FEED
+// =======================
+router.get("/shorts", async (req, res) => {
+  try {
+    const shorts = await Video.find({ isShort: true })
+      .populate("uploadedBy", "name")
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.json(shorts);
+  } catch (err) {
+    console.error("Shorts fetch error:", err);
+    res.status(500).json({ message: "Failed to fetch shorts" });
+  }
+});
+
+
+// =======================
 // 5. SIMILAR VIDEOS – MATRIX POWERED (0.02 sec!) (No Change)
 // =======================
 router.get("/similar/:filename", async (req, res) => {
@@ -561,6 +600,82 @@ router.get("/similar/:filename", async (req, res) => {
 //     res.status(500).send("Streaming error");
 //   }
 // });
+
+
+router.post(
+  "/upload-short",
+  auth,
+  chunkUpload.fields([
+    { name: "video", maxCount: 1 },
+    { name: "thumbnail", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const videoFile = req.files?.video?.[0];
+      const thumbFile = req.files?.thumbnail?.[0];
+
+      if (!videoFile || !thumbFile) {
+        return res.status(400).json({
+          message: "Video and thumbnail are required",
+        });
+      }
+
+      // 🔹 filenames
+      const videoFilename = Date.now() + "_" + videoFile.originalname;
+      const thumbFilename = Date.now() + "_" + thumbFile.originalname;
+
+      // 🔹 move files to uploads
+      await fs.rename(videoFile.path, path.join("uploads", videoFilename));
+      await fs.rename(thumbFile.path, path.join("uploads", thumbFilename));
+
+      // 🔹 tags parsing
+      const tags = req.body.tags
+        ? req.body.tags
+            .split(",")
+            .map((t) => t.trim().toLowerCase())
+            .filter(Boolean)
+        : [];
+
+      // 🔥 CREATE SHORT VIDEO
+      const video = await Video.create({
+        title: req.body.title,
+        description: req.body.description || "",
+
+        filename: videoFilename,
+        thumbnail: thumbFilename,
+        url: `/uploads/${videoFilename}`,
+        size: videoFile.size,
+
+        uploadedBy: req.user.id,
+
+        // ✅ IMPORTANT FIX
+        category: "Other", // enum-safe
+
+        tags,
+
+        // 🔥 SHORT FLAGS
+        isShort: true,
+        aspectRatio: "9:16",
+        duration: 0, // later auto-detect
+      });
+
+      // optional background workers
+      startVideoProcessingWorker(video);
+      startCaptionWorker(video);
+
+      res.json({
+        message: "✅ Short uploaded successfully",
+        video,
+      });
+    } catch (err) {
+      console.error("❌ upload-short error:", err);
+      res.status(500).json({
+        message: "Short upload failed",
+      });
+    }
+  }
+);
+
 
 router.get("/stream/:filename", async (req, res) => {
   const { filename } = req.params;

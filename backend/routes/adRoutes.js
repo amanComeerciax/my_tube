@@ -201,7 +201,11 @@ const multer = require("multer");
 const Ad = require("../models/Ad");
 const Video = require("../models/Video");
 const auth = require("../middleware/auth");
+const User = require("../models/User");
+
+const authOptional = require("../middleware/authOptional");
 const path = require("path");
+const { getUserTopInterest } = require("../utils/userInterest");
 
 // ✅ MULTER SETUP FOR AD UPLOADS
 const storage = multer.diskStorage({
@@ -242,7 +246,9 @@ router.post("/upload", auth, upload.single("adVideo"), async (req, res) => {
 /* =========================
    🎯 FETCH AD FOR VIDEO
 ========================= */
-router.get("/:videoId", async (req, res) => {
+// router.get("/:videoId", async (req, res) => {
+  router.get("/:videoId", authOptional, async (req, res) => {
+
   try {
     console.log("🎯 Fetching ad for video:", req.params.videoId);
 
@@ -256,25 +262,67 @@ router.get("/:videoId", async (req, res) => {
     console.log("📹 Video found:", video.title, "Category:", video.category);
 
     // Try to find an ad for this video's category
-    let ad = await Ad.findOne({
-      active: true,
-      target: "category",
-      targetValue: video.category
-    }).sort({ createdAt: -1 });
+    // let ad = await Ad.findOne({
+    //   active: true,
+    //   target: "category",
+    //   targetValue: video.category
+    // }).sort({ createdAt: -1 });
 
-    // If no category-specific ad, try "all" target
+    // // If no category-specific ad, try "all" target
+    // if (!ad) {
+    //   console.log("⚠️ No category ad found, checking for 'all' target");
+    //   ad = await Ad.findOne({
+    //     active: true,
+    //     target: "all"
+    //   }).sort({ createdAt: -1 });
+    // }
+
+    // if (!ad) {
+    //   console.log("⚠️ No ad available");
+    //   return res.json(null);
+    // }
+
+    let ad = null;
+
+    // 1️⃣ Premium user → no ads
+    if (req.user) {
+      const user = await User.findById(req.user.id);
+    
+      if (user?.isPremium) {
+        return res.json(null);
+      }
+    
+      // 2️⃣ User interest based ad
+      const interest = await getUserTopInterest(user);
+    
+      if (interest) {
+        ad = await Ad.findOne({
+          active: true,
+          target: "category",
+          targetValue: interest
+        }).sort({ createdAt: -1 });
+      }
+    }
+    
+    // 3️⃣ Video category fallback
     if (!ad) {
-      console.log("⚠️ No category ad found, checking for 'all' target");
+      ad = await Ad.findOne({
+        active: true,
+        target: "category",
+        targetValue: video.category
+      }).sort({ createdAt: -1 });
+    }
+    
+    // 4️⃣ All users fallback
+    if (!ad) {
       ad = await Ad.findOne({
         active: true,
         target: "all"
       }).sort({ createdAt: -1 });
     }
+    
+    if (!ad) return res.json(null);
 
-    if (!ad) {
-      console.log("⚠️ No ad available");
-      return res.json(null);
-    }
 
     console.log("✅ Ad found:", ad.title);
 

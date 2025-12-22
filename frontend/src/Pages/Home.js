@@ -2455,7 +2455,7 @@ export default function Home() {
     {
       items: [
         { name: "Home", icon: "home", path: "/", category: "All" },
-        { name: "Shorts", icon: "shorts", path: "#shorts" },
+        { name: "Shorts", icon: "shorts", path: "/shortss" },
         { name: "Subscriptions", icon: "subscriptions", path: "#subscriptions" }
       ]
     },
@@ -2465,6 +2465,12 @@ export default function Home() {
         { name: "Your Channel", icon: "user", path: "/profile" },
         { name: "History", icon: "history", path: "/history" },
         { name: "Your Videos", icon: "video", path: "/profile" },
+
+        {
+          name: "Go Live",
+          icon: "live",
+          path: `/live/${user._id}?role=broadcaster`
+        },
         { name: "Watch Later", icon: "clock", path: "#watch-later" },
         { name: "Liked Videos", icon: "like", path: "#liked" }
       ] : [
@@ -2658,6 +2664,8 @@ export default function Home() {
   const getIconSVG = (iconName) => {
     const icons = {
       home: <path d="M12 5.69l5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>,
+      live: <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>,
+
       shorts: <path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"/>,
       subscriptions: <path d="M18 7H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm0 10H6V9h12v8zm-6-1l5-3-5-3v6zM5 6h14V4H5c-1.1 0-2 .9-2 2v11h2V6z"/>,
       user: <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>,
@@ -2771,6 +2779,21 @@ export default function Home() {
                       </svg>
                       Watch History
                     </button>
+
+
+                    <button
+  className="menu-item"
+  onClick={() => {
+    navigate(`/live/${user._id}?role=broadcaster`);
+    setShowUserMenu(false);
+  }}
+>
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="red">
+    <circle cx="12" cy="12" r="8" />
+  </svg>
+  Go Live
+</button>
+
                     <div className="menu-divider"></div>
                     <button className="menu-item logout-item" onClick={() => { logout(); navigate("/"); setShowUserMenu(false); }}>
                       <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

@@ -159,7 +159,7 @@ const userSchema = new mongoose.Schema(
     premiumUntil: {
       type: Date,
       default: null,
-    },
+      },
 
     isAdmin: { type: Boolean, default: false },
   },

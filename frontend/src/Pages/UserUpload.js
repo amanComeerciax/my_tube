@@ -1682,7 +1682,7 @@
 //       </div>
 
 //       <div style={styles.content}>
-        
+
 //         {/* STEP 1: Upload Video */}
 //         {currentStep === 1 && (
 //           <div style={styles.uploadArea}>
@@ -1915,6 +1915,9 @@
 //   backToEditBtn: { background: "transparent", color: "#3ea6ff", border: "none", marginTop: 20, cursor: "pointer" }
 // };
 
+
+
+
 import React, { useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
@@ -1933,9 +1936,10 @@ export default function UserUpload() {
   const [category, setCategory] = useState("");
   const [video, setVideo] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
-  
+
+
   // New state to hold the filename returned by the server for the thumbnail
-  const [thumbnailFilename, setThumbnailFilename] = useState(null); 
+  const [thumbnailFilename, setThumbnailFilename] = useState(null);
 
   const [videoPreview, setVideoPreview] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
@@ -2006,7 +2010,7 @@ export default function UserUpload() {
     formData.append("chunkIndex", index);
     formData.append("totalChunks", totalChunks);
     formData.append("uploadId", uploadId);
-    
+
     // Send all video metadata with every chunk (essential for the final chunk)
     formData.append("title", title.trim());
     formData.append("description", description);
@@ -2025,7 +2029,7 @@ export default function UserUpload() {
         onUploadProgress: (e) => {
           // Calculate progress based on total file size, not just this chunk
           const percent = Math.round(((index * CHUNK_SIZE + e.loaded) * 100) / video.size);
-          setUploadProgress(Math.min(percent, 99)); 
+          setUploadProgress(Math.min(percent, 99));
         },
       }
     );
@@ -2043,7 +2047,7 @@ export default function UserUpload() {
 
       try {
         const data = await uploadChunk(chunk, i, totalChunks, token);
-        
+
         if (i === totalChunks - 1) {
           // Final check after the last chunk
           setUploadProgress(100);
@@ -2089,7 +2093,7 @@ export default function UserUpload() {
           },
         }
       );
-      
+
       const uploadedFilename = thumbRes.data.filename;
       setThumbnailFilename(uploadedFilename); // Save the filename for the video chunks
 
@@ -2121,7 +2125,7 @@ export default function UserUpload() {
       </div>
 
       <div style={styles.content}>
-        
+
         {/* STEP 1: Upload Video */}
         {currentStep === 1 && (
           <div style={styles.uploadArea}>
@@ -2137,6 +2141,10 @@ export default function UserUpload() {
               <p style={{ color: "#aaa" }}>Click to select or drag & drop</p>
               <button style={styles.selectButton}>Select File</button>
             </div>
+            <button style={styles.selectButton} onClick={() => navigate("/upload-short")}>
+              📱 Upload Short
+            </button>
+
           </div>
         )}
 
@@ -2258,7 +2266,7 @@ export default function UserUpload() {
                     <div style={{ ...styles.progressFill, width: `${uploadProgress}%` }}></div>
                   </div>
                   <p style={{ fontSize: 12, marginTop: 5, color: '#ff0000' }}>
-                     {uploadProgress < 10 ? 'Uploading Thumbnail...' : 'Uploading Video Chunks...'}
+                    {uploadProgress < 10 ? 'Uploading Thumbnail...' : 'Uploading Video Chunks...'}
                   </p>
                 </div>
               )}
@@ -2357,3 +2365,5 @@ const styles = {
   previewTag: { display: "inline-block", background: "#333", padding: "5px 10px", borderRadius: 12, marginRight: 6, marginTop: 6 },
   backToEditBtn: { background: "transparent", color: "#3ea6ff", border: "none", marginTop: 20, cursor: "pointer" }
 };
+
+

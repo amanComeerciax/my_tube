@@ -10,7 +10,9 @@ import Profile from './Pages/Profile';
 import History from './Pages/History';
 import AdminUploadAd from "./Pages/AdminUploadAd";
 import RevenueDashboard from './Pages/RevenueDashboard';
-
+import Shorts from "./Pages/Shorts";
+import ShortUpload from './Pages/ShortUpload';
+import LivePage from './Pages/LivePage';
 
 
 
@@ -31,6 +33,11 @@ return (
 <Route path="/history" element={<History />} />
 <Route path="/admin/upload-ad" element={<AdminUploadAd />} />
 <Route path="/revenue-dashboard" element={<RevenueDashboard />} />
+<Route path="/shorts" element={<Shorts />} />
+<Route path="/upload-short" element={<ShortUpload />} />
+<Route path="/live/:roomId" element={<LivePage />} />
+
+
 
 </Routes>
 </Router>
