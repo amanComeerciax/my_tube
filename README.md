@@ -36,6 +36,7 @@
 | ⏳ **Quality Switch Loader**      | ⭐ Added Today | Loader shown during quality change                            |
 | ⏭ **Auto-Play Next Video**       | ✔️ Complete   | Plays next recommended video automatically                    |
 | 🎞 **Hover Video Preview**       | ✔️ Complete   | YouTube-style hover autoplay preview                          |
+| User Go Live                    |  Complete     | User Go Live                                                  |
 
 | Feature                         | Status        | Description                                     |
 | ------------------------------- | ------------- | ----------------------------------------------- |
@@ -44,6 +45,7 @@
 | 👤 **Channel Card UI**          | ✔️ Complete   | Clickable channel cards with live counters      |
 | ⭐ **Subscribe System (Live)**   | ✔️ Complete   | Real-time subscribe/unsubscribe without reload  |
 | 👀 **Watch History Management** | ⭐ Added Today | View, delete single video, or clear all history |
+| Login With Google               | Completed     |  User Can Login And Sign-up With Google         |
 
 
 | Feature                         | Status        | Description                                     |
