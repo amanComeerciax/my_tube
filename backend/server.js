@@ -208,7 +208,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 /* ================= ROUTES ================= */
 app.use("/api/videos", videosRoutes);
@@ -220,6 +220,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/subscribe", subscriptionRoute);
 app.use("/api/premium", premiumRoutes);
 app.use("/api/ads", require("./routes/adRoutes"));
+app.use("/captions", express.static(path.join(__dirname, "captions")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+
 
 const server = http.createServer(app);
 
@@ -342,11 +346,19 @@ io.on("connection", (socket) => {
   });
 
   // WebRTC Signaling - Answer (from viewer to broadcaster)
+  // socket.on("answer", ({ answer, roomId, to }) => {
+
+
+  //   console.log(`📤 Relaying answer from ${socket.id} to ${to}`);
+  //   io.to(to).emit("answer", answer);
+  // });
+
   socket.on("answer", ({ answer, roomId, to }) => {
-
-
     console.log(`📤 Relaying answer from ${socket.id} to ${to}`);
-    io.to(to).emit("answer", answer);
+    io.to(to).emit("answer", {
+      answer,
+      from: socket.id // CRITICAL: Tell broadcaster who sent this
+    });
   });
 
   
@@ -426,13 +438,22 @@ socket.on("new-viewer", async ({ viewerId }) => {
 });
 
   // WebRTC Signaling - ICE Candidates
+  // socket.on("ice-candidate", ({ candidate, roomId, to }) => {
+  //   if (to) {
+  //     console.log(`🧊 Relaying ICE candidate from ${socket.id} to ${to}`);
+  //     io.to(to).emit("ice-candidate", candidate);
+  //   } else {
+  //     // Broadcast to room if no specific target
+  //     socket.to(roomId).emit("ice-candidate", candidate);
+  //   }
+  // });
+
   socket.on("ice-candidate", ({ candidate, roomId, to }) => {
     if (to) {
-      console.log(`🧊 Relaying ICE candidate from ${socket.id} to ${to}`);
-      io.to(to).emit("ice-candidate", candidate);
-    } else {
-      // Broadcast to room if no specific target
-      socket.to(roomId).emit("ice-candidate", candidate);
+      io.to(to).emit("ice-candidate", {
+        candidate,
+        from: socket.id // CRITICAL: Tell recipient who sent this
+      });
     }
   });
 

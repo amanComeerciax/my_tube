@@ -130,6 +130,9 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
 
+    aiSummary: { type: String, default: "" },
+    sentiment: { type: String, default: "" },
+
     // 📺 Watch History
     watchHistory: {
       type: [

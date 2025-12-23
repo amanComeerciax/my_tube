@@ -190,6 +190,8 @@ const video = await Video.create({
 //   });
 // }
 
+
+
 function startVideoProcessingWorker(video) {
   const worker = new Worker(
     path.join(__dirname, "../workers/videoWorker.js"),
@@ -302,28 +304,48 @@ function startCaptionWorker(video) {
 //     res.status(500).json({ message: "Thumbnail upload failed" });
 //   }
 // });
+// router.post("/upload/thumbnail", auth, chunkUpload.single("thumbnail"), async (req, res) => {
+//   try {
+//     console.log("FILE RECEIVED:", req.file);
+
+//     if (!req.file) {
+//       return res.status(400).json({ message: "Thumbnail file required" });
+//     }
+
+//     const newFilename = Date.now() + "_" + req.file.originalname;
+
+//     await fs.rename(req.file.path, path.join("uploads", newFilename));
+
+//     res.json({
+//       message: "Thumbnail uploaded successfully",
+//       filename: newFilename
+//     });
+//   } catch (error) {
+//     console.error("Thumbnail upload error:", error);
+//     res.status(500).json({ message: "Thumbnail upload failed" });
+//   }
+// });
+
+// Thumbnail Upload Route
 router.post("/upload/thumbnail", auth, chunkUpload.single("thumbnail"), async (req, res) => {
   try {
-    console.log("FILE RECEIVED:", req.file);
+    if (!req.file) return res.status(400).json({ message: "File required" });
 
-    if (!req.file) {
-      return res.status(400).json({ message: "Thumbnail file required" });
-    }
+    // 🔹 filename logic
+    const thumbFilename = "thumb_" + Date.now() + "_" + req.file.originalname;
 
-    const newFilename = Date.now() + "_" + req.file.originalname;
+    // 🔹 Move from temp to uploads
+    const destinationPath = path.join(process.cwd(), "uploads", thumbFilename);
+    await fs.rename(req.file.path, destinationPath);
 
-    await fs.rename(req.file.path, path.join("uploads", newFilename));
-
-    res.json({
-      message: "Thumbnail uploaded successfully",
-      filename: newFilename
+    res.json({ 
+      message: "✅ Thumbnail Uploaded", 
+      filename: thumbFilename // Yahi filename 'UserUpload' ke step 2 mein jayega
     });
-  } catch (error) {
-    console.error("Thumbnail upload error:", error);
-    res.status(500).json({ message: "Thumbnail upload failed" });
+  } catch (err) {
+    res.status(500).json({ message: "Upload failed" });
   }
 });
-
 
 
 // 📌 मुख्य चंक अपलोड हैंडलर
@@ -781,6 +803,24 @@ router.post("/dislike/:id", auth, async (req, res) => {
   }
 });
 
+
+// 📑 Get all videos liked by the current user
+router.get("/liked-videos", auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Aise videos dhoondo jahan likes array mein userId ho
+    const likedVideos = await Video.find({
+      likes: userId 
+    }).populate("uploadedBy", "name avatar"); // Creator details bhi le aao
+
+    res.json(likedVideos);
+  } catch (err) {
+    console.error("❌ Fetch Liked Videos Error:", err);
+    res.status(500).json({ message: "Error fetching liked videos" });
+  }
+});
+
 // =======================
 // 8. VIEW COUNT (No Change)
 // =======================
@@ -829,6 +869,9 @@ router.put("/update/:id", auth, async (req, res) => {
   }
 });
 
+
+
+
 // 📌 थंबनेल अपडेट रूट (अब chunkUpload का उपयोग करता है)
 router.put("/:id", auth, chunkUpload.single("thumbnail"), async (req, res) => {
   try {
@@ -862,6 +905,8 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Delete failed" });
   }
 });
+
+
 
 // 📌 वीडियो फाइल अपडेट करने वाला रूट (अब chunkUpload का उपयोग करता है)
 router.put("/update-video/:id", auth, chunkUpload.single("video"), async (req, res) => {

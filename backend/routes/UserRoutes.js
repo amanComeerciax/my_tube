@@ -724,4 +724,27 @@ router.delete("/watch-history", auth, async (req, res) => {
   }
 });
 
+const storage = multer.diskStorage({
+  destination: "uploads/avatars/",
+  filename: (req, file, cb) => {
+    cb(null, `avatar-${req.user.id}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+const upload = multer({ storage });
+
+// Update Avatar Route
+router.put("/update-avatar", auth, upload.single("avatar"), async (req, res) => {
+  try {
+    const avatarUrl = `http://localhost:5000/uploads/avatars/${req.file.filename}`;
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { avatar: avatarUrl },
+      { new: true }
+    );
+    res.json({ message: "Profile photo updated", avatar: user.avatar });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

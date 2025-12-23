@@ -1585,6 +1585,36 @@ export default function Profile() {
     }
   };
 
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("avatar", file);
+  
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        "http://localhost:5000/api/user/update-avatar",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      // Update Local States
+      setProfileUser({ ...profileUser, avatar: res.data.avatar });
+      updateUser({ ...user, avatar: res.data.avatar }); // Context update
+      alert("✅ Profile photo updated!");
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to upload photo");
+    }
+  };
+
   const loadHistory = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -1788,7 +1818,7 @@ const buyPremium = async () => {
       <div style={styles.headerSection}>
         <div style={styles.headerContent}>
           <div style={styles.avatarSection}>
-            <div style={styles.avatarWrapper}>
+            {/* <div style={styles.avatarWrapper}>
               <img
                 src={
                   profileUser.avatar?.trim()
@@ -1798,7 +1828,33 @@ const buyPremium = async () => {
                 alt="avatar"
                 style={styles.avatar}
               />
-            </div>
+            </div> */}
+            <div style={styles.avatarWrapper}>
+  <img
+    src={
+      profileUser.avatar?.trim()
+        ? profileUser.avatar
+        : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+    }
+    alt="avatar"
+    style={styles.avatar}
+  />
+  
+  {/* Profile photo change input - Only for own profile */}
+  {isOwnProfile && (
+    <label style={styles.editAvatarLabel}>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleAvatarChange}
+        style={{ display: "none" }}
+      />
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+        <path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"/>
+      </svg>
+    </label>
+  )}
+</div>
 
             <div style={styles.channelInfo}>
               {/* <h1 style={styles.channelName}>{profileUser.name}</h1> */}
@@ -1967,11 +2023,21 @@ const buyPremium = async () => {
                     style={styles.thumbnailWrapper}
                     onClick={() => navigate(`/watch/${v.filename}`)}
                   >
-                    <img
+                    {/* <img
                       src={`http://localhost:5000/uploads/${v.thumbnail}`}
                       style={styles.thumbnail}
                       alt={v.title}
-                    />
+                    /> */}
+                    <img 
+  // ✅ Pura path manually jodein agar environment variables nahi hain
+  src={`http://localhost:5000/uploads/${v.thumbnail}`} 
+  alt={v.title}
+  style={styles.thumbnail}
+  onError={(e) => {
+    console.log("Image failed to load:", e.target.src);
+    e.target.src = "https://via.placeholder.com/320x180?text=No+Thumbnail";
+  }}
+/>
                     <div style={styles.playOverlay}>
                       <svg viewBox="0 0 72 72" width="48" height="48">
                         <circle cx="36" cy="36" r="34" fill="rgba(0,0,0,0.6)" />
@@ -2422,6 +2488,22 @@ const styles = {
     background: "#1a1a1a",
     borderRadius: 12,
     overflow: "hidden"
+  },
+
+  editAvatarLabel: {
+    position: "absolute",
+    bottom: "10px",
+    right: "10px",
+    background: "rgba(0,0,0,0.6)",
+    width: "36px",
+    height: "36px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    border: "2px solid #fff",
+    transition: "background 0.3s",
   },
   thumbnailWrapper: {
     position: "relative",

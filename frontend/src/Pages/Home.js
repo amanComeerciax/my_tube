@@ -2455,8 +2455,8 @@ export default function Home() {
     {
       items: [
         { name: "Home", icon: "home", path: "/", category: "All" },
-        { name: "Shorts", icon: "shorts", path: "/shortss" },
-        { name: "Subscriptions", icon: "subscriptions", path: "#subscriptions" }
+        { name: "Shorts", icon: "shorts", path: "/shorts" },
+        { name: "Subscriptions", icon: "subscriptions", path: "/Subscription" }
       ]
     },
     {
@@ -2471,8 +2471,8 @@ export default function Home() {
           icon: "live",
           path: `/live/${user._id}?role=broadcaster`
         },
-        { name: "Watch Later", icon: "clock", path: "#watch-later" },
-        { name: "Liked Videos", icon: "like", path: "#liked" }
+       
+     
       ] : [
         { name: "Sign in to like videos, comment, and subscribe.", icon: "info", type: "info" }
       ]

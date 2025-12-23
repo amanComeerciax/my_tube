@@ -13,6 +13,8 @@ import RevenueDashboard from './Pages/RevenueDashboard';
 import Shorts from "./Pages/Shorts";
 import ShortUpload from './Pages/ShortUpload';
 import LivePage from './Pages/LivePage';
+import Subscriptions from './Pages/Subscriptions';
+import LikedVideos from './Pages/LikedVideos';
 
 
 
@@ -36,6 +38,8 @@ return (
 <Route path="/shorts" element={<Shorts />} />
 <Route path="/upload-short" element={<ShortUpload />} />
 <Route path="/live/:roomId" element={<LivePage />} />
+<Route path="/Subscription" element={<Subscriptions />} />
+<Route path="/LikedVideos" element={<LikedVideos />} />
 
 
 
