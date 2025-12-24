@@ -66,6 +66,7 @@
 | 🎙 **Voice Search (Mic Input)**       | ⭐ Added Today | YouTube-style voice search (Web Speech API)       |
 
 
+
 | Feature                               | Status        | Description                                       |
 | ------------------------------------- | ------------- | ------------------------------------------------- |
 | 🔎 **Fuzzy Search (Fuse.js)**         | ✔️ Complete   | Typo-tolerant smart search                        |
@@ -73,7 +74,8 @@
 | 🧠 **Bloom Filter Optimization**      | ✔️ Complete   | Prevents duplicate titles before DB hit           |
 | 🧩 **Smart Recommendation Algorithm** | ⭐ Added Today | Personalized feed using history + tags + category |
 | 🎙 **Voice Search (Mic Input)**       | ⭐ Added Today | YouTube-style voice search (Web Speech API)       |
-
+| 🎙 **Voice Search (Mic Input)**       | ⭐ Added Today | control watch page play stop next video through voice|
+| ⭐ **Ai Summary Generate ** | ⭐ Added Today | using vtt caption file ollama Model dholphin Mixtrel genarate summary |
 
 | Feature                           | Status        | Description                             |
 | --------------------------------- | ------------- | --------------------------------------- |
