@@ -199,6 +199,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const userRoutes = require("./routes/UserRoutes");
 const subscriptionRoute = require("./routes/subscriptionRoutes");
 const premiumRoutes = require("./routes/premiumRoutes");
+const monetizationRoutes = require("./routes/monetizationRoutes");
 
 const BloomFilter = require("./utils/bloomFilter");
 const Video = require("./models/Video");
@@ -220,6 +221,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/subscribe", subscriptionRoute);
 app.use("/api/premium", premiumRoutes);
 app.use("/api/ads", require("./routes/adRoutes"));
+app.use("/api/monetization", monetizationRoutes);
 app.use("/captions", express.static(path.join(__dirname, "captions")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

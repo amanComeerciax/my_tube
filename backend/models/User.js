@@ -159,6 +159,27 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
+
+    monetization: {
+      status: {
+        type: String,
+        enum: ["none", "pending", "approved", "rejected"],
+        default: "none",
+      },
+      appliedAt: {
+        type: Date,
+        default: null,
+      },
+      approvedAt: {
+        type: Date,
+        default: null,
+      },
+      rejectedReason: {
+        type: String,
+        default: "",
+      },
+    },
+
     premiumUntil: {
       type: Date,
       default: null,

@@ -947,7 +947,7 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
 
     const tagArray = tags ? tags.split(",").map(t => t.trim().toLowerCase()).filter(Boolean) : [];
 
-    const isShort = true;
+    const isShort = false;
 
     const video = await Video.create({
       title,

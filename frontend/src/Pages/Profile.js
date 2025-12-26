@@ -1656,6 +1656,8 @@ export default function Profile() {
   };
 
   const toggleSubscribe = async () => {
+
+
     if (!user) return alert("Login first");
     const token = localStorage.getItem("token");
 
@@ -1668,6 +1670,29 @@ export default function Profile() {
     setSubscribed(res.data.subscribed);
     setSubscribersCount(prev => res.data.subscribed ? prev + 1 : prev - 1);
   };
+
+  // 💰 APPLY FOR MONETIZATION
+const applyForMonetization = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.post(
+      "http://localhost:5000/api/monetization/apply",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    alert(res.data.message);
+
+    // 🔄 Reload profile to get updated monetization status
+    loadProfile();
+  } catch (err) {
+    alert(err.response?.data?.message || "Failed to apply for monetization");
+  }
+};
+
 
   // Open edit modal
   const openEditModal = (video, e) => {
@@ -1877,8 +1902,54 @@ const buyPremium = async () => {
               <div style={styles.channelDescription}>
                 {profileUser.email}
               </div>
+
+              {/* 💰 MONETIZATION STATUS (ONLY OWN PROFILE) */}
+{isOwnProfile && (
+  <div style={styles.monetizationCard}>
+    <h3 style={{ marginBottom: 8 }}>💰 Channel Monetization</h3>
+
+    {profileUser.monetization?.status === "none" && (
+      <>
+        <p style={{ color: "#aaa", fontSize: 14 }}>
+          Earn money by showing ads on your videos.
+        </p>
+        <button
+          style={styles.applyMonetizationBtn}
+          onClick={applyForMonetization}
+        >
+          Apply for Monetization
+        </button>
+      </>
+    )}
+
+    {profileUser.monetization?.status === "pending" && (
+      <p style={{ color: "#facc15", fontWeight: 600 }}>
+        ⏳ Monetization request under review
+      </p>
+    )}
+
+    {profileUser.monetization?.status === "approved" && (
+      <p style={{ color: "#22c55e", fontWeight: 700 }}>
+        ✅ Monetization Enabled
+      </p>
+    )}
+
+    {profileUser.monetization?.status === "rejected" && (
+      <>
+        <p style={{ color: "#ef4444", fontWeight: 700 }}>
+          ❌ Monetization Rejected
+        </p>
+        <p style={{ color: "#aaa", fontSize: 13 }}>
+          Reason: {profileUser.monetization.rejectedReason}
+        </p>
+      </>
+    )}
+  </div>
+)}
+
             </div>
           </div>
+
 
           {/* <div style={styles.actionButtons}>
             {isOwnProfile ? (
@@ -2386,6 +2457,26 @@ const styles = {
     gap: 12,
     alignItems: "center"
   },
+
+  monetizationCard: {
+    marginTop: 16,
+    padding: 16,
+    background: "#141414",
+    border: "1px solid #333",
+    borderRadius: 12,
+  },
+  
+  applyMonetizationBtn: {
+    marginTop: 10,
+    padding: "10px 20px",
+    background: "#ff0000",
+    border: "none",
+    borderRadius: 20,
+    color: "#fff",
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+  
   subscribeButton: {
     padding: "12px 24px",
     background: "#ff0000",

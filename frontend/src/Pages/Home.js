@@ -2403,6 +2403,9 @@ export default function Home() {
   const [videos, setVideos] = useState([]);
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [isListening, setIsListening] = useState(false);
@@ -2423,11 +2426,39 @@ export default function Home() {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
+        setShowSuggestions(false);
+
       }
     };
+
+
+    
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!search.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+  
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/search/suggestions?query=${search}`
+        );
+        setSuggestions(res.data);
+        setShowSuggestions(true);
+      } catch (err) {
+        console.error("Suggestion error:", err);
+      }
+    }, 300);
+  
+    return () => clearTimeout(timeout);
+  }, [search]);
+  
 
   const categories = [
     { name: "All", icon: "🏠" },
@@ -2719,6 +2750,25 @@ export default function Home() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="search-input"
               />
+
+              {showSuggestions && suggestions.length > 0 && (
+  <div className="suggestions-box">
+    {suggestions.map((s, i) => (
+      <div
+        key={i}
+        className="suggestion-item"
+        onClick={() => {
+          setSearch(s.text);
+          setShowSuggestions(false);
+        }}
+      >
+        🔍 {s.text}
+        <span className="suggestion-type">{s.type}</span>
+      </div>
+    ))}
+  </div>
+)}
+
               {search && (
                 <button className="clear-btn" onClick={() => setSearch("")}>
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -3382,6 +3432,85 @@ export default function Home() {
           padding-top: 56px;
           min-height: 100vh;
         }
+/* ================= SEARCH SUGGESTIONS ================= */
+
+.suggestions-box {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+
+  background: #212121;
+  border-radius: 0 0 14px 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-top: none;
+
+  max-height: 320px;
+  overflow-y: auto;
+
+  z-index: 5000;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  animation: dropdownFade 0.15s ease-out;
+}
+
+/* smooth scroll */
+.suggestions-box::-webkit-scrollbar {
+  width: 6px;
+}
+.suggestions-box::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+}
+
+/* single suggestion */
+.suggestion-item {
+  padding: 12px 16px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  font-size: 14px;
+  color: #f1f1f1;
+  transition: background 0.15s ease;
+}
+
+.suggestion-item:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* left side text */
+.suggestion-item span:first-child {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* type badge (video / channel) */
+.suggestion-type {
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  color: #bdbdbd;
+  flex-shrink: 0;
+}
+
+/* entry animation */
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
         /* ========== SIDEBAR ========== */
         .sidebar {
