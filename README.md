@@ -37,6 +37,8 @@
 | ⏭ **Auto-Play Next Video**       | ✔️ Complete   | Plays next recommended video automatically                    |
 | 🎞 **Hover Video Preview**       | ✔️ Complete   | YouTube-style hover autoplay preview                          |
 | User Go Live                    |  Complete     | User Go Live                                                  |
+| Auto Search Suggetion           | Complete      | User Search Auto Suggestion for video                         |
+
 
 | Feature                         | Status        | Description                                     |
 | ------------------------------- | ------------- | ----------------------------------------------- |
