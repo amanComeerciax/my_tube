@@ -1669,8 +1669,17 @@ export default function AdManagement() {
               onClick={() => navigate("/revenue-dashboard")}
               style={styles.revenueTab}
             >
+              
               <FiDollarSign size={18} />
               <span>Revenue Dashboard</span>
+            </button>
+            <button
+              onClick={() => navigate("/AdminMonetizationPanel")}
+              style={styles.revenueTab}
+            >
+              
+              <FiDollarSign size={18} />
+              <span>MonetizationPanel</span>
             </button>
           </div>
         </div>

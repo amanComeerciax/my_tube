@@ -496,6 +496,11 @@ const videoSchema = new mongoose.Schema(
       default: null,
     },
 
+    earnings: {
+      type: Number,
+      default: 0,
+    },
+
     // 🎬 PROCESSING FIELDS
     processing: {
       type: Boolean,

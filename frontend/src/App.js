@@ -15,6 +15,8 @@ import ShortUpload from './Pages/ShortUpload';
 import LivePage from './Pages/LivePage';
 import Subscriptions from './Pages/Subscriptions';
 import LikedVideos from './Pages/LikedVideos';
+import AdminMonetizationPanel from './Pages/AdminMonetizationPanel';
+import CreatorMonetization from './Pages/CreatorMonetization';
 
 
 
@@ -40,10 +42,12 @@ return (
 <Route path="/live/:roomId" element={<LivePage />} />
 <Route path="/Subscription" element={<Subscriptions />} />
 <Route path="/LikedVideos" element={<LikedVideos />} />
+<Route path="/AdminMonetizationPanel" element={<AdminMonetizationPanel />} />
+<Route path="/CreatorMonetization" element={<CreatorMonetization />} />
 
 
 
-</Routes>
+</Routes>   
 </Router>
 );
 }

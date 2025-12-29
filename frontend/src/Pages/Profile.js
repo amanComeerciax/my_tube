@@ -1904,48 +1904,7 @@ const buyPremium = async () => {
               </div>
 
               {/* 💰 MONETIZATION STATUS (ONLY OWN PROFILE) */}
-{isOwnProfile && (
-  <div style={styles.monetizationCard}>
-    <h3 style={{ marginBottom: 8 }}>💰 Channel Monetization</h3>
 
-    {profileUser.monetization?.status === "none" && (
-      <>
-        <p style={{ color: "#aaa", fontSize: 14 }}>
-          Earn money by showing ads on your videos.
-        </p>
-        <button
-          style={styles.applyMonetizationBtn}
-          onClick={applyForMonetization}
-        >
-          Apply for Monetization
-        </button>
-      </>
-    )}
-
-    {profileUser.monetization?.status === "pending" && (
-      <p style={{ color: "#facc15", fontWeight: 600 }}>
-        ⏳ Monetization request under review
-      </p>
-    )}
-
-    {profileUser.monetization?.status === "approved" && (
-      <p style={{ color: "#22c55e", fontWeight: 700 }}>
-        ✅ Monetization Enabled
-      </p>
-    )}
-
-    {profileUser.monetization?.status === "rejected" && (
-      <>
-        <p style={{ color: "#ef4444", fontWeight: 700 }}>
-          ❌ Monetization Rejected
-        </p>
-        <p style={{ color: "#aaa", fontSize: 13 }}>
-          Reason: {profileUser.monetization.rejectedReason}
-        </p>
-      </>
-    )}
-  </div>
-)}
 
             </div>
           </div>
@@ -2023,6 +1982,24 @@ const buyPremium = async () => {
           ⭐ Go Premium ₹99
         </button>
       )}
+
+{user && (
+  <button
+    style={{
+      padding: "12px 24px",
+      background: "linear-gradient(135deg,#22c55e,#16a34a)",
+      border: "none",
+      borderRadius: 24,
+      fontWeight: 700,
+      cursor: "pointer",
+      color: "#000",
+    }}
+    onClick={() => navigate("/CreatorMonetization")}
+  >
+    💰 Creator Monetization
+  </button>
+)}
+
 
       {/* ⚙️ Manage Channel */}
       <button style={styles.iconButton} title="Manage channel">
