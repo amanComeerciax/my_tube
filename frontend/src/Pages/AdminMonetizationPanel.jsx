@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -89,25 +90,46 @@ export default function AdminMonetizationPanel() {
   };
 
   /* ================= PROCESS PAYOUT ================= */
-  const handleProcessPayout = async (earningsId, paymentId) => {
-    const transactionId = prompt("Enter transaction ID:");
-    if (!transactionId) return;
+//   const handleProcessPayout = async (earningsId, paymentId) => {
+//     const transactionId = prompt("Enter transaction ID:");
+//     if (!transactionId) return;
 
+//     try {
+//       const token = localStorage.getItem("token");
+//       await axios.post(
+//         `http://localhost:5000/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
+//         { transactionId },
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+      
+//       alert("✅ Payout processed successfully");
+//       fetchCreators();
+//     } catch (err) {
+//       alert("Failed to process payout");
+//     }
+//   };
+
+
+const handleProcessPayout = async (earningsId, paymentId) => {
+    if (!window.confirm("Send payout via Razorpay?")) return;
+  
     try {
       const token = localStorage.getItem("token");
+  
       await axios.post(
         `http://localhost:5000/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
-        { transactionId },
+        {}, // ❌ no transactionId
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      alert("✅ Payout processed successfully");
+  
+      alert("✅ Payout sent via Razorpay");
       fetchCreators();
+      setSelectedCreator(null);
     } catch (err) {
-      alert("Failed to process payout");
+      alert(err.response?.data?.message || "Razorpay payout failed");
     }
   };
-
+  
   /* ================= HELPERS ================= */
   const formatCurrency = (amount) => {
     return "₹" + (amount || 0).toLocaleString("en-IN", { 
@@ -499,12 +521,23 @@ export default function AdminMonetizationPanel() {
                             Requested: {formatDate(payment.createdAt)}
                           </div>
                         </div>
-                        <button
+                        {/* <button
                           onClick={() => handleProcessPayout(selectedCreator._id, payment._id)}
                           style={styles.processButton}
                         >
                           Process Payout
-                        </button>
+                        </button> */}
+
+<button
+  onClick={() => handleProcessPayout(selectedCreator._id, payment._id)}
+  style={{
+    ...styles.processButton,
+    background: "#2563eb"
+  }}
+>
+  Pay via Razorpay
+</button>
+
                       </div>
                     ))}
                 </div>

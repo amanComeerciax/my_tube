@@ -856,6 +856,8 @@ const Video = require("../models/Video");
 const User = require("../models/User");
 const auth = require("../middleware/auth");
 const Ad = require("../models/Ad");
+const Notification = require("../models/Notification");
+
 
 // PRE-BUILT SIMILARITY MATRIX
 let similarityMatrix = {};
@@ -964,6 +966,26 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
       captionsStatus: "pending",
       summaryStatus: "pending"
     });
+
+    // 🔔 NOTIFY SUBSCRIBERS ABOUT NEW VIDEO
+const uploader = await User.findById(uploadedBy).select("subscribers name");
+
+if (uploader?.subscribers?.length > 0) {
+  const notifications = uploader.subscribers
+    .filter(subId => subId.toString() !== uploadedBy.toString()) // self notify avoid
+    .map(subscriberId => ({
+      user: subscriberId,          // receiver (subscriber)
+      sender: uploadedBy,           // channel owner
+      type: "new_video",
+      video: video._id,
+      message: `${uploader.name} uploaded a new video`
+    }));
+
+  if (notifications.length > 0) {
+    await Notification.insertMany(notifications);
+  }
+}
+
 
     console.log(`Video assembled and saved: ${finalFilename}`);
     return video;
@@ -1359,6 +1381,8 @@ router.post(
     }
   }
 );
+
+
 
 // STREAM VIDEO
 router.get("/stream/:filename", async (req, res) => {

@@ -8269,3 +8269,1536 @@ const styles = {
     fontSize: "10px",
   },
 };
+
+
+
+// import React, { useEffect, useState, useContext, useRef } from "react";
+// import axios from "axios";
+// import { io } from "socket.io-client";
+// import { AuthContext } from "../context/AuthContext";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { 
+//   FiThumbsUp, FiThumbsDown, FiShare2, FiBell,
+//   FiMoreHorizontal, FiChevronDown, FiChevronUp, FiCheck,
+//   FiMaximize, FiMic
+// } from "react-icons/fi";
+// import { 
+//   MdOutlineScreenShare, 
+//   MdOutlineFullscreenExit, 
+//   MdOutlineSpeed,
+//   MdAutoAwesome,
+//   MdGraphicEq
+// } from 'react-icons/md';
+
+// export default function Watch() {
+//   const { filename } = useParams();
+//   const { user } = useContext(AuthContext);
+//   const navigate = useNavigate();
+//   const socketRef = useRef(null);
+//   const videoRef = useRef(null);
+//   const playerContainerRef = useRef(null);
+//   const recognitionRef = useRef(null);
+
+//   // States
+//   const [video, setVideo] = useState(null);
+//   const [channel, setChannel] = useState(null);
+//   const [recommended, setRecommended] = useState([]);
+//   const [comment, setComment] = useState("");
+//   const [likes, setLikes] = useState(0);
+//   const [dislikes, setDislikes] = useState(0);
+//   const [userLiked, setUserLiked] = useState(false);
+//   const [userDisliked, setUserDisliked] = useState(false);
+//   const [subscribed, setSubscribed] = useState(false);
+//   const [showDescription, setShowDescription] = useState(false);
+//   const [isSaved, setIsSaved] = useState(false);
+//   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  
+//   // Video Controls
+//   const [playbackSpeed, setPlaybackSpeed] = useState(1);
+//   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+//   const [videoQuality, setVideoQuality] = useState('original');
+//   const [showQualityMenu, setShowQualityMenu] = useState(false);
+//   const [captionsAvailable, setCaptionsAvailable] = useState(false);
+//   const [showSubtitles, setShowSubtitles] = useState(false);
+  
+//   // AI Insights
+//   const [aiInsights, setAiInsights] = useState({ summary: "", sentiment: "", status: "pending" });
+//   const [showAIInsights, setShowAIInsights] = useState(true);
+  
+//   // Voice Control
+//   const [isListening, setIsListening] = useState(false);
+//   const [lastCommand, setLastCommand] = useState("");
+//   const [voiceSupported, setVoiceSupported] = useState(true);
+
+//   /* ================= VOICE CONTROL SETUP ================= */
+//   useEffect(() => {
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+//     if (!SpeechRecognition) {
+//       setVoiceSupported(false);
+//       return;
+//     }
+
+//     const recognition = new SpeechRecognition();
+//     recognition.lang = "en-IN";
+//     recognition.continuous = true;
+//     recognition.interimResults = false;
+
+//     recognition.onresult = (event) => {
+//       const text = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+//       setLastCommand(text);
+//       handleVoiceCommand(text);
+//     };
+
+//     recognition.onerror = (event) => {
+//       if (event.error === 'no-speech' && isListening) {
+//         setTimeout(() => {
+//           try { recognition.start(); } catch (e) {}
+//         }, 1000);
+//       }
+//     };
+
+//     recognition.onend = () => {
+//       if (isListening) {
+//         try { recognition.start(); } catch (e) {}
+//       }
+//     };
+
+//     recognitionRef.current = recognition;
+
+//     return () => {
+//       if (recognition) recognition.stop();
+//     };
+//   }, [isListening]);
+
+//   const handleVoiceCommand = (command) => {
+//     const video = videoRef.current;
+//     if (!video) return;
+
+//     if (command.includes("play") || command.includes("start")) {
+//       video.play();
+//       showVoiceFeedback("▶️ Playing");
+//     } else if (command.includes("pause") || command.includes("stop")) {
+//       video.pause();
+//       showVoiceFeedback("⏸ Paused");
+//     } else if (command.includes("skip") || command.includes("forward")) {
+//       const seconds = command.match(/(\d+)/) ? parseInt(command.match(/(\d+)/)[1]) : 10;
+//       video.currentTime += seconds;
+//       showVoiceFeedback(`⏩ Skipped ${seconds}s`);
+//     } else if (command.includes("mute")) {
+//       video.muted = true;
+//       showVoiceFeedback("🔇 Muted");
+//     } else if (command.includes("unmute")) {
+//       video.muted = false;
+//       showVoiceFeedback("🔊 Unmuted");
+//     } else if (command.includes("full screen") || command.includes("fullscreen")) {
+//       toggleFullscreen();
+//       showVoiceFeedback("⛶ Fullscreen");
+//     } else if (command.includes("theater") || command.includes("theatre")) {
+//       toggleTheaterMode();
+//       showVoiceFeedback("🎬 Theater Mode");
+//     } else if (command.includes("like")) {
+//       likeVideo();
+//       showVoiceFeedback("👍 Liked");
+//     } else if (command.includes("subscribe")) {
+//       if (channel && !subscribed) {
+//         toggleSubscribe();
+//         showVoiceFeedback("🔔 Subscribed");
+//       }
+//     }
+//   };
+
+//   const showVoiceFeedback = (message) => {
+//     setLastCommand(message);
+//     setTimeout(() => setLastCommand(""), 3000);
+//   };
+
+//   const toggleVoiceControl = () => {
+//     if (!voiceSupported) {
+//       alert("Voice control not supported in your browser.");
+//       return;
+//     }
+
+//     if (!isListening) {
+//       try {
+//         recognitionRef.current?.start();
+//         setIsListening(true);
+//         showVoiceFeedback("🎙️ Voice Control Active");
+//       } catch (err) {
+//         alert("Could not start voice recognition.");
+//       }
+//     } else {
+//       recognitionRef.current?.stop();
+//       setIsListening(false);
+//       showVoiceFeedback("🎙️ Voice Control Off");
+//     }
+//   };
+
+//   /* ================= FETCH VIDEO ================= */
+//   const fetchVideo = async () => {
+//     try {
+//       const res = await axios.get(`http://localhost:5000/api/videos/by-filename/${filename}`);
+//       setVideo(res.data);
+//       setLikes(res.data.likes?.length || 0);
+//       setDislikes(res.data.dislikes?.length || 0);
+
+//       // AI Insights
+//       setAiInsights({
+//         summary: res.data.aiSummary || "",
+//         sentiment: res.data.sentiment || "Neutral",
+//         status: res.data.summaryStatus || "pending"
+//       });
+
+//       if (user) {
+//         setUserLiked(res.data.likes?.includes(user._id));
+//         setUserDisliked(res.data.dislikes?.includes(user._id));
+//       }
+
+//       if (res.data.uploadedBy?._id) {
+//         fetchChannel(res.data.uploadedBy._id);
+//         fetchComments(res.data._id);
+//       }
+
+//       if (user && res.data._id) {
+//         addToHistory(res.data._id);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching video:", error);
+//     }
+//   };
+
+//   const fetchChannel = async (id) => {
+//     const res = await axios.get(`http://localhost:5000/api/user/profile/${id}`);
+//     setChannel(res.data);
+//     if (user) setSubscribed(res.data.subscribers?.includes(user._id));
+//   };
+
+//   const fetchComments = async (id) => {
+//     const res = await axios.get(`http://localhost:5000/api/comments/video/${id}`);
+//     setVideo((p) => ({ ...p, comments: res.data }));
+//   };
+
+//   const fetchRecommended = async () => {
+//     try {
+//       const res = await axios.get(`http://localhost:5000/api/videos/similar/${filename}`);
+//       setRecommended(res.data.slice(0, 20));
+//     } catch {
+//       const res = await axios.get("http://localhost:5000/api/videos/all");
+//       setRecommended(res.data.filter(v => v.filename !== filename).slice(0, 20));
+//     }
+//   };
+
+//   const addToHistory = async (videoId) => {
+//     const token = localStorage.getItem("token");
+//     if (!token) return;
+//     try {
+//       await axios.post(
+//         `http://localhost:5000/api/user/watch-history/add/${videoId}`,
+//         {},
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//     } catch (err) {
+//       console.error("Failed to add to history:", err);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchVideo();
+//     axios.post(`http://localhost:5000/api/videos/view/${filename}`);
+//   }, [filename, user?._id]);
+
+//   useEffect(() => {
+//     if (video) fetchRecommended();
+//   }, [video]);
+
+//   useEffect(() => {
+//     socketRef.current = io("http://localhost:5000");
+//     if (video?._id) {
+//       socketRef.current.emit("join-video", video._id);
+//     }
+    
+//     socketRef.current.on("caption-ready", (data) => {
+//       setVideo((prev) => ({ ...prev, captions: data.captions }));
+//     });
+
+//     socketRef.current.on("summary-ready", (data) => {
+//       if (data.videoId === video?._id) {
+//         setAiInsights({
+//           summary: data.summary || "",
+//           sentiment: data.sentiment || "Neutral",
+//           status: "ready"
+//         });
+//       }
+//     });
+
+//     return () => {
+//       socketRef.current.disconnect();
+//     };
+//   }, [video?._id]);
+
+//   const getAIInsightsMessage = () => {
+//     switch(aiInsights.status) {
+//       case "pending":
+//         return "⏳ AI analysis will begin after captions are generated...";
+//       case "processing":
+//         return "🤖 AI is analyzing the video content...";
+//       case "failed":
+//         return "❌ AI analysis failed. Please try again later.";
+//       case "not-available":
+//         return "ℹ️ AI analysis not available for this video.";
+//       default:
+//         return "";
+//     }
+//   };
+
+//   const likeVideo = async () => {
+//     if (!user) return navigate("/login");
+//     const token = localStorage.getItem("token");
+//     const res = await axios.post(`http://localhost:5000/api/videos/like/${video._id}`, {}, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     setLikes(res.data.likes.length);
+//     setDislikes(res.data.dislikes.length);
+//     setUserLiked(res.data.likes.includes(user._id));
+//     setUserDisliked(res.data.dislikes.includes(user._id));
+//   };
+
+//   const dislikeVideo = async () => {
+//     if (!user) return navigate("/login");
+//     const token = localStorage.getItem("token");
+//     const res = await axios.post(`http://localhost:5000/api/videos/dislike/${video._id}`, {}, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     setLikes(res.data.likes.length);
+//     setDislikes(res.data.dislikes.length);
+//     setUserLiked(res.data.likes.includes(user._id));
+//     setUserDisliked(res.data.dislikes.includes(user._id));
+//   };
+
+//   const toggleSubscribe = async () => {
+//     if (!user) return navigate("/login");
+//     const token = localStorage.getItem("token");
+//     const res = await axios.post(`http://localhost:5000/api/user/subscribe/${channel._id}`, {}, {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     setSubscribed(res.data.subscribed);
+//     setChannel(p => ({ ...p, subscribers: res.data.subscribers || p.subscribers }));
+//   };
+
+//   const handleQualityChange = (newQuality) => {
+//     if (!videoRef.current || !video) return;
+//     const currentTime = videoRef.current.currentTime;
+//     const isPlaying = !videoRef.current.paused;
+    
+//     setVideoQuality(newQuality);
+//     setShowQualityMenu(false);
+    
+//     const newSource = `http://localhost:5000/api/videos/stream/${video.filename}?q=${newQuality}`;
+//     videoRef.current.src = newSource;
+    
+//     const syncAndPlay = () => {
+//       videoRef.current.currentTime = currentTime;
+//       if (isPlaying) videoRef.current.play();
+//       videoRef.current.removeEventListener('loadedmetadata', syncAndPlay);
+//     };
+    
+//     videoRef.current.addEventListener('loadedmetadata', syncAndPlay);
+//     videoRef.current.load();
+//   };
+
+//   const changePlaybackSpeed = (speed) => {
+//     if (videoRef.current) {
+//       videoRef.current.playbackRate = speed;
+//       setPlaybackSpeed(speed);
+//       setShowSpeedMenu(false);
+//     }
+//   };
+
+//   const toggleTheaterMode = () => {
+//     setIsTheaterMode(!isTheaterMode);
+//   };
+
+//   const toggleFullscreen = () => {
+//     if (!document.fullscreenElement) {
+//       playerContainerRef.current?.requestFullscreen();
+//     } else {
+//       document.exitFullscreen();
+//     }
+//   };
+
+//   const toggleSubtitles = () => {
+//     const videoEl = videoRef.current;
+//     if (!videoEl) return;
+//     const tracks = videoEl.textTracks;
+//     if (!tracks || tracks.length === 0) return;
+//     const nextState = !showSubtitles;
+//     setShowSubtitles(nextState);
+//     for (let i = 0; i < tracks.length; i++) {
+//       tracks[i].mode = nextState ? "showing" : "hidden";
+//     }
+//   };
+
+//   const handleVideoLoadedMetadata = () => {
+//     const videoEl = videoRef.current;
+//     if (!videoEl) return;
+//     const tracks = videoEl.textTracks;
+//     if (tracks && tracks.length > 0) {
+//       setCaptionsAvailable(true);
+//       for (let i = 0; i < tracks.length; i++) tracks[i].mode = "hidden";
+//       setShowSubtitles(false);
+//     }
+//   };
+
+//   const postComment = async () => {
+//     if (!comment.trim() || !user) return;
+//     const token = localStorage.getItem("token");
+//     try {
+//       await axios.post("http://localhost:5000/api/comments/add", 
+//         { videoId: video._id, text: comment }, 
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       setComment("");
+//       fetchComments(video._id);
+//     } catch (error) {
+//       console.error("Comment failed:", error);
+//     }
+//   };
+
+//   const formatViews = (views) => {
+//     if (!views) return "0 views";
+//     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M views`;
+//     if (views >= 1000) return `${(views / 1000).toFixed(1)}K views`;
+//     return `${views} views`;
+//   };
+
+//   const formatNumber = (num) => {
+//     if (!num) return "0";
+//     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+//     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+//     return num.toString();
+//   };
+
+//   const getTimeAgo = (date) => {
+//     if (!date) return "Just now";
+//     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+//     const intervals = { 
+//       year: 31536000, 
+//       month: 2592000, 
+//       week: 604800,
+//       day: 86400, 
+//       hour: 3600, 
+//       minute: 60 
+//     };
+//     for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+//       const interval = Math.floor(seconds / secondsInUnit);
+//       if (interval >= 1) return `${interval} ${unit}${interval > 1 ? "s" : ""} ago`;
+//     }
+//     return "Just now";
+//   };
+
+//   if (!video) {
+//     return (
+//       <div className="yt-loading">
+//         <div className="yt-spinner" />
+//         <p>Loading video...</p>
+//         <style jsx>{`
+//           .yt-loading {
+//             display: flex;
+//             flex-direction: column;
+//             align-items: center;
+//             justify-content: center;
+//             min-height: 100vh;
+//             background: #0f0f0f;
+//             color: #f1f1f1;
+//           }
+//           .yt-spinner {
+//             width: 48px;
+//             height: 48px;
+//             border: 3px solid #3f3f3f;
+//             border-top-color: #f00;
+//             border-radius: 50%;
+//             animation: spin 1s linear infinite;
+//           }
+//           @keyframes spin {
+//             to { transform: rotate(360deg); }
+//           }
+//         `}</style>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="yt-watch-page">
+//       <div className="yt-watch-container">
+//         {/* LEFT: Video Player + Info */}
+//         <div className="yt-primary">
+//           {/* Video Player */}
+//           <div className="yt-player" ref={playerContainerRef}>
+//             <video
+//               ref={videoRef}
+//               src={`http://localhost:5000/api/videos/stream/${video.filename}?q=${videoQuality}`}
+//               controls
+//               autoPlay
+//               className="yt-video"
+//               onLoadedMetadata={handleVideoLoadedMetadata}
+//               crossOrigin="anonymous"
+//             >
+//               {video.captions && (
+//                 <track
+//                   kind="subtitles"
+//                   src={`http://localhost:5000/captions/${video.captions}`}
+//                   srcLang="en"
+//                   label="English (Auto)"
+//                 />
+//               )}
+//             </video>
+
+//             {/* Voice Feedback */}
+//             {lastCommand && (
+//               <div className="yt-voice-feedback">
+//                 <MdGraphicEq size={20} style={{ animation: 'pulse 1s infinite' }} />
+//                 <span>{lastCommand}</span>
+//               </div>
+//             )}
+
+//             {/* Advanced Controls Overlay */}
+//             <div className="yt-controls-overlay">
+//               {/* Voice Control */}
+//               <button 
+//                 onClick={toggleVoiceControl}
+//                 className={`yt-control-btn ${isListening ? 'active' : ''}`}
+//                 title="Voice Control"
+//               >
+//                 {isListening ? <MdGraphicEq size={18} /> : <FiMic size={18} />}
+//               </button>
+
+//               {/* Theater Mode */}
+//               <button 
+//                 onClick={toggleTheaterMode}
+//                 className="yt-control-btn"
+//                 title="Theater mode"
+//               >
+//                 {isTheaterMode ? <MdOutlineFullscreenExit size={18} /> : <MdOutlineScreenShare size={18} />}
+//               </button>
+
+//               {/* Subtitles */}
+//               <button 
+//                 onClick={toggleSubtitles}
+//                 className={`yt-control-btn ${showSubtitles ? 'active' : ''}`}
+//                 disabled={!captionsAvailable}
+//                 title="Subtitles"
+//               >
+//                 CC
+//               </button>
+
+//               {/* Speed Control */}
+//               <div className="yt-control-menu-wrapper">
+//                 <button 
+//                   onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+//                   className="yt-control-btn"
+//                   title="Playback speed"
+//                 >
+//                   <MdOutlineSpeed size={18} />
+//                   <span>{playbackSpeed}x</span>
+//                 </button>
+//                 {showSpeedMenu && (
+//                   <div className="yt-control-menu">
+//                     {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].map(s => (
+//                       <div 
+//                         key={s}
+//                         onClick={() => changePlaybackSpeed(s)}
+//                         className={`yt-menu-item ${playbackSpeed === s ? 'active' : ''}`}
+//                       >
+//                         <span>{s === 1 ? 'Normal' : `${s}x`}</span>
+//                         {playbackSpeed === s && <FiCheck size={14} />}
+//                       </div>
+//                     ))}
+//                   </div>
+//                 )}
+//               </div>
+
+//               {/* Quality Control */}
+//               <div className="yt-control-menu-wrapper">
+//                 <button 
+//                   onClick={() => setShowQualityMenu(!showQualityMenu)}
+//                   className="yt-control-btn"
+//                   title="Quality"
+//                 >
+//                   {videoQuality}
+//                 </button>
+//                 {showQualityMenu && (
+//                   <div className="yt-control-menu">
+//                     {['auto', 'original', '720p', '480p', '360p'].map(q => (
+//                       <div 
+//                         key={q}
+//                         onClick={() => handleQualityChange(q)}
+//                         className={`yt-menu-item ${videoQuality === q ? 'active' : ''}`}
+//                       >
+//                         <span>{q === 'auto' ? 'Auto' : q}</span>
+//                         {videoQuality === q && <FiCheck size={14} />}
+//                       </div>
+//                     ))}
+//                   </div>
+//                 )}
+//               </div>
+
+//               {/* Fullscreen */}
+//               <button 
+//                 onClick={toggleFullscreen}
+//                 className="yt-control-btn"
+//                 title="Fullscreen"
+//               >
+//                 <FiMaximize size={18} />
+//               </button>
+//             </div>
+//           </div>
+
+//           {/* Voice Commands Help */}
+//           {isListening && (
+//             <div className="yt-voice-help">
+//               <div className="yt-voice-help-header">
+//                 <MdGraphicEq size={20} style={{ color: '#f00' }} />
+//                 <span>Voice Control Active</span>
+//               </div>
+//               <div className="yt-voice-commands">
+//                 <span>"Play" • "Pause" • "Mute" • "Skip 10" • "Like" • "Subscribe" • "Fullscreen"</span>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* AI Insights */}
+//           {showAIInsights && (aiInsights.status === "ready" || aiInsights.status === "processing" || aiInsights.status === "pending") && (
+//             <div className="yt-ai-card">
+//               <div className="yt-ai-header">
+//                 <div className="yt-ai-title">
+//                   <MdAutoAwesome size={20} />
+//                   <span>AI Summary</span>
+//                   {aiInsights.sentiment && aiInsights.status === "ready" && (
+//                     <span className="yt-ai-badge">{aiInsights.sentiment}</span>
+//                   )}
+//                 </div>
+//                 <button onClick={() => setShowAIInsights(false)} className="yt-ai-close">×</button>
+//               </div>
+//               <div className="yt-ai-content">
+//                 {aiInsights.status === "ready" && aiInsights.summary ? (
+//                   <p>{aiInsights.summary}</p>
+//                 ) : (
+//                   <p className="yt-ai-loading">{getAIInsightsMessage()}</p>
+//                 )}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Video Title */}
+//           <h1 className="yt-title">{video.title}</h1>
+
+//           {/* Video Info Bar */}
+//           <div className="yt-info-bar">
+//             <div className="yt-stats">
+//               <span>{formatViews(video.views)}</span>
+//               <span className="yt-dot">•</span>
+//               <span>{getTimeAgo(video.createdAt)}</span>
+//             </div>
+
+//             <div className="yt-actions">
+//               {/* Like/Dislike */}
+//               <div className="yt-like-section">
+//                 <button 
+//                   className={`yt-action-btn ${userLiked ? 'active' : ''}`}
+//                   onClick={likeVideo}
+//                 >
+//                   <FiThumbsUp size={20} />
+//                   <span>{formatNumber(likes)}</span>
+//                 </button>
+//                 <div className="yt-divider" />
+//                 <button 
+//                   className={`yt-action-btn ${userDisliked ? 'active' : ''}`}
+//                   onClick={dislikeVideo}
+//                 >
+//                   <FiThumbsDown size={20} />
+//                 </button>
+//               </div>
+
+//               {/* Share */}
+//               <button className="yt-action-btn">
+//                 <FiShare2 size={20} />
+//                 <span>Share</span>
+//               </button>
+
+//               {/* More */}
+//               <button className="yt-action-btn-icon">
+//                 <FiMoreHorizontal size={24} />
+//               </button>
+//             </div>
+//           </div>
+
+//           {/* Channel Info + Subscribe */}
+//           <div className="yt-channel-bar">
+//             {channel && (
+//               <>
+//                 <div 
+//                   className="yt-channel-info"
+//                   onClick={() => navigate(`/profile/${channel._id}`)}
+//                 >
+//                   <div className="yt-channel-avatar">
+//                     {channel.name?.charAt(0).toUpperCase()}
+//                   </div>
+//                   <div className="yt-channel-text">
+//                     <div className="yt-channel-name">{channel.name}</div>
+//                     <div className="yt-channel-subs">
+//                       {formatNumber(channel.subscribers?.length || 0)} subscribers
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 <button 
+//                   className={subscribed ? "yt-subscribed-btn" : "yt-subscribe-btn"}
+//                   onClick={toggleSubscribe}
+//                 >
+//                   {subscribed ? (
+//                     <>
+//                       <FiBell size={20} />
+//                       <span>Subscribed</span>
+//                     </>
+//                   ) : (
+//                     <span>Subscribe</span>
+//                   )}
+//                 </button>
+//               </>
+//             )}
+//           </div>
+
+//           {/* Description */}
+//           <div className="yt-description">
+//             <div className="yt-description-header">
+//               <div className="yt-desc-meta">
+//                 {formatViews(video.views)} • {getTimeAgo(video.createdAt)}
+//               </div>
+//             </div>
+//             <div className={`yt-description-text ${showDescription ? 'expanded' : ''}`}>
+//               {video.description}
+//             </div>
+//             {video.description && video.description.length > 200 && (
+//               <button 
+//                 className="yt-show-more"
+//                 onClick={() => setShowDescription(!showDescription)}
+//               >
+//                 {showDescription ? 'Show less' : 'Show more'}
+//               </button>
+//             )}
+//           </div>
+
+//           {/* Comments Section */}
+//           <div className="yt-comments">
+//             <div className="yt-comments-header">
+//               <h2>{video.comments?.length || 0} Comments</h2>
+//             </div>
+
+//             {/* Add Comment */}
+//             {user && (
+//               <div className="yt-add-comment">
+//                 <div className="yt-comment-avatar">
+//                   {user.name?.charAt(0).toUpperCase() || 'U'}
+//                 </div>
+//                 <div className="yt-comment-input-wrapper">
+//                   <input
+//                     type="text"
+//                     placeholder="Add a comment..."
+//                     value={comment}
+//                     onChange={(e) => setComment(e.target.value)}
+//                     onKeyPress={(e) => e.key === 'Enter' && postComment()}
+//                     className="yt-comment-input"
+//                   />
+//                   {comment.trim() && (
+//                     <div className="yt-comment-actions">
+//                       <button onClick={() => setComment("")} className="yt-cancel">
+//                         Cancel
+//                       </button>
+//                       <button onClick={postComment} className="yt-post">
+//                         Comment
+//                       </button>
+//                     </div>
+//                   )}
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Comments List */}
+//             <div className="yt-comments-list">
+//               {video.comments?.map((c) => (
+//                 <div key={c._id} className="yt-comment">
+//                   <div className="yt-comment-avatar">
+//                     {c.user?.name?.charAt(0).toUpperCase() || c.user?.charAt(0).toUpperCase() || 'U'}
+//                   </div>
+//                   <div className="yt-comment-content">
+//                     <div className="yt-comment-header">
+//                       <span className="yt-comment-author">
+//                         {c.user?.name || c.user || 'Anonymous'}
+//                       </span>
+//                       <span className="yt-comment-time">
+//                         {getTimeAgo(c.createdAt)}
+//                       </span>
+//                     </div>
+//                     <p className="yt-comment-text">{c.text}</p>
+//                     <div className="yt-comment-toolbar">
+//                       <button className="yt-comment-btn">
+//                         <FiThumbsUp size={16} />
+//                       </button>
+//                       <button className="yt-comment-btn">
+//                         <FiThumbsDown size={16} />
+//                       </button>
+//                       <button className="yt-comment-btn">Reply</button>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* RIGHT: Recommended Videos */}
+//         <div className="yt-secondary">
+//           {recommended.map((v) => (
+//             <div
+//               key={v._id}
+//               className="yt-recommend-card"
+//               onClick={() => navigate(`/watch/${v.filename}`)}
+//             >
+//               <div className="yt-recommend-thumb">
+//                 <img
+//                   src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                   alt={v.title}
+//                   onError={(e) => {
+//                     e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="168" height="94"><rect fill="%23282828" width="168" height="94"/></svg>';
+//                   }}
+//                 />
+//                 <div className="yt-recommend-duration">
+//                   {v.duration || '10:23'}
+//                 </div>
+//               </div>
+//               <div className="yt-recommend-info">
+//                 <h4 className="yt-recommend-title">{v.title}</h4>
+//                 <p className="yt-recommend-channel">{v.uploadedBy?.name}</p>
+//                 <div className="yt-recommend-meta">
+//                   <span>{formatViews(v.views)}</span>
+//                   <span>•</span>
+//                   <span>{getTimeAgo(v.createdAt)}</span>
+//                 </div>
+//               </div>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+
+//       <style jsx>{`
+//         .yt-watch-page {
+//           min-height: 100vh;
+//           background: #0f0f0f;
+//           color: #f1f1f1;
+//           padding-top: 56px;
+//         }
+
+//         .yt-watch-container {
+//           max-width: ${isTheaterMode ? '100%' : '1754px'};
+//           margin: 0 auto;
+//           padding: 24px;
+//           display: grid;
+//           grid-template-columns: ${isTheaterMode ? '1fr' : '1fr 402px'};
+//           gap: 24px;
+//         }
+
+//         /* PRIMARY COLUMN */
+//         .yt-primary {
+//           min-width: 0;
+//         }
+
+//         .yt-player {
+//           position: relative;
+//           width: 100%;
+//           aspect-ratio: 16/9;
+//           background: #000;
+//           border-radius: 12px;
+//           overflow: hidden;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-video {
+//           width: 100%;
+//           height: 100%;
+//           display: block;
+//         }
+
+//         /* Controls Overlay */
+//         .yt-controls-overlay {
+//           position: absolute;
+//           top: 12px;
+//           right: 12px;
+//           display: flex;
+//           gap: 8px;
+//           z-index: 10;
+//         }
+
+//         .yt-control-btn {
+//           display: flex;
+//           align-items: center;
+//           gap: 4px;
+//           padding: 8px 12px;
+//           background: rgba(0, 0, 0, 0.7);
+//           backdrop-filter: blur(10px);
+//           border: none;
+//           border-radius: 8px;
+//           color: #fff;
+//           font-size: 12px;
+//           font-weight: 600;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-control-btn:hover {
+//           background: rgba(0, 0, 0, 0.85);
+//         }
+
+//         .yt-control-btn.active {
+//           background: rgba(255, 0, 0, 0.8);
+//         }
+
+//         .yt-control-btn:disabled {
+//           opacity: 0.5;
+//           cursor: not-allowed;
+//         }
+
+//         .yt-control-menu-wrapper {
+//           position: relative;
+//         }
+
+//         .yt-control-menu {
+//           position: absolute;
+//           top: calc(100% + 8px);
+//           right: 0;
+//           background: rgba(28, 28, 28, 0.98);
+//           backdrop-filter: blur(20px);
+//           border: 1px solid #3f3f3f;
+//           border-radius: 8px;
+//           padding: 8px;
+//           min-width: 140px;
+//           z-index: 100;
+//         }
+
+//         .yt-menu-item {
+//           display: flex;
+//           justify-content: space-between;
+//           align-items: center;
+//           padding: 10px 12px;
+//           border-radius: 6px;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-menu-item:hover {
+//           background: #3f3f3f;
+//         }
+
+//         .yt-menu-item.active {
+//           background: rgba(62, 166, 255, 0.2);
+//           color: #3ea6ff;
+//         }
+
+//         /* Voice Feedback */
+//         .yt-voice-feedback {
+//           position: absolute;
+//           top: 50%;
+//           left: 50%;
+//           transform: translate(-50%, -50%);
+//           background: rgba(0, 0, 0, 0.9);
+//           backdrop-filter: blur(20px);
+//           padding: 16px 32px;
+//           border-radius: 12px;
+//           display: flex;
+//           align-items: center;
+//           gap: 12px;
+//           color: #fff;
+//           font-size: 16px;
+//           font-weight: 600;
+//           z-index: 100;
+//           border: 1px solid rgba(255, 255, 255, 0.2);
+//         }
+
+//         /* Voice Help Card */
+//         .yt-voice-help {
+//           background: rgba(255, 0, 0, 0.1);
+//           border: 1px solid rgba(255, 0, 0, 0.3);
+//           border-radius: 12px;
+//           padding: 16px;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-voice-help-header {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//           font-size: 14px;
+//           font-weight: 600;
+//           margin-bottom: 8px;
+//           color: #f1f1f1;
+//         }
+
+//         .yt-voice-commands {
+//           font-size: 13px;
+//           color: #aaa;
+//           line-height: 1.5;
+//         }
+
+//         /* AI Card */
+//         .yt-ai-card {
+//           background: rgba(62, 166, 255, 0.1);
+//           border: 1px solid rgba(62, 166, 255, 0.3);
+//           border-radius: 12px;
+//           padding: 16px;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-ai-header {
+//           display: flex;
+//           justify-content: space-between;
+//           align-items: center;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-ai-title {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//           font-size: 14px;
+//           font-weight: 600;
+//           color: #3ea6ff;
+//         }
+
+//         .yt-ai-badge {
+//           padding: 4px 12px;
+//           background: rgba(62, 166, 255, 0.2);
+//           border-radius: 12px;
+//           font-size: 11px;
+//           color: #3ea6ff;
+//         }
+
+//         .yt-ai-close {
+//           width: 28px;
+//           height: 28px;
+//           background: rgba(255, 255, 255, 0.1);
+//           border: none;
+//           border-radius: 50%;
+//           color: #f1f1f1;
+//           font-size: 20px;
+//           cursor: pointer;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//         }
+
+//         .yt-ai-close:hover {
+//           background: rgba(255, 255, 255, 0.2);
+//         }
+
+//         .yt-ai-content {
+//           font-size: 14px;
+//           line-height: 1.6;
+//           color: #f1f1f1;
+//         }
+
+//         .yt-ai-loading {
+//           color: #aaa;
+//           font-style: italic;
+//         }
+
+//         @keyframes pulse {
+//           0%, 100% { opacity: 1; }
+//           50% { opacity: 0.5; }
+//         }
+
+//         .yt-title {
+//           font-size: 20px;
+//           font-weight: 600;
+//           line-height: 1.4;
+//           margin: 0 0 12px 0;
+//           color: #f1f1f1;
+//         }
+
+//         .yt-info-bar {
+//           display: flex;
+//           justify-content: space-between;
+//           align-items: center;
+//           padding: 12px 0;
+//           border-bottom: 1px solid #3f3f3f;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-stats {
+//           display: flex;
+//           align-items: center;
+//           gap: 6px;
+//           font-size: 14px;
+//           color: #aaa;
+//         }
+
+//         .yt-dot {
+//           font-size: 10px;
+//         }
+
+//         .yt-actions {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//         }
+
+//         .yt-like-section {
+//           display: flex;
+//           align-items: center;
+//           background: #272727;
+//           border-radius: 18px;
+//           overflow: hidden;
+//         }
+
+//         .yt-action-btn {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//           padding: 10px 16px;
+//           background: transparent;
+//           border: none;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-action-btn:hover {
+//           background: #3f3f3f;
+//         }
+
+//         .yt-action-btn.active {
+//           color: #3ea6ff;
+//         }
+
+//         .yt-action-btn svg {
+//           stroke: currentColor;
+//         }
+
+//         .yt-divider {
+//           width: 1px;
+//           height: 24px;
+//           background: #3f3f3f;
+//         }
+
+//         .yt-action-btn-icon {
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           width: 40px;
+//           height: 40px;
+//           background: #272727;
+//           border: none;
+//           border-radius: 50%;
+//           color: #f1f1f1;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-action-btn-icon:hover {
+//           background: #3f3f3f;
+//         }
+
+//         .yt-channel-bar {
+//           display: flex;
+//           justify-content: space-between;
+//           align-items: center;
+//           padding: 12px 0;
+//           margin-bottom: 12px;
+//         }
+
+//         .yt-channel-info {
+//           display: flex;
+//           align-items: center;
+//           gap: 12px;
+//           cursor: pointer;
+//         }
+
+//         .yt-channel-avatar {
+//           width: 40px;
+//           height: 40px;
+//           border-radius: 50%;
+//           background: #f00;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           font-weight: 600;
+//           font-size: 18px;
+//           color: #fff;
+//         }
+
+//         .yt-channel-text {
+//           display: flex;
+//           flex-direction: column;
+//         }
+
+//         .yt-channel-name {
+//           font-size: 16px;
+//           font-weight: 500;
+//           color: #f1f1f1;
+//         }
+
+//         .yt-channel-subs {
+//           font-size: 12px;
+//           color: #aaa;
+//         }
+
+//         .yt-subscribe-btn {
+//           padding: 10px 16px;
+//           background: #f00;
+//           border: none;
+//           border-radius: 18px;
+//           color: #fff;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-subscribe-btn:hover {
+//           background: #cc0000;
+//         }
+
+//         .yt-subscribed-btn {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//           padding: 10px 16px;
+//           background: #272727;
+//           border: none;
+//           border-radius: 18px;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-subscribed-btn:hover {
+//           background: #3f3f3f;
+//         }
+
+//         .yt-description {
+//           background: #272727;
+//           border-radius: 12px;
+//           padding: 12px;
+//           margin-bottom: 24px;
+//         }
+
+//         .yt-desc-meta {
+//           font-size: 14px;
+//           font-weight: 500;
+//           color: #f1f1f1;
+//           margin-bottom: 8px;
+//         }
+
+//         .yt-description-text {
+//           font-size: 14px;
+//           line-height: 1.6;
+//           color: #f1f1f1;
+//           white-space: pre-wrap;
+//           max-height: 80px;
+//           overflow: hidden;
+//         }
+
+//         .yt-description-text.expanded {
+//           max-height: none;
+//         }
+
+//         .yt-show-more {
+//           margin-top: 8px;
+//           background: none;
+//           border: none;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//         }
+
+//         .yt-comments {
+//           margin-top: 24px;
+//         }
+
+//         .yt-comments-header h2 {
+//           font-size: 20px;
+//           font-weight: 600;
+//           margin: 0 0 32px 0;
+//         }
+
+//         .yt-add-comment {
+//           display: flex;
+//           gap: 16px;
+//           margin-bottom: 32px;
+//         }
+
+//         .yt-comment-avatar {
+//           width: 40px;
+//           height: 40px;
+//           border-radius: 50%;
+//           background: #f00;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           font-weight: 600;
+//           font-size: 16px;
+//           color: #fff;
+//           flex-shrink: 0;
+//         }
+
+//         .yt-comment-input-wrapper {
+//           flex: 1;
+//         }
+
+//         .yt-comment-input {
+//           width: 100%;
+//           background: transparent;
+//           border: none;
+//           border-bottom: 1px solid #3f3f3f;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           padding: 8px 0;
+//           outline: none;
+//         }
+
+//         .yt-comment-input:focus {
+//           border-bottom-color: #f1f1f1;
+//         }
+
+//         .yt-comment-actions {
+//           display: flex;
+//           justify-content: flex-end;
+//           gap: 8px;
+//           margin-top: 12px;
+//         }
+
+//         .yt-cancel {
+//           padding: 10px 16px;
+//           background: transparent;
+//           border: none;
+//           border-radius: 18px;
+//           color: #f1f1f1;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//         }
+
+//         .yt-cancel:hover {
+//           background: #3f3f3f;
+//         }
+
+//         .yt-post {
+//           padding: 10px 16px;
+//           background: #3ea6ff;
+//           border: none;
+//           border-radius: 18px;
+//           color: #0f0f0f;
+//           font-size: 14px;
+//           font-weight: 500;
+//           cursor: pointer;
+//         }
+
+//         .yt-post:hover {
+//           background: #65b8ff;
+//         }
+
+//         .yt-comments-list {
+//           display: flex;
+//           flex-direction: column;
+//           gap: 24px;
+//         }
+
+//         .yt-comment {
+//           display: flex;
+//           gap: 16px;
+//         }
+
+//         .yt-comment-content {
+//           flex: 1;
+//         }
+
+//         .yt-comment-header {
+//           display: flex;
+//           align-items: center;
+//           gap: 8px;
+//           margin-bottom: 4px;
+//         }
+
+//         .yt-comment-author {
+//           font-size: 13px;
+//           font-weight: 500;
+//           color: #f1f1f1;
+//         }
+
+//         .yt-comment-time {
+//           font-size: 12px;
+//           color: #aaa;
+//         }
+
+//         .yt-comment-text {
+//           font-size: 14px;
+//           line-height: 1.6;
+//           color: #f1f1f1;
+//           margin: 0 0 8px 0;
+//         }
+
+//         .yt-comment-toolbar {
+//           display: flex;
+//           align-items: center;
+//           gap: 16px;
+//         }
+
+//         .yt-comment-btn {
+//           display: flex;
+//           align-items: center;
+//           gap: 6px;
+//           background: transparent;
+//           border: none;
+//           color: #aaa;
+//           font-size: 12px;
+//           font-weight: 500;
+//           cursor: pointer;
+//           padding: 4px 8px;
+//           border-radius: 12px;
+//         }
+
+//         .yt-comment-btn:hover {
+//           background: #3f3f3f;
+//         }
+
+//         /* SECONDARY COLUMN */
+//         .yt-secondary {
+//           display: flex;
+//           flex-direction: column;
+//           gap: 8px;
+//         }
+
+//         .yt-recommend-card {
+//           display: flex;
+//           gap: 8px;
+//           cursor: pointer;
+//           padding: 8px;
+//           border-radius: 8px;
+//           transition: background 0.15s;
+//         }
+
+//         .yt-recommend-card:hover {
+//           background: #272727;
+//         }
+
+//         .yt-recommend-thumb {
+//           position: relative;
+//           width: 168px;
+//           height: 94px;
+//           flex-shrink: 0;
+//           border-radius: 8px;
+//           overflow: hidden;
+//           background: #181818;
+//         }
+
+//         .yt-recommend-thumb img {
+//           width: 100%;
+//           height: 100%;
+//           object-fit: cover;
+//         }
+
+//         .yt-recommend-duration {
+//           position: absolute;
+//           bottom: 4px;
+//           right: 4px;
+//           background: rgba(0, 0, 0, 0.8);
+//           color: #fff;
+//           font-size: 12px;
+//           font-weight: 500;
+//           padding: 2px 4px;
+//           border-radius: 2px;
+//         }
+
+//         .yt-recommend-info {
+//           flex: 1;
+//           min-width: 0;
+//         }
+
+//         .yt-recommend-title {
+//           font-size: 14px;
+//           font-weight: 500;
+//           line-height: 1.4;
+//           color: #f1f1f1;
+//           margin: 0 0 4px 0;
+//           display: -webkit-box;
+//           -webkit-line-clamp: 2;
+//           -webkit-box-orient: vertical;
+//           overflow: hidden;
+//         }
+
+//         .yt-recommend-channel {
+//           font-size: 12px;
+//           color: #aaa;
+//           margin: 0 0 2px 0;
+//         }
+
+//         .yt-recommend-meta {
+//           display: flex;
+//           align-items: center;
+//           gap: 4px;
+//           font-size: 12px;
+//           color: #aaa;
+//         }
+
+//         /* RESPONSIVE */
+//         @media (max-width: 1024px) {
+//           .yt-watch-container {
+//             grid-template-columns: 1fr;
+//           }
+
+//           .yt-secondary {
+//             display: grid;
+//             grid-template-columns: 1fr 1fr;
+//           }
+//         }
+
+//         @media (max-width: 768px) {
+//           .yt-watch-container {
+//             padding: 0;
+//             gap: 0;
+//           }
+
+//           .yt-player {
+//             border-radius: 0;
+//             margin-bottom: 0;
+//           }
+
+//           .yt-primary {
+//             padding: 0 12px;
+//           }
+
+//           .yt-secondary {
+//             grid-template-columns: 1fr;
+//             padding: 0 12px;
+//           }
+
+//           .yt-info-bar {
+//             flex-direction: column;
+//             align-items: flex-start;
+//             gap: 12px;
+//           }
+
+//           .yt-actions {
+//             width: 100%;
+//             overflow-x: auto;
+//           }
+//         }
+//       `}</style>
+//     </div>
+//   );
+// }

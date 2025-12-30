@@ -152,9 +152,621 @@
 // });
 
 // module.exports = router;
+// const express = require("express");
+// const router = express.Router();
+// const auth = require("../middleware/auth");
+// const CreatorEarnings = require("../models/Creatorearnings");
+// const AdRevenue = require("../models/Adrevenue");
+// const User = require("../models/User");
+// const Video = require("../models/Video");
+// const razorpay = require("../services/razorpay");
+// const axios = require("axios"); 
+
+// /* =========================
+//    📊 ELIGIBILITY THRESHOLDS
+// ========================= */
+// const ELIGIBILITY = {
+//   SUBSCRIBERS: 1,
+//   WATCH_HOURS: 0,
+//   VIDEOS_PUBLISHED: 1,
+//   ACCOUNT_AGE_DAYS: 0,
+// };
+
+// const REVENUE_SHARE = {
+//   CREATOR: 0.55, // 55% to creator
+//   PLATFORM: 0.45  // 45% to platform
+// };
+
+// /* =========================
+//    ✅ APPLY FOR MONETIZATION
+// ========================= */
+// router.post("/apply", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+    
+//     // Check if already applied
+//     let earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (earnings && earnings.isMonetized) {
+//       return res.status(400).json({ message: "Already monetized" });
+//     }
+    
+//     if (earnings && earnings.monetizationStatus === "pending") {
+//       return res.status(400).json({ message: "Application already pending" });
+//     }
+    
+//     // Get creator stats
+//     const user = await User.findById(userId);
+//     const videos = await Video.find({ uploadedBy: userId });
+    
+//     // Calculate account age
+//     const accountAgeDays = Math.floor(
+//       (Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)
+//     );
+    
+//     // Calculate total watch hours from all videos
+//     const totalWatchMinutes = user.totalWatchMinutes || 0;
+//     const totalWatchHours = Math.floor(totalWatchMinutes / 60);
+    
+//     // Calculate stats
+//     const stats = {
+//       totalSubscribers: user.subscribers?.length || 0,
+//       totalWatchHours: totalWatchHours,
+//       totalVideos: videos.length,
+//       accountAgeDays: accountAgeDays
+//     };
+    
+//     // Check eligibility
+//     const eligibility = {
+//       subscribers: stats.totalSubscribers >= ELIGIBILITY.SUBSCRIBERS,
+//       watchHours: stats.totalWatchHours >= ELIGIBILITY.WATCH_HOURS,
+//       videosPublished: stats.totalVideos >= ELIGIBILITY.VIDEOS_PUBLISHED,
+//       accountAge: stats.accountAgeDays >= ELIGIBILITY.ACCOUNT_AGE_DAYS
+//     };
+    
+//     // Auto-approve if all criteria met
+//     const allEligible = Object.values(eligibility).every(v => v);
+//     const status = allEligible ? "approved" : "pending";
+    
+//     // Create or update earnings record
+//     if (!earnings) {
+//       earnings = new CreatorEarnings({
+//         creator: userId,
+//         currentStats: stats,
+//         eligibilityMet: eligibility,
+//         monetizationStatus: status,
+//         isMonetized: allEligible,
+//         appliedAt: new Date(),
+//         approvedAt: allEligible ? new Date() : null
+//       });
+//     } else {
+//       earnings.currentStats = stats;
+//       earnings.eligibilityMet = eligibility;
+//       earnings.monetizationStatus = status;
+//       earnings.isMonetized = allEligible;
+//       earnings.appliedAt = new Date();
+//       earnings.approvedAt = allEligible ? new Date() : null;
+//     }
+    
+//     await earnings.save();
+    
+//     // Update user
+//     await User.findByIdAndUpdate(userId, {
+//       isMonetized: allEligible,
+//       monetizationAppliedAt: new Date(),
+//       creatorEarnings: earnings._id
+//     });
+    
+//     res.json({
+//       message: allEligible 
+//         ? "✅ Congratulations! You're now monetized!" 
+//         : "📝 Application submitted. You'll be reviewed soon.",
+//       earnings,
+//       status,
+//       eligibilityMet: allEligible
+//     });
+    
+//   } catch (err) {
+//     console.error("Monetization application error:", err);
+//     res.status(500).json({ message: "Application failed", error: err.message });
+//   }
+// });
+
+
+
+// /* =========================
+//    🧑‍💼 ADMIN → ALL PAYOUT REQUESTS
+// ========================= */
+// router.get("/admin/payout-requests", auth, async (req, res) => {
+//   try {
+//     // ⚠️ later admin middleware add kar dena
+//     const creators = await CreatorEarnings.find({
+//       "paymentHistory.status": "pending"
+//     })
+//     .populate("creator", "name email username")
+//     .sort({ updatedAt: -1 });
+
+//     res.json(creators);
+//   } catch (err) {
+//     res.status(500).json({ message: "Failed to fetch payout requests" });
+//   }
+// });
+
+
+// /* =========================
+//    📊 GET MONETIZATION STATUS
+// ========================= */
+// router.get("/status", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+    
+//     let earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (!earnings) {
+//       // Calculate current stats for display
+//       const user = await User.findById(userId);
+//       const videos = await Video.find({ uploadedBy: userId });
+      
+//       const accountAgeDays = Math.floor(
+//         (Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)
+//       );
+      
+//       const totalWatchMinutes = user.totalWatchMinutes || 0;
+//       const totalWatchHours = Math.floor(totalWatchMinutes / 60);
+      
+//       return res.json({
+//         applied: false,
+//         currentStats: {
+//           totalSubscribers: user.subscribers?.length || 0,
+//           totalWatchHours: totalWatchHours,
+//           totalVideos: videos.length,
+//           accountAgeDays: accountAgeDays
+//         },
+//         requiredThresholds: ELIGIBILITY
+//       });
+//     }
+    
+//     res.json({
+//       applied: true,
+//       earnings,
+//       eligibleForPayout: earnings.eligibleForPayout
+//     });
+    
+//   } catch (err) {
+//     console.error("Status fetch error:", err);
+//     res.status(500).json({ message: "Failed to fetch status" });
+//   }
+// });
+
+// /* =========================
+//    💰 GET EARNINGS DASHBOARD
+// ========================= */
+// router.get("/dashboard", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+    
+//     const earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (!earnings || !earnings.isMonetized) {
+//       return res.status(403).json({ message: "Not monetized" });
+//     }
+    
+//     // Get recent ad revenue records
+//     const recentRevenue = await AdRevenue.find({ creator: userId })
+//       .sort({ timestamp: -1 })
+//       .limit(100)
+//       .populate("video", "title")
+//       .populate("ad", "title");
+    
+//     // Calculate this month's earnings
+//     const now = new Date();
+//     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+//     const thisMonthRevenue = await AdRevenue.aggregate([
+//       {
+//         $match: {
+//           creator: userId,
+//           timestamp: { $gte: monthStart }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalRevenue: { $sum: "$revenueShare.creatorShare" },
+//           totalViews: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
+//           },
+//           totalClicks: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
+//           }
+//         }
+//       }
+//     ]);
+    
+//     // Get top earning videos
+//     const topVideos = await AdRevenue.aggregate([
+//       {
+//         $match: {
+//           creator: userId
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: "$video",
+//           totalRevenue: { $sum: "$revenueShare.creatorShare" },
+//           adViews: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
+//           },
+//           adClicks: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
+//           }
+//         }
+//       },
+//       {
+//         $sort: { totalRevenue: -1 }
+//       },
+//       {
+//         $limit: 10
+//       }
+//     ]);
+    
+//     // Populate video details
+//     const populatedTopVideos = await Video.populate(topVideos, {
+//       path: "_id",
+//       select: "title thumbnail views"
+//     });
+    
+//     // Revenue by date (last 30 days)
+//     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    
+//     const revenueByDate = await AdRevenue.aggregate([
+//       {
+//         $match: {
+//           creator: userId,
+//           timestamp: { $gte: thirtyDaysAgo }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: {
+//             $dateToString: { format: "%Y-%m-%d", date: "$timestamp" }
+//           },
+//           revenue: { $sum: "$revenueShare.creatorShare" },
+//           views: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
+//           },
+//           clicks: {
+//             $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
+//           }
+//         }
+//       },
+//       {
+//         $sort: { _id: 1 }
+//       }
+//     ]);
+    
+//     res.json({
+//       earnings,
+//       thisMonth: thisMonthRevenue[0] || {
+//         totalRevenue: 0,
+//         totalViews: 0,
+//         totalClicks: 0
+//       },
+//       topVideos: populatedTopVideos,
+//       recentRevenue: recentRevenue.slice(0, 20),
+//       chartData: revenueByDate
+//     });
+    
+//   } catch (err) {
+//     console.error("Dashboard error:", err);
+//     res.status(500).json({ message: "Failed to fetch dashboard" });
+//   }
+// });
+
+// /* =========================
+//    🏦 UPDATE PAYMENT INFO
+// ========================= */
+// router.post("/payment-info", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const { accountHolderName, bankName, accountNumber, ifscCode, upiId, panNumber } = req.body;
+    
+//     const earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (!earnings || !earnings.isMonetized) {
+//       return res.status(403).json({ message: "Not monetized" });
+//     }
+    
+//     // Validate required fields for India
+//     if (!panNumber || panNumber.length !== 10) {
+//       return res.status(400).json({ message: "Valid PAN number required" });
+//     }
+    
+//     earnings.paymentInfo = {
+//       accountHolderName,
+//       bankName,
+//       accountNumber,
+//       ifscCode,
+//       upiId,
+//       panNumber,
+//       verified: true // Admin will verify
+//     };
+    
+//     await earnings.save();
+    
+//     res.json({
+//       message: "✅ Payment information saved",
+//       paymentInfo: earnings.paymentInfo
+//     });
+    
+//   } catch (err) {
+//     console.error("Payment info error:", err);
+//     res.status(500).json({ message: "Failed to save payment info" });
+//   }
+// });
+
+// /* =========================
+//    💸 REQUEST PAYOUT
+// ========================= */
+// router.post("/request-payout", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+    
+//     const earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (!earnings || !earnings.isMonetized) {
+//       return res.status(403).json({ message: "Not monetized" });
+//     }
+    
+//     // Check minimum threshold
+//     if (earnings.earnings.pendingBalance < earnings.minPayoutThreshold) {
+//       return res.status(400).json({
+//         message: `Minimum payout is ₹${earnings.minPayoutThreshold}. Current balance: ₹${earnings.earnings.pendingBalance.toFixed(2)}`
+//       });
+//     }
+    
+//     // Check payment info
+//     if (!earnings.paymentInfo.verified) {
+//       return res.status(400).json({
+//         message: "Please add and verify payment information first"
+//       });
+//     }
+    
+//     // Create payout request
+//     const currentMonth = new Date().toISOString().slice(0, 7); // "2025-01"
+    
+//     earnings.paymentHistory.push({
+//       amount: earnings.earnings.pendingBalance,
+//       month: currentMonth,
+//       status: "pending"
+//     });
+    
+//     await earnings.save();
+    
+//     res.json({
+//       message: "✅ Payout requested successfully",
+//       amount: earnings.earnings.pendingBalance,
+//       note: "Payment will be processed within 7-10 business days"
+//     });
+    
+//   } catch (err) {
+//     console.error("Payout request error:", err);
+//     res.status(500).json({ message: "Failed to request payout" });
+//   }
+// });
+
+// /* =========================
+//    📜 GET PAYMENT HISTORY
+// ========================= */
+// router.get("/payment-history", auth, async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+    
+//     const earnings = await CreatorEarnings.findOne({ creator: userId });
+    
+//     if (!earnings) {
+//       return res.json({ paymentHistory: [] });
+//     }
+    
+//     res.json({
+//       paymentHistory: earnings.paymentHistory.sort((a, b) => 
+//         new Date(b.paidAt || b.createdAt) - new Date(a.paidAt || a.createdAt)
+//       )
+//     });
+    
+//   } catch (err) {
+//     console.error("Payment history error:", err);
+//     res.status(500).json({ message: "Failed to fetch payment history" });
+//   }
+// });
+
+// /* =========================
+//    📊 ADMIN: GET ALL CREATORS
+// ========================= */
+// router.get("/admin/creators", auth, async (req, res) => {
+//   try {
+//     // TODO: Add admin check middleware
+    
+//     const creators = await CreatorEarnings.find()
+//       .populate("creator", "name email username")
+//       .sort({ "earnings.totalEarnings": -1 });
+    
+//     res.json(creators);
+    
+//   } catch (err) {
+//     console.error("Admin creators error:", err);
+//     res.status(500).json({ message: "Failed to fetch creators" });
+//   }
+// });
+
+// /* =========================
+//    ✅ ADMIN: APPROVE/REJECT
+// ========================= */
+// router.post("/admin/review/:id", auth, async (req, res) => {
+//   try {
+//     // TODO: Add admin check middleware
+    
+//     const { status } = req.body; // "approved" or "rejected"
+    
+//     const earnings = await CreatorEarnings.findById(req.params.id);
+    
+//     if (!earnings) {
+//       return res.status(404).json({ message: "Creator not found" });
+//     }
+    
+//     earnings.monetizationStatus = status;
+//     earnings.isMonetized = status === "approved";
+    
+//     if (status === "approved") {
+//       earnings.approvedAt = new Date();
+//       await User.findByIdAndUpdate(earnings.creator, { isMonetized: true });
+//     } else {
+//       earnings.rejectedAt = new Date();
+//       await User.findByIdAndUpdate(earnings.creator, { isMonetized: false });
+//     }
+    
+//     await earnings.save();
+    
+//     res.json({
+//       message: `Creator ${status}`,
+//       earnings
+//     });
+    
+//   } catch (err) {
+//     console.error("Review error:", err);
+//     res.status(500).json({ message: "Failed to review application" });
+//   }
+// });
+
+// router.post(
+//   "/admin/process-payout/:earningsId/:paymentId",
+//   auth,
+//   async (req, res) => {
+//     try {
+//       const earnings = await CreatorEarnings.findById(req.params.earningsId);
+//       const payment = earnings.paymentHistory.id(req.params.paymentId);
+
+//       if (!payment) {
+//         return res.status(404).json({ message: "Payment not found" });
+//       }
+
+//       const amountInPaise = Math.round(payment.amount * 100);
+
+//       // ✅ RAZORPAYX PAYOUT (REST API)
+//       const payoutRes = await axios.post(
+//         "https://api.razorpay.com/v1/payouts",
+//         {
+//           account_number: process.env.RAZORPAYX_ACCOUNT_NUMBER,
+//           amount: amountInPaise,
+//           currency: "INR",
+//           mode: earnings.paymentInfo.upiId ? "UPI" : "IMPS",
+//           purpose: "payout",
+//           fund_account: earnings.paymentInfo.upiId
+//             ? {
+//                 account_type: "vpa",
+//                 vpa: {
+//                   address: earnings.paymentInfo.upiId
+//                 }
+//               }
+//             : {
+//                 account_type: "bank_account",
+//                 bank_account: {
+//                   name: earnings.paymentInfo.accountHolderName,
+//                   ifsc: earnings.paymentInfo.ifscCode,
+//                   account_number: earnings.paymentInfo.accountNumber
+//                 }
+//               },
+//           narration: "Creator payout"
+//         },
+//         {
+//           auth: {
+//             username: process.env.RAZORPAY_KEY_ID,
+//             password: process.env.RAZORPAY_KEY_SECRET
+//           }
+//         }
+//       );
+
+//       // ✅ SUCCESS UPDATE
+//       payment.status = "completed";
+//       payment.paidAt = new Date();
+//       payment.transactionId = payoutRes.data.id;
+
+//       earnings.earnings.totalPaidOut += payment.amount;
+//       earnings.earnings.pendingBalance -= payment.amount;
+
+//       await earnings.save();
+
+//       res.json({
+//         message: "✅ Payout sent successfully",
+//         payoutId: payoutRes.data.id
+//       });
+
+//     } catch (err) {
+//       console.error("Payout error:", err.response?.data || err.message);
+//       res.status(500).json({
+//         message: "Payout failed",
+//         error: err.response?.data || err.message
+//       });
+//     }
+//   }
+// );
+
+
+
+// /* =========================
+//    💳 ADMIN: PROCESS PAYOUT
+// ========================= */
+// // router.post("/admin/process-payout/:earningsId/:paymentId", auth, async (req, res) => {
+// //   try {
+// //     // TODO: Add admin check middleware
+    
+// //     const { transactionId } = req.body;
+    
+// //     const earnings = await CreatorEarnings.findById(req.params.earningsId);
+    
+// //     if (!earnings) {
+// //       return res.status(404).json({ message: "Creator not found" });
+// //     }
+    
+// //     const payment = earnings.paymentHistory.id(req.params.paymentId);
+    
+// //     if (!payment) {
+// //       return res.status(404).json({ message: "Payment not found" });
+// //     }
+    
+// //     // Update payment status
+// //     payment.status = "completed";
+// //     payment.paidAt = new Date();
+// //     payment.transactionId = transactionId;
+    
+// //     // Update earnings
+// //     earnings.earnings.totalPaidOut += payment.amount;
+// //     earnings.earnings.pendingBalance -= payment.amount;
+    
+// //     await earnings.save();
+    
+// //     res.json({
+// //       message: "✅ Payout processed",
+// //       payment
+// //     });
+    
+// //   } catch (err) {
+// //     console.error("Process payout error:", err);
+// //     res.status(500).json({ message: "Failed to process payout" });
+// //   }
+// // });
+
+
+
+
+
+
+// module.exports = router;
+
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
+
 const CreatorEarnings = require("../models/Creatorearnings");
 const AdRevenue = require("../models/Adrevenue");
 const User = require("../models/User");
@@ -170,63 +782,50 @@ const ELIGIBILITY = {
   ACCOUNT_AGE_DAYS: 0,
 };
 
-const REVENUE_SHARE = {
-  CREATOR: 0.55, // 55% to creator
-  PLATFORM: 0.45  // 45% to platform
-};
-
 /* =========================
    ✅ APPLY FOR MONETIZATION
 ========================= */
 router.post("/apply", auth, async (req, res) => {
   try {
     const userId = req.user.id;
-    
-    // Check if already applied
+
     let earnings = await CreatorEarnings.findOne({ creator: userId });
-    
+
     if (earnings && earnings.isMonetized) {
       return res.status(400).json({ message: "Already monetized" });
     }
-    
+
     if (earnings && earnings.monetizationStatus === "pending") {
       return res.status(400).json({ message: "Application already pending" });
     }
-    
-    // Get creator stats
+
     const user = await User.findById(userId);
     const videos = await Video.find({ uploadedBy: userId });
-    
-    // Calculate account age
+
     const accountAgeDays = Math.floor(
       (Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)
     );
-    
-    // Calculate total watch hours from all videos
+
     const totalWatchMinutes = user.totalWatchMinutes || 0;
     const totalWatchHours = Math.floor(totalWatchMinutes / 60);
-    
-    // Calculate stats
+
     const stats = {
       totalSubscribers: user.subscribers?.length || 0,
-      totalWatchHours: totalWatchHours,
+      totalWatchHours,
       totalVideos: videos.length,
-      accountAgeDays: accountAgeDays
+      accountAgeDays,
     };
-    
-    // Check eligibility
+
     const eligibility = {
       subscribers: stats.totalSubscribers >= ELIGIBILITY.SUBSCRIBERS,
       watchHours: stats.totalWatchHours >= ELIGIBILITY.WATCH_HOURS,
       videosPublished: stats.totalVideos >= ELIGIBILITY.VIDEOS_PUBLISHED,
-      accountAge: stats.accountAgeDays >= ELIGIBILITY.ACCOUNT_AGE_DAYS
+      accountAge: stats.accountAgeDays >= ELIGIBILITY.ACCOUNT_AGE_DAYS,
     };
-    
-    // Auto-approve if all criteria met
-    const allEligible = Object.values(eligibility).every(v => v);
+
+    const allEligible = Object.values(eligibility).every(Boolean);
     const status = allEligible ? "approved" : "pending";
-    
-    // Create or update earnings record
+
     if (!earnings) {
       earnings = new CreatorEarnings({
         creator: userId,
@@ -235,7 +834,7 @@ router.post("/apply", auth, async (req, res) => {
         monetizationStatus: status,
         isMonetized: allEligible,
         appliedAt: new Date(),
-        approvedAt: allEligible ? new Date() : null
+        approvedAt: allEligible ? new Date() : null,
       });
     } else {
       earnings.currentStats = stats;
@@ -245,417 +844,148 @@ router.post("/apply", auth, async (req, res) => {
       earnings.appliedAt = new Date();
       earnings.approvedAt = allEligible ? new Date() : null;
     }
-    
+
     await earnings.save();
-    
-    // Update user
+
     await User.findByIdAndUpdate(userId, {
       isMonetized: allEligible,
-      monetizationAppliedAt: new Date(),
-      creatorEarnings: earnings._id
+      creatorEarnings: earnings._id,
     });
-    
+
     res.json({
-      message: allEligible 
-        ? "✅ Congratulations! You're now monetized!" 
-        : "📝 Application submitted. You'll be reviewed soon.",
+      message: allEligible
+        ? "✅ Congratulations! You're now monetized!"
+        : "📝 Application submitted for review",
       earnings,
-      status,
-      eligibilityMet: allEligible
     });
-    
   } catch (err) {
-    console.error("Monetization application error:", err);
-    res.status(500).json({ message: "Application failed", error: err.message });
+    console.error("Apply error:", err);
+    res.status(500).json({ message: "Application failed" });
   }
 });
 
 /* =========================
-   📊 GET MONETIZATION STATUS
+   📊 MONETIZATION STATUS
 ========================= */
 router.get("/status", auth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    let earnings = await CreatorEarnings.findOne({ creator: userId });
-    
-    if (!earnings) {
-      // Calculate current stats for display
-      const user = await User.findById(userId);
-      const videos = await Video.find({ uploadedBy: userId });
-      
-      const accountAgeDays = Math.floor(
-        (Date.now() - new Date(user.createdAt)) / (1000 * 60 * 60 * 24)
-      );
-      
-      const totalWatchMinutes = user.totalWatchMinutes || 0;
-      const totalWatchHours = Math.floor(totalWatchMinutes / 60);
-      
-      return res.json({
-        applied: false,
-        currentStats: {
-          totalSubscribers: user.subscribers?.length || 0,
-          totalWatchHours: totalWatchHours,
-          totalVideos: videos.length,
-          accountAgeDays: accountAgeDays
-        },
-        requiredThresholds: ELIGIBILITY
-      });
-    }
-    
-    res.json({
-      applied: true,
-      earnings,
-      eligibleForPayout: earnings.eligibleForPayout
-    });
-    
-  } catch (err) {
-    console.error("Status fetch error:", err);
-    res.status(500).json({ message: "Failed to fetch status" });
-  }
+  const earnings = await CreatorEarnings.findOne({ creator: req.user.id });
+  if (!earnings) return res.json({ applied: false });
+
+  res.json({
+    applied: true,
+    earnings,
+    eligibleForPayout: earnings.eligibleForPayout,
+  });
 });
 
 /* =========================
-   💰 GET EARNINGS DASHBOARD
+   💰 DASHBOARD
 ========================= */
 router.get("/dashboard", auth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    const earnings = await CreatorEarnings.findOne({ creator: userId });
-    
-    if (!earnings || !earnings.isMonetized) {
-      return res.status(403).json({ message: "Not monetized" });
-    }
-    
-    // Get recent ad revenue records
-    const recentRevenue = await AdRevenue.find({ creator: userId })
-      .sort({ timestamp: -1 })
-      .limit(100)
-      .populate("video", "title")
-      .populate("ad", "title");
-    
-    // Calculate this month's earnings
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    
-    const thisMonthRevenue = await AdRevenue.aggregate([
-      {
-        $match: {
-          creator: userId,
-          timestamp: { $gte: monthStart }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: "$revenueShare.creatorShare" },
-          totalViews: {
-            $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
-          },
-          totalClicks: {
-            $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
-          }
-        }
-      }
-    ]);
-    
-    // Get top earning videos
-    const topVideos = await AdRevenue.aggregate([
-      {
-        $match: {
-          creator: userId
-        }
-      },
-      {
-        $group: {
-          _id: "$video",
-          totalRevenue: { $sum: "$revenueShare.creatorShare" },
-          adViews: {
-            $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
-          },
-          adClicks: {
-            $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
-          }
-        }
-      },
-      {
-        $sort: { totalRevenue: -1 }
-      },
-      {
-        $limit: 10
-      }
-    ]);
-    
-    // Populate video details
-    const populatedTopVideos = await Video.populate(topVideos, {
-      path: "_id",
-      select: "title thumbnail views"
-    });
-    
-    // Revenue by date (last 30 days)
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    
-    const revenueByDate = await AdRevenue.aggregate([
-      {
-        $match: {
-          creator: userId,
-          timestamp: { $gte: thirtyDaysAgo }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$timestamp" }
-          },
-          revenue: { $sum: "$revenueShare.creatorShare" },
-          views: {
-            $sum: { $cond: [{ $eq: ["$eventType", "view"] }, 1, 0] }
-          },
-          clicks: {
-            $sum: { $cond: [{ $eq: ["$eventType", "click"] }, 1, 0] }
-          }
-        }
-      },
-      {
-        $sort: { _id: 1 }
-      }
-    ]);
-    
-    res.json({
-      earnings,
-      thisMonth: thisMonthRevenue[0] || {
-        totalRevenue: 0,
-        totalViews: 0,
-        totalClicks: 0
-      },
-      topVideos: populatedTopVideos,
-      recentRevenue: recentRevenue.slice(0, 20),
-      chartData: revenueByDate
-    });
-    
-  } catch (err) {
-    console.error("Dashboard error:", err);
-    res.status(500).json({ message: "Failed to fetch dashboard" });
+  const earnings = await CreatorEarnings.findOne({ creator: req.user.id });
+  if (!earnings || !earnings.isMonetized) {
+    return res.status(403).json({ message: "Not monetized" });
   }
+
+  res.json({ earnings });
 });
 
 /* =========================
-   🏦 UPDATE PAYMENT INFO
+   🏦 PAYMENT INFO
 ========================= */
 router.post("/payment-info", auth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const { accountHolderName, bankName, accountNumber, ifscCode, upiId, panNumber } = req.body;
-    
-    const earnings = await CreatorEarnings.findOne({ creator: userId });
-    
-    if (!earnings || !earnings.isMonetized) {
-      return res.status(403).json({ message: "Not monetized" });
-    }
-    
-    // Validate required fields for India
-    if (!panNumber || panNumber.length !== 10) {
-      return res.status(400).json({ message: "Valid PAN number required" });
-    }
-    
-    earnings.paymentInfo = {
-      accountHolderName,
-      bankName,
-      accountNumber,
-      ifscCode,
-      upiId,
-      panNumber,
-      verified: true // Admin will verify
-    };
-    
-    await earnings.save();
-    
-    res.json({
-      message: "✅ Payment information saved",
-      paymentInfo: earnings.paymentInfo
-    });
-    
-  } catch (err) {
-    console.error("Payment info error:", err);
-    res.status(500).json({ message: "Failed to save payment info" });
-  }
+  const earnings = await CreatorEarnings.findOne({ creator: req.user.id });
+  if (!earnings) return res.status(404).json({ message: "Not found" });
+
+  earnings.paymentInfo = {
+    ...req.body,
+    verified: true,
+  };
+
+  await earnings.save();
+
+  res.json({ message: "✅ Payment info saved" });
 });
 
 /* =========================
    💸 REQUEST PAYOUT
 ========================= */
 router.post("/request-payout", auth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    const earnings = await CreatorEarnings.findOne({ creator: userId });
-    
-    if (!earnings || !earnings.isMonetized) {
-      return res.status(403).json({ message: "Not monetized" });
-    }
-    
-    // Check minimum threshold
-    if (earnings.earnings.pendingBalance < earnings.minPayoutThreshold) {
-      return res.status(400).json({
-        message: `Minimum payout is ₹${earnings.minPayoutThreshold}. Current balance: ₹${earnings.earnings.pendingBalance.toFixed(2)}`
-      });
-    }
-    
-    // Check payment info
-    if (!earnings.paymentInfo.verified) {
-      return res.status(400).json({
-        message: "Please add and verify payment information first"
-      });
-    }
-    
-    // Create payout request
-    const currentMonth = new Date().toISOString().slice(0, 7); // "2025-01"
-    
-    earnings.paymentHistory.push({
-      amount: earnings.earnings.pendingBalance,
-      month: currentMonth,
-      status: "pending"
-    });
-    
-    await earnings.save();
-    
-    res.json({
-      message: "✅ Payout requested successfully",
-      amount: earnings.earnings.pendingBalance,
-      note: "Payment will be processed within 7-10 business days"
-    });
-    
-  } catch (err) {
-    console.error("Payout request error:", err);
-    res.status(500).json({ message: "Failed to request payout" });
+  const earnings = await CreatorEarnings.findOne({ creator: req.user.id });
+
+  if (!earnings || !earnings.isMonetized) {
+    return res.status(403).json({ message: "Not monetized" });
   }
+
+  if (earnings.earnings.pendingBalance < earnings.minPayoutThreshold) {
+    return res.status(400).json({
+      message: `Minimum payout ₹${earnings.minPayoutThreshold}`,
+    });
+  }
+
+  if (!earnings.paymentInfo?.verified) {
+    return res.status(400).json({
+      message: "Please add and verify payment information first",
+    });
+  }
+
+  earnings.paymentHistory.push({
+    amount: earnings.earnings.pendingBalance,
+    month: new Date().toISOString().slice(0, 7),
+    status: "pending",
+    createdAt: new Date(),
+  });
+
+  await earnings.save();
+
+  res.json({ message: "✅ Payout requested successfully" });
 });
 
 /* =========================
-   📜 GET PAYMENT HISTORY
-========================= */
-router.get("/payment-history", auth, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    const earnings = await CreatorEarnings.findOne({ creator: userId });
-    
-    if (!earnings) {
-      return res.json({ paymentHistory: [] });
-    }
-    
-    res.json({
-      paymentHistory: earnings.paymentHistory.sort((a, b) => 
-        new Date(b.paidAt || b.createdAt) - new Date(a.paidAt || a.createdAt)
-      )
-    });
-    
-  } catch (err) {
-    console.error("Payment history error:", err);
-    res.status(500).json({ message: "Failed to fetch payment history" });
-  }
-});
-
-/* =========================
-   📊 ADMIN: GET ALL CREATORS
+   👨‍💼 ADMIN: ALL CREATORS
 ========================= */
 router.get("/admin/creators", auth, async (req, res) => {
-  try {
-    // TODO: Add admin check middleware
-    
-    const creators = await CreatorEarnings.find()
-      .populate("creator", "name email username")
-      .sort({ "earnings.totalEarnings": -1 });
-    
-    res.json(creators);
-    
-  } catch (err) {
-    console.error("Admin creators error:", err);
-    res.status(500).json({ message: "Failed to fetch creators" });
-  }
+  const creators = await CreatorEarnings.find()
+    .populate("creator", "name email")
+    .sort({ "earnings.totalEarnings": -1 });
+
+  res.json(creators);
 });
 
 /* =========================
-   ✅ ADMIN: APPROVE/REJECT
+   👨‍💼 ADMIN: PROCESS PAYOUT (MOCK)
 ========================= */
-router.post("/admin/review/:id", auth, async (req, res) => {
-  try {
-    // TODO: Add admin check middleware
-    
-    const { status } = req.body; // "approved" or "rejected"
-    
-    const earnings = await CreatorEarnings.findById(req.params.id);
-    
-    if (!earnings) {
-      return res.status(404).json({ message: "Creator not found" });
-    }
-    
-    earnings.monetizationStatus = status;
-    earnings.isMonetized = status === "approved";
-    
-    if (status === "approved") {
-      earnings.approvedAt = new Date();
-      await User.findByIdAndUpdate(earnings.creator, { isMonetized: true });
-    } else {
-      earnings.rejectedAt = new Date();
-      await User.findByIdAndUpdate(earnings.creator, { isMonetized: false });
-    }
-    
-    await earnings.save();
-    
-    res.json({
-      message: `Creator ${status}`,
-      earnings
-    });
-    
-  } catch (err) {
-    console.error("Review error:", err);
-    res.status(500).json({ message: "Failed to review application" });
-  }
-});
+router.post(
+  "/admin/process-payout/:earningsId/:paymentId",
+  auth,
+  async (req, res) => {
+    try {
+      const earnings = await CreatorEarnings.findById(req.params.earningsId);
+      const payment = earnings.paymentHistory.id(req.params.paymentId);
 
-/* =========================
-   💳 ADMIN: PROCESS PAYOUT
-========================= */
-router.post("/admin/process-payout/:earningsId/:paymentId", auth, async (req, res) => {
-  try {
-    // TODO: Add admin check middleware
-    
-    const { transactionId } = req.body;
-    
-    const earnings = await CreatorEarnings.findById(req.params.earningsId);
-    
-    if (!earnings) {
-      return res.status(404).json({ message: "Creator not found" });
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+
+      // ✅ MOCK PAYOUT (NO RAZORPAY)
+      payment.status = "completed";
+      payment.transactionId = "TEST_TXN_" + Date.now();
+      payment.paidAt = new Date();
+
+      earnings.earnings.totalPaidOut += payment.amount;
+      earnings.earnings.pendingBalance -= payment.amount;
+
+      await earnings.save();
+
+      res.json({
+        message: "✅ Payout processed (TEST MODE)",
+        transactionId: payment.transactionId,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Payout failed" });
     }
-    
-    const payment = earnings.paymentHistory.id(req.params.paymentId);
-    
-    if (!payment) {
-      return res.status(404).json({ message: "Payment not found" });
-    }
-    
-    // Update payment status
-    payment.status = "completed";
-    payment.paidAt = new Date();
-    payment.transactionId = transactionId;
-    
-    // Update earnings
-    earnings.earnings.totalPaidOut += payment.amount;
-    earnings.earnings.pendingBalance -= payment.amount;
-    
-    await earnings.save();
-    
-    res.json({
-      message: "✅ Payout processed",
-      payment
-    });
-    
-  } catch (err) {
-    console.error("Process payout error:", err);
-    res.status(500).json({ message: "Failed to process payout" });
   }
-});
+);
 
 module.exports = router;

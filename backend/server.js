@@ -201,6 +201,7 @@ const subscriptionRoute = require("./routes/subscriptionRoutes");
 const premiumRoutes = require("./routes/premiumRoutes");
 const monetizationRoutes = require("./routes/monetizationRoutes");
 const walletRoutes = require("./routes/walletRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const BloomFilter = require("./utils/bloomFilter");
 const Video = require("./models/Video");
@@ -224,6 +225,7 @@ app.use("/api/premium", premiumRoutes);
 app.use("/api/wallet",walletRoutes);
 app.use("/api/ads", require("./routes/adRoutes"));
 app.use("/api/monetization", monetizationRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use("/captions", express.static(path.join(__dirname, "captions")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
