@@ -4162,7 +4162,8 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
+import Notifications from "../components/Notifications";
+import { io } from "socket.io-client";
 const TRENDING_DAYS_WINDOW = 7;
 const RECENCY_WEIGHT = 1000;
 const TOP_N = 50;
@@ -4207,11 +4208,43 @@ export default function Home() {
   const userMenuRef = useRef(null);
   const searchRef = useRef(null);
   const videoRefs = useRef({});
+  const socketRef = useRef(null);
+
+  
+
+  useEffect(() => {
+    if (!user?._id) return;
+  
+    socketRef.current = io("http://localhost:5000", {
+      transports: ["websocket"],
+    });
+  
+    // 🔔 join personal notification room
+    socketRef.current.emit("join-user", user._id);
+  
+    console.log("🔔 Joined notification room:", user._id);
+  
+    socketRef.current.on("connect", () => {
+      console.log("🟢 Socket connected:", socketRef.current.id);
+    });
+  
+    socketRef.current.on("disconnect", () => {
+      console.log("🔴 Socket disconnected");
+    });
+  
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [user]);
+  
 
   useEffect(() => {
     const categoryParam = searchParams.get("category");
     if (categoryParam) setSelectedCategory(categoryParam);
   }, [searchParams]);
+
+
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -4279,7 +4312,7 @@ export default function Home() {
         { name: "History", icon: "history", path: "/history" },
         { name: "Your Videos", icon: "video", path: "/profile" },
         { name: "Watch Later", icon: "clock", path: "/watch-later" },
-        { name: "Liked Videos", icon: "like", path: "/liked" },
+        { name: "Liked Videos", icon: "like", path: "/Likedvideos" },
         { name: "Go Live", icon: "live", path: `/live/${user._id}?role=broadcaster` },
       ] : [
         { name: "Sign in to see your videos", icon: "info", type: "info" }
@@ -4608,6 +4641,7 @@ export default function Home() {
                   <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
                 </svg>
               </button>
+              <Notifications />
               
               <div className="yt-user-menu-wrapper" ref={userMenuRef}>
                 <button 

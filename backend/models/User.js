@@ -323,6 +323,13 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    // ❤️ LIKED VIDEOS
+likedVideos: {
+  type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Video" }],
+  default: [],
+},
+
+
     // 💰 CREATOR EARNINGS (keeping your original structure)
     // NOTE: This is for backward compatibility
     // The main earnings tracking is now in the CreatorEarnings model

@@ -34,11 +34,13 @@ return (
 <Route path="/upload" element={<Upload/>} />
 <Route path="/UserUpload" element={<UserUpload/>} />
 <Route path="/Profile" element={<Profile/>} />
+<Route path="/profile/:id" element={<Profile />} />
 <Route path="/history" element={<History />} />
 <Route path="/admin/upload-ad" element={<AdminUploadAd />} />
 <Route path="/revenue-dashboard" element={<RevenueDashboard />} />
 <Route path="/shorts" element={<Shorts />} />
 <Route path="/upload-short" element={<ShortUpload />} />
+<Route path="/liked-videos" element={<LikedVideos />} />
 <Route path="/live/:roomId" element={<LivePage />} />
 <Route path="/Subscription" element={<Subscriptions />} />
 <Route path="/LikedVideos" element={<LikedVideos />} />

@@ -2,14 +2,15 @@ const mongoose = require("mongoose");
 
 const NotificationSchema = new mongoose.Schema(
   {
-    // jisko notification milegi (subscriber)
+    // jisko notification milegi (subscriber/video owner)
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
+      index: true
     },
 
-    // jisne action kiya (channel owner)
+    // jisne action kiya (channel owner/liker/commenter)
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -23,7 +24,7 @@ const NotificationSchema = new mongoose.Schema(
       required: true
     },
 
-    // kis video se related (new video upload)
+    // kis video se related (if applicable)
     video: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video"
@@ -38,10 +39,18 @@ const NotificationSchema = new mongoose.Schema(
     // read / unread
     isRead: {
       type: Boolean,
-      default: false
+      default: false,
+      index: true
     }
   },
   { timestamps: true }
 );
+
+// Compound index for efficient queries
+NotificationSchema.index({ user: 1, createdAt: -1 });
+NotificationSchema.index({ user: 1, isRead: 1 });
+
+// Auto-delete notifications older than 30 days
+NotificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 2592000 });
 
 module.exports = mongoose.model("Notification", NotificationSchema);

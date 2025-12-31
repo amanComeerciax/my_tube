@@ -434,7 +434,7 @@ const User = require("../models/User");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-
+const Notification = require("../models/Notification"); // ADD THIS LINE
 // ===========================
 // 📁 MULTER CONFIG FOR PROFILE IMAGES
 // ===========================
@@ -619,15 +619,44 @@ router.post("/subscribe/:id", auth, async (req, res) => {
       await target.save();
       await currentUser.save();
       return res.json({ subscribed: false, message: "Unsubscribed" });
-    } else {
-      // 🔔 Subscribe
-      target.subscribers.push(currentUser._id);
-      currentUser.subscribedTo.push(target._id);
+    // } else {
+    //   // 🔔 Subscribe
+    //   target.subscribers.push(currentUser._id);
+    //   currentUser.subscribedTo.push(target._id);
 
-      await target.save();
-      await currentUser.save();
-      return res.json({ subscribed: true, message: "Subscribed" });
+    //   await target.save();
+    //   await currentUser.save();
+    //   return res.json({ subscribed: true, message: "Subscribed" });
+    // }
+  } else {
+    // 🔔 Subscribe
+    target.subscribers.push(currentUser._id);
+    currentUser.subscribedTo.push(target._id);
+
+    await target.save();
+    await currentUser.save();
+
+    // 🔔 CREATE NOTIFICATION FOR CHANNEL OWNER
+    try {
+      await Notification.create({
+        user: target._id,
+        sender: currentUser._id,
+        type: "subscribe",
+        video: null,
+        message: `${currentUser.name} subscribed to your channel`,
+        isRead: false
+      });
+      console.log("✅ Subscribe notification sent");
+    } catch (notifErr) {
+      console.error("⚠️ Subscribe notification failed:", notifErr);
     }
+
+    return res.json({ 
+      subscribed: true, 
+      message: "Subscribed",
+      subscribers: target.subscribers 
+    });
+  }
   } catch (err) {
     console.error("Subscribe Error:", err);
     res.status(500).json({

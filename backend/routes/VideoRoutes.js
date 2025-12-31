@@ -967,6 +967,9 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
       summaryStatus: "pending"
     });
 
+
+    
+
     // 🔔 NOTIFY SUBSCRIBERS ABOUT NEW VIDEO
 const uploader = await User.findById(uploadedBy).select("subscribers name");
 
@@ -1444,24 +1447,70 @@ router.get("/stream/:filename", async (req, res) => {
 });
 
 // LIKE
+// router.post("/like/:id", auth, async (req, res) => {
+//   try {
+//     const video = await Video.findById(req.params.id);
+//     if (!video) return res.status(404).json({ message: "Not found" });
+
+//     const userId = req.user.id;
+//     video.dislikes = video.dislikes?.filter(d => d.toString() !== userId) || [];
+//     const liked = video.likes.includes(userId);
+//     if (liked) video.likes.pull(userId);
+//     else video.likes.push(userId);
+
+//     await video.save();
+//     await video.populate("uploadedBy", "name");
+//     res.json(video);
+//   } catch (err) {
+//     res.status(500).json({ message: "Like failed" });
+//   }
+// });
+
+
 router.post("/like/:id", auth, async (req, res) => {
   try {
-    const video = await Video.findById(req.params.id);
+    const video = await Video.findById(req.params.id).populate("uploadedBy", "name _id");
     if (!video) return res.status(404).json({ message: "Not found" });
 
     const userId = req.user.id;
     video.dislikes = video.dislikes?.filter(d => d.toString() !== userId) || [];
     const liked = video.likes.includes(userId);
-    if (liked) video.likes.pull(userId);
-    else video.likes.push(userId);
+    
+    if (liked) {
+      // Unlike
+      video.likes.pull(userId);
+    } else {
+      // Like
+      video.likes.push(userId);
+
+      // 🔔 CREATE NOTIFICATION FOR VIDEO OWNER
+      if (video.uploadedBy._id.toString() !== userId) {
+        try {
+          const liker = await User.findById(userId).select("name");
+          await Notification.create({
+            user: video.uploadedBy._id,
+            sender: userId,
+            type: "like",
+            video: video._id,
+            message: `${liker.name} liked your video`,
+            isRead: false
+          });
+          console.log("✅ Like notification sent");
+        } catch (notifErr) {
+          console.error("⚠️ Like notification failed:", notifErr);
+        }
+      }
+    }
 
     await video.save();
-    await video.populate("uploadedBy", "name");
     res.json(video);
   } catch (err) {
+    console.error("Like error:", err);
     res.status(500).json({ message: "Like failed" });
   }
 });
+
+
 
 // DISLIKE
 router.post("/dislike/:id", auth, async (req, res) => {

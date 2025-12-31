@@ -22,11 +22,39 @@
       "similarity": 1
     },
     {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.7746
+    },
+    {
       "videoId": "694b8c93f4d1cbf0635f3814",
       "filename": "1766558854937-Project0705FullHD1080pmov_blob",
       "title": "interview",
       "thumbnail": "thumb_1766558867465_avengers.jpeg",
       "similarity": 0.4714
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.3333
     },
     {
       "videoId": "694ba87990b86f3a1d35ffcf",
@@ -59,11 +87,39 @@
       "similarity": 1
     },
     {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.7746
+    },
+    {
       "videoId": "694b8c93f4d1cbf0635f3814",
       "filename": "1766558854937-Project0705FullHD1080pmov_blob",
       "title": "interview",
       "thumbnail": "thumb_1766558867465_avengers.jpeg",
       "similarity": 0.4714
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.3333
     },
     {
       "videoId": "694ba87990b86f3a1d35ffcf",
@@ -96,11 +152,39 @@
       "similarity": 1
     },
     {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.7746
+    },
+    {
       "videoId": "694b8c93f4d1cbf0635f3814",
       "filename": "1766558854937-Project0705FullHD1080pmov_blob",
       "title": "interview",
       "thumbnail": "thumb_1766558867465_avengers.jpeg",
       "similarity": 0.4714
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.3333
     },
     {
       "videoId": "694ba87990b86f3a1d35ffcf",
@@ -110,8 +194,23 @@
       "similarity": 0.2887
     }
   ],
-  "694b8b1175401b22a3886609": [],
+  "694b8b1175401b22a3886609": [
+    {
+      "videoId": "69524703da0724e4dc308317",
+      "filename": "1766999789650-4KUHD60FPSmp4_blob",
+      "title": "music",
+      "thumbnail": "thumb_1766999810083_cars.jpg",
+      "similarity": 0.4082
+    }
+  ],
   "694b8c93f4d1cbf0635f3814": [
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.5477
+    },
     {
       "videoId": "694b883462d44062857869a1",
       "filename": "1766557731835-Project0705FullHD1080pmov_blob",
@@ -139,6 +238,20 @@
       "title": "interview",
       "thumbnail": "thumb_1766559948878_alladin.jpeg",
       "similarity": 0.4714
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.2887
+    },
+    {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.2887
     }
   ],
   "694b90cd349693f2b8ce915e": [
@@ -164,11 +277,39 @@
       "similarity": 1
     },
     {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.7746
+    },
+    {
       "videoId": "694b8c93f4d1cbf0635f3814",
       "filename": "1766558854937-Project0705FullHD1080pmov_blob",
       "title": "interview",
       "thumbnail": "thumb_1766558867465_avengers.jpeg",
       "similarity": 0.4714
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.3333
     },
     {
       "videoId": "694ba87990b86f3a1d35ffcf",
@@ -180,11 +321,25 @@
   ],
   "694b928b90b86f3a1d35fc9a": [
     {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.4714
+    },
+    {
       "videoId": "694ba87990b86f3a1d35ffcf",
       "filename": "1766565994658-8005482uhd3840216025fpsmp4_blob",
       "title": "gh",
       "thumbnail": "thumb_1766566008526_c3.jpg",
       "similarity": 0.4082
+    },
+    {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.2887
     }
   ],
   "694b94b190b86f3a1d35fd75": [],
@@ -208,11 +363,25 @@
   ],
   "694ba87990b86f3a1d35ffcf": [
     {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.5774
+    },
+    {
       "videoId": "694b928b90b86f3a1d35fc9a",
       "filename": "1766560381337-Project0705FullHD1080pmov_blob",
       "title": "intervieww",
       "thumbnail": "thumb_1766560395252_c3.jpg",
       "similarity": 0.4082
+    },
+    {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.3536
     },
     {
       "videoId": "694b883462d44062857869a1",
@@ -243,5 +412,323 @@
       "similarity": 0.2887
     }
   ],
-  "694bb24090b86f3a1d3604a0": []
+  "694bb24090b86f3a1d3604a0": [
+    {
+      "videoId": "69524703da0724e4dc308317",
+      "filename": "1766999789650-4KUHD60FPSmp4_blob",
+      "title": "music",
+      "thumbnail": "thumb_1766999810083_cars.jpg",
+      "similarity": 0.3162
+    }
+  ],
+  "694e186c0a7e050919e86c2a": [
+    {
+      "videoId": "6954b56d1d49badb9cc14087",
+      "filename": "1767159132470-IMG7342MOV_blob",
+      "title": "hello",
+      "thumbnail": "thumb_1767159149400_c3.jpg",
+      "similarity": 1
+    }
+  ],
+  "694e219c0a7e050919e870af": [
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.5
+    }
+  ],
+  "695246e4da0724e4dc3082fa": [
+    {
+      "videoId": "694ba87990b86f3a1d35ffcf",
+      "filename": "1766565994658-8005482uhd3840216025fpsmp4_blob",
+      "title": "gh",
+      "thumbnail": "thumb_1766566008526_c3.jpg",
+      "similarity": 0.5774
+    },
+    {
+      "videoId": "694b928b90b86f3a1d35fc9a",
+      "filename": "1766560381337-Project0705FullHD1080pmov_blob",
+      "title": "intervieww",
+      "thumbnail": "thumb_1766560395252_c3.jpg",
+      "similarity": 0.4714
+    },
+    {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694b883462d44062857869a1",
+      "filename": "1766557731835-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766557748024_tt.jpg",
+      "similarity": 0.3333
+    },
+    {
+      "videoId": "694b89d3cc43410038346702",
+      "filename": "1766558143450-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558162989_c3.jpg",
+      "similarity": 0.3333
+    },
+    {
+      "videoId": "694b8a4f75401b22a38865c6",
+      "filename": "1766558270765-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558286904_alladin.jpeg",
+      "similarity": 0.3333
+    },
+    {
+      "videoId": "694b90cd349693f2b8ce915e",
+      "filename": "1766559932100-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766559948878_alladin.jpeg",
+      "similarity": 0.3333
+    }
+  ],
+  "69524703da0724e4dc308317": [
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.5
+    },
+    {
+      "videoId": "694b8b1175401b22a3886609",
+      "filename": "1766558462905-e2010cf26d5f48fb934009bd844a7334MP4_blob",
+      "title": "comedy",
+      "thumbnail": "thumb_1766558481135_avengers.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694bb24090b86f3a1d3604a0",
+      "filename": "1766568501439-e2010cf26d5f48fb934009bd844a7334MP4_blob",
+      "title": "baka",
+      "thumbnail": "thumb_1766568511972_alladin.jpeg",
+      "similarity": 0.3162
+    }
+  ],
+  "69524a4ef2685c614ba40f4e": [
+    {
+      "videoId": "694e219c0a7e050919e870af",
+      "filename": "1766728072268-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "news",
+      "thumbnail": "thumb_1766728092362_image1.jpg",
+      "similarity": 0.5
+    },
+    {
+      "videoId": "69524703da0724e4dc308317",
+      "filename": "1766999789650-4KUHD60FPSmp4_blob",
+      "title": "music",
+      "thumbnail": "thumb_1766999810083_cars.jpg",
+      "similarity": 0.5
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.4743
+    },
+    {
+      "videoId": "694b883462d44062857869a1",
+      "filename": "1766557731835-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766557748024_tt.jpg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694b89d3cc43410038346702",
+      "filename": "1766558143450-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558162989_c3.jpg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694b8a4f75401b22a38865c6",
+      "filename": "1766558270765-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558286904_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694b90cd349693f2b8ce915e",
+      "filename": "1766559932100-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766559948878_alladin.jpeg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694b8c93f4d1cbf0635f3814",
+      "filename": "1766558854937-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558867465_avengers.jpeg",
+      "similarity": 0.2887
+    }
+  ],
+  "69535d93513c611825fa07ce": [
+    {
+      "videoId": "6953790dd422c6431c541667",
+      "filename": "1767078147347-4KUHD60FPSmp4_blob",
+      "title": "aman",
+      "thumbnail": "thumb_1767078157108_COMMERCIAX_white.png",
+      "similarity": 0.2673
+    }
+  ],
+  "695374dfd119e1346c132cee": [
+    {
+      "videoId": "694b883462d44062857869a1",
+      "filename": "1766557731835-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766557748024_tt.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "694b89d3cc43410038346702",
+      "filename": "1766558143450-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558162989_c3.jpg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "694b8a4f75401b22a38865c6",
+      "filename": "1766558270765-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558286904_alladin.jpeg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "694b90cd349693f2b8ce915e",
+      "filename": "1766559932100-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766559948878_alladin.jpeg",
+      "similarity": 0.8165
+    },
+    {
+      "videoId": "6954f7c533494b0b1a6d834c",
+      "filename": "1767176113026-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767176132935_je.jpg",
+      "similarity": 0.4743
+    },
+    {
+      "videoId": "695246e4da0724e4dc3082fa",
+      "filename": "1766999763612-4K4Thetestdatamp4_blob",
+      "title": "demo",
+      "thumbnail": "thumb_1766999780589_c3.jpg",
+      "similarity": 0.4082
+    },
+    {
+      "videoId": "694ba87990b86f3a1d35ffcf",
+      "filename": "1766565994658-8005482uhd3840216025fpsmp4_blob",
+      "title": "gh",
+      "thumbnail": "thumb_1766566008526_c3.jpg",
+      "similarity": 0.3536
+    },
+    {
+      "videoId": "694b8c93f4d1cbf0635f3814",
+      "filename": "1766558854937-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558867465_avengers.jpeg",
+      "similarity": 0.2887
+    },
+    {
+      "videoId": "694b928b90b86f3a1d35fc9a",
+      "filename": "1766560381337-Project0705FullHD1080pmov_blob",
+      "title": "intervieww",
+      "thumbnail": "thumb_1766560395252_c3.jpg",
+      "similarity": 0.2887
+    }
+  ],
+  "6953790dd422c6431c541667": [
+    {
+      "videoId": "6954c9d1da20c6608154f1db",
+      "filename": "1767164356061-1766041341194IMG7335mov_blob",
+      "title": "roman",
+      "thumbnail": "thumb_1767164369544_images.jpeg",
+      "similarity": 0.3536
+    },
+    {
+      "videoId": "69535d93513c611825fa07ce",
+      "filename": "1767071094402-e2010cf26d5f48fb934009bd844a7334MP4_blob",
+      "title": "bhai bhai",
+      "thumbnail": "thumb_1767071122874_c3.jpg",
+      "similarity": 0.2673
+    }
+  ],
+  "6954b56d1d49badb9cc14087": [
+    {
+      "videoId": "694e186c0a7e050919e86c2a",
+      "filename": "1766725722702-IMG7342MOV_blob",
+      "title": "hello",
+      "thumbnail": "thumb_1766725740818_alladin.jpeg",
+      "similarity": 1
+    }
+  ],
+  "6954c980da20c6608154f13c": [],
+  "6954c9d1da20c6608154f1db": [
+    {
+      "videoId": "6953790dd422c6431c541667",
+      "filename": "1767078147347-4KUHD60FPSmp4_blob",
+      "title": "aman",
+      "thumbnail": "thumb_1767078157108_COMMERCIAX_white.png",
+      "similarity": 0.3536
+    }
+  ],
+  "6954f7c533494b0b1a6d834c": [
+    {
+      "videoId": "694b883462d44062857869a1",
+      "filename": "1766557731835-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766557748024_tt.jpg",
+      "similarity": 0.7746
+    },
+    {
+      "videoId": "694b89d3cc43410038346702",
+      "filename": "1766558143450-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558162989_c3.jpg",
+      "similarity": 0.7746
+    },
+    {
+      "videoId": "694b8a4f75401b22a38865c6",
+      "filename": "1766558270765-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558286904_alladin.jpeg",
+      "similarity": 0.7746
+    },
+    {
+      "videoId": "694b90cd349693f2b8ce915e",
+      "filename": "1766559932100-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766559948878_alladin.jpeg",
+      "similarity": 0.7746
+    },
+    {
+      "videoId": "694b8c93f4d1cbf0635f3814",
+      "filename": "1766558854937-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1766558867465_avengers.jpeg",
+      "similarity": 0.5477
+    },
+    {
+      "videoId": "69524a4ef2685c614ba40f4e",
+      "filename": "1767000628153-PoliticianssonshotdeadduringFacebookliveWorldDNAWIONpublercommp4_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767000654431_alladin.jpeg",
+      "similarity": 0.4743
+    },
+    {
+      "videoId": "695374dfd119e1346c132cee",
+      "filename": "1767077067276-Project0705FullHD1080pmov_blob",
+      "title": "interview",
+      "thumbnail": "thumb_1767077086338_4f.jpg",
+      "similarity": 0.4743
+    }
+  ]
 }
