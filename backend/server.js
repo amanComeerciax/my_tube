@@ -663,6 +663,8 @@ app.use("/api/wallet", walletRoutes);
 app.use("/api/monetization", monetizationRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/ads", require("./routes/adRoutes"));
+app.use("/hls", express.static(path.join(__dirname, "uploads/hls")));
+
 
 /* ================= SERVER ================= */
 const server = http.createServer(app);

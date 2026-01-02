@@ -467,6 +467,9 @@ const videoSchema = new mongoose.Schema(
       default: "pending",
     },
 
+
+    
+
     // 🤖 AI SUMMARY FIELDS
     aiSummary: {
       type: String,
