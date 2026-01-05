@@ -1,5 +1,5 @@
 // // import React, { useState, useContext } from "react";
-// // import axios from "axios";
+// // import api from "../config/api";
 // // import { AuthContext } from "../context/AuthContext";
 // // import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@
 // //     e.preventDefault();
 
 // //     try {
-// //       const res = await axios.post("http://localhost:5000/api/auth/login", {
+// //       const res = await api.post("/api/auth/login", {
 // //         email,
 // //         password,
 // //       });
@@ -60,7 +60,7 @@
 
 
 // import React, { useState, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -122,7 +122,7 @@
 //     e.preventDefault();
 
 //     try {
-//       const res = await axios.post("http://localhost:5000/api/auth/login", {
+//       const res = await api.post("/api/auth/login", {
 //         email,
 //         password,
 //       });
@@ -174,7 +174,7 @@
 
 
 // import React, { useState, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -238,7 +238,7 @@
 //     e.preventDefault();
 
 //     try {
-//       const res = await axios.post("http://localhost:5000/api/auth/login", {
+//       const res = await api.post("/api/auth/login", {
 //         email,
 //         password,
 //       });
@@ -293,7 +293,7 @@
 // }
 
 // import React, { useState, useContext, useEffect, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 // // Assuming you have an icon library like 'react-icons' installed
@@ -315,7 +315,7 @@
 //     setLoading(true);
 
 //     try {
-//       const res = await axios.post("http://localhost:5000/api/auth/login", {
+//       const res = await api.post("/api/auth/login", {
 //         email,
 //         password,
 //       });
@@ -753,7 +753,7 @@
 
 
 import React, { useState, useContext, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff, FiLogIn, FiLoader } from "react-icons/fi";
@@ -775,7 +775,7 @@ export default function CyberpunkLoginCard() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await api.post("/api/auth/login", {
         email,
         password,
       });
@@ -796,7 +796,7 @@ export default function CyberpunkLoginCard() {
       const user = result.user;
 
       // Sync with your Backend
-      const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+      const res = await api.post("/api/auth/google-login", {
         email: user.email,
         name: user.displayName,
         avatar: user.photoURL,

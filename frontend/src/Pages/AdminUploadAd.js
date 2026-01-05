@@ -1,4 +1,4 @@
-// import axios from "axios";
+// import api from "../config/api";
 // import { useState } from "react";
 
 // export default function AdminUploadAd() {
@@ -14,7 +14,7 @@
 //     form.append("targetValue", targetValue);
 //     form.append("skipAfter", 5);
 
-//     await axios.post("http://localhost:5000/api/ads/upload", form, {
+//     await api.post("/api/ads/upload", form, {
 //       headers: {
 //         Authorization: `Bearer ${localStorage.getItem("token")}`
 //       }
@@ -38,7 +38,7 @@
 // }
 
 // import React, { useState, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -56,7 +56,7 @@
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
-    
+
 //     if (!adVideo) {
 //       setMessage("❌ Please select a video file");
 //       return;
@@ -74,7 +74,7 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post("http://localhost:5000/api/ads/upload", formData, {
+//       const res = await api.post("/api/ads/upload", formData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "multipart/form-data"
@@ -90,7 +90,7 @@
 //       setTargetValue("");
 //       setSkipAfter(5);
 //       setAdVideo(null);
-      
+
 //       // Reset file input
 //       document.getElementById("adVideoInput").value = "";
 //     } catch (err) {
@@ -116,7 +116,7 @@
 //     <div style={styles.container}>
 //       <div style={styles.card}>
 //         <h1 style={styles.title}>📢 Upload Advertisement</h1>
-        
+
 //         <form onSubmit={handleSubmit} style={styles.form}>
 //           {/* Title */}
 //           <div style={styles.inputGroup}>
@@ -342,7 +342,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 // import { 
@@ -355,7 +355,7 @@
 //   const navigate = useNavigate();
 
 //   const [activeTab, setActiveTab] = useState("list"); // list, upload, analytics
-  
+
 //   // Upload form state
 //   const [title, setTitle] = useState("");
 //   const [target, setTarget] = useState("all");
@@ -385,8 +385,8 @@
 //     setLoading(true);
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.get("http://localhost:5000/api/ads", {
-//         headers: { Authorization: `Bearer ${token}` }
+//       const res = await api.get("/api/ads", {
+//         
 //       });
 //       setAds(res.data);
 //     } catch (err) {
@@ -400,7 +400,7 @@
 //   /* ================= CREATE AD ================= */
 //   const handleUpload = async (e) => {
 //     e.preventDefault();
-    
+
 //     if (!adVideo) {
 //       setMessage("❌ Please select a video file");
 //       return;
@@ -418,7 +418,7 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post("http://localhost:5000/api/ads/upload", formData, {
+//       const res = await api.post("/api/ads/upload", formData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "multipart/form-data"
@@ -426,7 +426,7 @@
 //       });
 
 //       setMessage("✅ Ad uploaded successfully!");
-      
+
 //       // Reset form
 //       setTitle("");
 //       setTarget("all");
@@ -434,7 +434,7 @@
 //       setSkipAfter(5);
 //       setAdVideo(null);
 //       document.getElementById("adVideoInput").value = "";
-      
+
 //       // Switch to list view
 //       setTimeout(() => {
 //         setActiveTab("list");
@@ -452,10 +452,10 @@
 //   const handleUpdate = async (adId) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.put(`http://localhost:5000/api/ads/${adId}`, editingAd, {
-//         headers: { Authorization: `Bearer ${token}` }
+//       await api.put(`/api/ads/${adId}`, editingAd, {
+//         
 //       });
-      
+
 //       setMessage("✅ Ad updated successfully!");
 //       setEditingAd(null);
 //       fetchAds();
@@ -470,10 +470,10 @@
 //   const handleDelete = async (adId) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.delete(`http://localhost:5000/api/ads/${adId}`, {
-//         headers: { Authorization: `Bearer ${token}` }
+//       await api.delete(`/api/ads/${adId}`, {
+//         
 //       });
-      
+
 //       setMessage("✅ Ad deleted successfully!");
 //       setShowDeleteConfirm(null);
 //       fetchAds();
@@ -488,10 +488,10 @@
 //   const toggleAdStatus = async (ad) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.put(
-//         `http://localhost:5000/api/ads/${ad._id}`, 
+//       await api.put(
+//         `/api/ads/${ad._id}`, 
 //         { ...ad, active: !ad.active },
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 //       fetchAds();
 //     } catch (err) {
@@ -504,8 +504,8 @@
 //   const fetchAnalytics = async (adId) => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.get(`http://localhost:5000/api/ads/analytics/${adId}`, {
-//         headers: { Authorization: `Bearer ${token}` }
+//       const res = await api.get(`/api/ads/analytics/${adId}`, {
+//         
 //       });
 //       setSelectedAdAnalytics(res.data);
 //     } catch (err) {
@@ -881,7 +881,7 @@
 //           {activeTab === "analytics" && (
 //             <div style={styles.analyticsContainer}>
 //               <h2 style={styles.sectionTitle}>Ad Analytics Overview</h2>
-              
+
 //               {/* Overall Stats */}
 //               <div style={styles.statsGrid}>
 //                 <div style={styles.statCard}>
@@ -1046,7 +1046,7 @@
 //   content: {
 //     padding: "32px"
 //   },
-  
+
 //   // List View Styles
 //   listContainer: {
 //     minHeight: "400px"
@@ -1452,12 +1452,12 @@
 // };
 
 import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { 
-  FiUpload, FiList, FiEdit2, FiTrash2, FiEye, FiEyeOff, 
-  FiBarChart2, FiX, FiCheck, FiPlus, FiDollarSign 
+import {
+  FiUpload, FiList, FiEdit2, FiTrash2, FiEye, FiEyeOff,
+  FiBarChart2, FiX, FiCheck, FiPlus, FiDollarSign
 } from "react-icons/fi";
 
 export default function AdManagement() {
@@ -1465,7 +1465,7 @@ export default function AdManagement() {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("list");
-  
+
   // Upload form state
   const [title, setTitle] = useState("");
   const [target, setTarget] = useState("all");
@@ -1493,9 +1493,8 @@ export default function AdManagement() {
   const fetchAds = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/ads", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/ads", {
+
       });
       setAds(res.data);
     } catch (err) {
@@ -1509,7 +1508,7 @@ export default function AdManagement() {
   /* ================= CREATE AD ================= */
   const handleUpload = async (e) => {
     e.preventDefault();
-    
+
     if (!adVideo) {
       setMessage("❌ Please select a video file");
       return;
@@ -1528,16 +1527,10 @@ export default function AdManagement() {
     formData.append("adVideo", adVideo);
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/ads/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
-        }
-      });
+      await api.post("/api/ads/upload", formData);
 
       setMessage("✅ Ad uploaded successfully!");
-      
+
       // Reset form
       setTitle("");
       setTarget("all");
@@ -1547,7 +1540,7 @@ export default function AdManagement() {
       setCpc(2);
       setAdVideo(null);
       document.getElementById("adVideoInput").value = "";
-      
+
       setTimeout(() => {
         setActiveTab("list");
         setMessage("");
@@ -1563,11 +1556,10 @@ export default function AdManagement() {
   /* ================= UPDATE AD ================= */
   const handleUpdate = async (adId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:5000/api/ads/${adId}`, editingAd, {
-        headers: { Authorization: `Bearer ${token}` }
+      await api.put(`/api/ads/${adId}`, editingAd, {
+
       });
-      
+
       setMessage("✅ Ad updated successfully!");
       setEditingAd(null);
       fetchAds();
@@ -1581,11 +1573,10 @@ export default function AdManagement() {
   /* ================= DELETE AD ================= */
   const handleDelete = async (adId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/ads/${adId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      await api.delete(`/api/ads/${adId}`, {
+
       });
-      
+
       setMessage("✅ Ad deleted successfully!");
       setShowDeleteConfirm(null);
       fetchAds();
@@ -1599,11 +1590,10 @@ export default function AdManagement() {
   /* ================= TOGGLE AD STATUS ================= */
   const toggleAdStatus = async (ad) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5000/api/ads/${ad._id}`, 
+      await api.put(
+        `/api/ads/${ad._id}`,
         { ...ad, active: !ad.active },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {}
       );
       fetchAds();
     } catch (err) {
@@ -1669,7 +1659,7 @@ export default function AdManagement() {
               onClick={() => navigate("/revenue-dashboard")}
               style={styles.revenueTab}
             >
-              
+
               <FiDollarSign size={18} />
               <span>Revenue Dashboard</span>
             </button>
@@ -1677,7 +1667,7 @@ export default function AdManagement() {
               onClick={() => navigate("/AdminMonetizationPanel")}
               style={styles.revenueTab}
             >
-              
+
               <FiDollarSign size={18} />
               <span>MonetizationPanel</span>
             </button>
@@ -1710,8 +1700,8 @@ export default function AdManagement() {
                   <FiUpload size={48} color="#555" />
                   <h3 style={{ color: "#888", marginTop: 16 }}>No ads yet</h3>
                   <p style={{ color: "#666", fontSize: 14 }}>Upload your first ad to get started</p>
-                  <button 
-                    onClick={() => setActiveTab("upload")} 
+                  <button
+                    onClick={() => setActiveTab("upload")}
                     style={styles.primaryButton}
                   >
                     <FiPlus size={18} />
@@ -1724,7 +1714,7 @@ export default function AdManagement() {
                     <div key={ad._id} style={styles.adCard}>
                       <div style={styles.adVideoContainer}>
                         <video
-                          src={`http://localhost:5000/uploads/ads/${ad.videoFile}`}
+                          src={`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/uploads/ads/${ad.videoFile}`}
                           style={styles.adVideoPreview}
                           controls={false}
                           muted
@@ -1745,13 +1735,13 @@ export default function AdManagement() {
                             <input
                               type="text"
                               value={editingAd.title}
-                              onChange={(e) => setEditingAd({...editingAd, title: e.target.value})}
+                              onChange={(e) => setEditingAd({ ...editingAd, title: e.target.value })}
                               style={styles.editInput}
                               placeholder="Ad Title"
                             />
                             <select
                               value={editingAd.target}
-                              onChange={(e) => setEditingAd({...editingAd, target: e.target.value})}
+                              onChange={(e) => setEditingAd({ ...editingAd, target: e.target.value })}
                               style={styles.editSelect}
                             >
                               <option value="all">All Videos</option>
@@ -1762,7 +1752,7 @@ export default function AdManagement() {
                               <input
                                 type="text"
                                 value={editingAd.targetValue}
-                                onChange={(e) => setEditingAd({...editingAd, targetValue: e.target.value})}
+                                onChange={(e) => setEditingAd({ ...editingAd, targetValue: e.target.value })}
                                 style={styles.editInput}
                                 placeholder={editingAd.target === "category" ? "Category Name" : "Video ID"}
                               />
@@ -1770,34 +1760,34 @@ export default function AdManagement() {
                             <input
                               type="number"
                               value={editingAd.skipAfter}
-                              onChange={(e) => setEditingAd({...editingAd, skipAfter: e.target.value})}
+                              onChange={(e) => setEditingAd({ ...editingAd, skipAfter: e.target.value })}
                               style={styles.editInput}
                               placeholder="Skip After (seconds)"
                             />
                             <input
                               type="number"
                               value={editingAd.cpm}
-                              onChange={(e) => setEditingAd({...editingAd, cpm: e.target.value})}
+                              onChange={(e) => setEditingAd({ ...editingAd, cpm: e.target.value })}
                               style={styles.editInput}
                               placeholder="CPM (₹ per 1000 views)"
                             />
                             <input
                               type="number"
                               value={editingAd.cpc}
-                              onChange={(e) => setEditingAd({...editingAd, cpc: e.target.value})}
+                              onChange={(e) => setEditingAd({ ...editingAd, cpc: e.target.value })}
                               style={styles.editInput}
                               placeholder="CPC (₹ per click)"
                             />
                             <div style={styles.editActions}>
                               <button
                                 onClick={() => handleUpdate(ad._id)}
-                                style={{...styles.iconButton, background: "#22c55e"}}
+                                style={{ ...styles.iconButton, background: "#22c55e" }}
                               >
                                 <FiCheck size={16} />
                               </button>
                               <button
                                 onClick={() => setEditingAd(null)}
-                                style={{...styles.iconButton, background: "#ef4444"}}
+                                style={{ ...styles.iconButton, background: "#ef4444" }}
                               >
                                 <FiX size={16} />
                               </button>
@@ -1835,7 +1825,7 @@ export default function AdManagement() {
                               </div>
                               <div style={styles.adDetailItem}>
                                 <span style={styles.detailLabel}>Revenue:</span>
-                                <span style={{...styles.detailValue, color: "#22c55e", fontWeight: "700"}}>
+                                <span style={{ ...styles.detailValue, color: "#22c55e", fontWeight: "700" }}>
                                   {formatCurrency(ad.revenue || 0)}
                                 </span>
                               </div>
@@ -1862,7 +1852,7 @@ export default function AdManagement() {
                               </button>
                               <button
                                 onClick={() => setShowDeleteConfirm(ad._id)}
-                                style={{...styles.actionButton, color: "#ef4444"}}
+                                style={{ ...styles.actionButton, color: "#ef4444" }}
                               >
                                 <FiTrash2 size={16} />
                                 <span>Delete</span>
@@ -1878,13 +1868,13 @@ export default function AdManagement() {
                           <div style={styles.deleteActions}>
                             <button
                               onClick={() => handleDelete(ad._id)}
-                              style={{...styles.deleteButton, background: "#ef4444"}}
+                              style={{ ...styles.deleteButton, background: "#ef4444" }}
                             >
                               Yes, Delete
                             </button>
                             <button
                               onClick={() => setShowDeleteConfirm(null)}
-                              style={{...styles.deleteButton, background: "#555"}}
+                              style={{ ...styles.deleteButton, background: "#555" }}
                             >
                               Cancel
                             </button>

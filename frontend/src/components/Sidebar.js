@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import axios from "axios";
+import api from "../config/api";
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const { user } = useContext(AuthContext);
@@ -18,9 +18,8 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/user/subscriptions", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get("/api/user/subscriptions", {
+        
       });
       setSubscriptions(res.data || []);
     } catch (error) {

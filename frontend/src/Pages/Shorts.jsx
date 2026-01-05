@@ -1,5 +1,5 @@
 // import React, { useState, useEffect, useRef, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -22,7 +22,7 @@
 
 //   const fetchShorts = async () => {
 //     try {
-//       const res = await axios.get("http://localhost:5000/api/videos/shorts");
+//       const res = await api.get("/api/videos/shorts");
 //       setShorts(res.data);
 //       setLoading(false);
 //     } catch (err) {
@@ -84,10 +84,10 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post(
-//         `http://localhost:5000/api/videos/like/${shortId}`,
+//       const res = await api.post(
+//         `/api/videos/like/${shortId}`,
 //         {},
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 
 //       setShorts(prev =>
@@ -107,10 +107,10 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post(
-//         `http://localhost:5000/api/videos/dislike/${shortId}`,
+//       const res = await api.post(
+//         `/api/videos/dislike/${shortId}`,
 //         {},
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 
 //       setShorts(prev =>
@@ -172,7 +172,7 @@
 //           <div key={short._id} style={styles.shortContainer}>
 //             <video
 //               ref={el => videoRefs.current[index] = el}
-//               src={`http://localhost:5000/api/videos/stream/${short.filename}`}
+//               src={`/api/videos/stream/${short.filename}`}
 //               style={styles.video}
 //               loop
 //               muted={muted}
@@ -577,7 +577,7 @@
 // }
 
 // import React, { useState, useEffect, useRef, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -600,7 +600,7 @@
 
 //   const fetchShorts = async () => {
 //     try {
-//       const res = await axios.get("http://localhost:5000/api/videos/shorts");
+//       const res = await api.get("/api/videos/shorts");
 //       setShorts(res.data);
 //       setLoading(false);
 //     } catch (err) {
@@ -662,10 +662,10 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post(
-//         `http://localhost:5000/api/videos/like/${shortId}`,
+//       const res = await api.post(
+//         `/api/videos/like/${shortId}`,
 //         {},
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 
 //       setShorts(prev =>
@@ -685,10 +685,10 @@
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.post(
-//         `http://localhost:5000/api/videos/dislike/${shortId}`,
+//       const res = await api.post(
+//         `/api/videos/dislike/${shortId}`,
 //         {},
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 
 //       setShorts(prev =>
@@ -752,7 +752,7 @@
 //             <div style={styles.videoWrapper}>
 //               <video
 //                 ref={el => videoRefs.current[index] = el}
-//                 src={`http://localhost:5000/api/videos/stream/${short.filename}`}
+//                 src={`/api/videos/stream/${short.filename}`}
 //                 style={styles.video}
 //                 loop
 //                 muted={muted}
@@ -1197,7 +1197,7 @@
 
 
 import React, { useState, useEffect, useRef, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -1229,7 +1229,7 @@ export default function Shorts() {
 
   const fetchShorts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/videos/shorts");
+      const res = await api.get("/api/videos/shorts");
       setShorts(res.data);
       setLoading(false);
     } catch (err) {
@@ -1372,11 +1372,10 @@ export default function Shorts() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        `http://localhost:5000/api/videos/like/${shortId}`,
+      const res = await api.post(
+        `/api/videos/like/${shortId}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {  }
       );
 
       setShorts(prev =>
@@ -1395,11 +1394,10 @@ export default function Shorts() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        `http://localhost:5000/api/videos/dislike/${shortId}`,
+      const res = await api.post(
+        `/api/videos/dislike/${shortId}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {  }
       );
 
       setShorts(prev =>
@@ -1519,7 +1517,7 @@ export default function Shorts() {
             <div style={styles.videoWrapper}>
               <video
                 ref={el => videoRefs.current[index] = el}
-                src={`http://localhost:5000/api/videos/stream/${short.filename}`}
+                src={`/api/videos/stream/${short.filename}`}
                 style={styles.video}
                 loop
                 muted={muted}

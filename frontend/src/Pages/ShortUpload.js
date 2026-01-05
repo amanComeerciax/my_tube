@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -32,7 +32,6 @@ export default function ShortUpload() {
     );
   }
 
-  // 🎥 select short video
   const handleVideo = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -46,7 +45,6 @@ export default function ShortUpload() {
     setVideoPreview(URL.createObjectURL(file));
   };
 
-  // 🖼 thumbnail
   const handleThumb = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -55,7 +53,6 @@ export default function ShortUpload() {
     setThumbPreview(URL.createObjectURL(file));
   };
 
-  // 🚀 upload short (NO CHUNKS)
   const handleUpload = async () => {
     if (!title || !video || !thumbnail) {
       alert("Title, video & thumbnail required");
@@ -66,7 +63,6 @@ export default function ShortUpload() {
     setProgress(0);
 
     try {
-      const token = localStorage.getItem("token");
       const formData = new FormData();
 
       formData.append("video", video);
@@ -75,23 +71,14 @@ export default function ShortUpload() {
       formData.append("description", description);
       formData.append("tags", tags);
       formData.append("category", "Shorts");
-
-      // 🔥 SHORT FLAG
       formData.append("isShort", true);
 
-      await axios.post(
-        "http://localhost:5000/api/videos/upload-short",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          onUploadProgress: (e) => {
-            const percent = Math.round((e.loaded * 100) / e.total);
-            setProgress(percent);
-          },
-        }
-      );
+      await api.post("/api/videos/upload-short", formData, {
+        onUploadProgress: (e) => {
+          const percent = Math.round((e.loaded * 100) / e.total);
+          setProgress(percent);
+        },
+      });
 
       alert("🎉 Short uploaded successfully!");
       navigate("/shorts");
@@ -108,7 +95,6 @@ export default function ShortUpload() {
     <div style={styles.container}>
       <h1>📱 Upload Short</h1>
 
-      {/* VIDEO */}
       <input
         ref={videoRef}
         type="file"
@@ -129,7 +115,6 @@ export default function ShortUpload() {
         />
       )}
 
-      {/* TITLE */}
       <input
         style={styles.input}
         placeholder="Short title"
@@ -138,7 +123,6 @@ export default function ShortUpload() {
         onChange={(e) => setTitle(e.target.value)}
       />
 
-      {/* DESCRIPTION */}
       <textarea
         style={styles.textarea}
         placeholder="Description (optional)"
@@ -146,7 +130,6 @@ export default function ShortUpload() {
         onChange={(e) => setDescription(e.target.value)}
       />
 
-      {/* TAGS */}
       <input
         style={styles.input}
         placeholder="tags: funny, tech"
@@ -154,7 +137,6 @@ export default function ShortUpload() {
         onChange={(e) => setTags(e.target.value)}
       />
 
-      {/* THUMBNAIL */}
       <input
         ref={thumbRef}
         type="file"
@@ -175,7 +157,6 @@ export default function ShortUpload() {
         />
       )}
 
-      {/* PROGRESS */}
       {loading && <p>Uploading… {progress}%</p>}
 
       <button

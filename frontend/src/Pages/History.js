@@ -1,5 +1,5 @@
 // import React, { useEffect, useState, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate, Link } from "react-router-dom";
 
@@ -13,8 +13,8 @@
 //   const fetchHistory = async () => {
 //     try {
 //       const token = localStorage.getItem("token");
-//       const res = await axios.get("http://localhost:5000/api/user/watch-history", {
-//         headers: { Authorization: `Bearer ${token}` },
+//       const res = await api.get("/api/user/watch-history", {
+//         
 //       });
 //       setHistory(res.data);
 //       setLoading(false);
@@ -32,8 +32,8 @@
 //   // ❌ Remove Single
 //   const removeHistory = async (id) => {
 //     const token = localStorage.getItem("token");
-//     await axios.delete(`http://localhost:5000/api/user/watch-history/${id}`, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.delete(`/api/user/watch-history/${id}`, {
+//       
 //     });
 //     fetchHistory();
 //   };
@@ -44,8 +44,8 @@
 //     if (!confirmDelete) return;
 
 //     const token = localStorage.getItem("token");
-//     await axios.delete("http://localhost:5000/api/user/watch-history", {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.delete("/api/user/watch-history", {
+//       
 //     });
 //     fetchHistory();
 //   };
@@ -140,7 +140,7 @@
 //   empty: { color: "#fff", padding: 40, textAlign: "center" },
 // };
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -153,9 +153,8 @@ export default function History() {
   // 🧲 Fetch Watch History
   const fetchHistory = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/user/watch-history", {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await api.get("/api/user/watch-history", {
+        
       });
       setHistory(res.data);
       setLoading(false);
@@ -173,9 +172,8 @@ export default function History() {
   // ❌ Remove Single Entry
   const removeHistory = async (videoId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/user/watch-history/${videoId}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      await api.delete(`/api/user/watch-history/${videoId}`, {
+        
       });
       fetchHistory();
     } catch (error) {
@@ -188,9 +186,8 @@ export default function History() {
     const confirmDelete = window.confirm("Clear all watch history?");
     if (!confirmDelete) return;
 
-    const token = localStorage.getItem("token");
-    await axios.delete("http://localhost:5000/api/user/watch-history", {
-      headers: { Authorization: `Bearer ${token}` },
+    await api.delete("/api/user/watch-history", {
+      
     });
     fetchHistory();
   };
@@ -222,7 +219,7 @@ export default function History() {
             {/* Thumbnail Click → Open video */}
             <Link to={`/watch/${item.video.filename}`}>
               <img
-                src={`http://localhost:5000/uploads/${item.video.thumbnail}`}
+                src={`${process.env.REACT_APP_API_URL}/uploads/${item.video.thumbnail}`}
                 alt={item.video.title}
                 style={styles.thumbnail}
               />

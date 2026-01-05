@@ -122,16 +122,16 @@
 //     try {
 //       const target = await User.findById(req.params.id); 
 //       const currentUser = await User.findById(req.user.id);
-  
+
 //       if (!target) return res.status(404).json({ message: "User not found" });
-  
+
 //       // ❌ Can't subscribe to yourself
 //       if (target._id.toString() === currentUser._id.toString()) {
 //         return res.status(400).json({ message: "Can't subscribe to yourself" });
 //       }
-  
+
 //       const isAlreadySubscribed = target.subscribers.map(String).includes(currentUser._id.toString());
-  
+
 //       if (isAlreadySubscribed) {
 //         // 🔄 Unsubscribe
 //         target.subscribers.pull(currentUser._id);
@@ -152,7 +152,7 @@
 //       res.status(500).json({ message: "Server error subscribing", error: err.message });
 //     }
 //   });
-  
+
 
 // module.exports = router;
 
@@ -199,22 +199,22 @@
 //     try {
 //       const target = await User.findById(req.params.id);
 //       const currentUser = await User.findById(req.user.id);
-  
+
 //       if (!target) return res.status(404).json({ message: "User not found" });
-  
+
 //       // ❌ Can't subscribe to yourself
 //       if (target._id.toString() === currentUser._id.toString()) {
 //         return res.status(400).json({ message: "Can't subscribe to yourself" });
 //       }
-  
+
 //       // 💡 Ensure arrays exist (fix for old data)
 //       target.subscribers = Array.isArray(target.subscribers) ? target.subscribers : [];
 //       currentUser.subscribedTo = Array.isArray(currentUser.subscribedTo) ? currentUser.subscribedTo : [];
-  
+
 //       const isAlreadySubscribed = target.subscribers
 //         .map(id => id.toString())
 //         .includes(currentUser._id.toString());
-  
+
 //       if (isAlreadySubscribed) {
 //         // 🔄 Unsubscribe
 //         target.subscribers = target.subscribers.filter(
@@ -223,7 +223,7 @@
 //         currentUser.subscribedTo = currentUser.subscribedTo.filter(
 //           tid => tid.toString() !== target._id.toString()
 //         );
-  
+
 //         await target.save();
 //         await currentUser.save();
 //         return res.json({ subscribed: false, message: "Unsubscribed" });
@@ -231,7 +231,7 @@
 //         // 🔔 Subscribe
 //         target.subscribers.push(currentUser._id);
 //         currentUser.subscribedTo.push(target._id);
-  
+
 //         await target.save();
 //         await currentUser.save();
 //         return res.json({ subscribed: true, message: "Subscribed" });
@@ -244,7 +244,7 @@
 //       });
 //     }
 //   });
-  
+
 
 // module.exports = router;
 
@@ -291,22 +291,22 @@
 //     try {
 //       const target = await User.findById(req.params.id);
 //       const currentUser = await User.findById(req.user.id);
-  
+
 //       if (!target) return res.status(404).json({ message: "User not found" });
-  
+
 //       // ❌ Can't subscribe to yourself
 //       if (target._id.toString() === currentUser._id.toString()) {
 //         return res.status(400).json({ message: "Can't subscribe to yourself" });
 //       }
-  
+
 //       // 💡 Ensure arrays exist (fix for old data)
 //       target.subscribers = Array.isArray(target.subscribers) ? target.subscribers : [];
 //       currentUser.subscribedTo = Array.isArray(currentUser.subscribedTo) ? currentUser.subscribedTo : [];
-  
+
 //       const isAlreadySubscribed = target.subscribers
 //         .map(id => id.toString())
 //         .includes(currentUser._id.toString());
-  
+
 //       if (isAlreadySubscribed) {
 //         // 🔄 Unsubscribe
 //         target.subscribers = target.subscribers.filter(
@@ -315,7 +315,7 @@
 //         currentUser.subscribedTo = currentUser.subscribedTo.filter(
 //           tid => tid.toString() !== target._id.toString()
 //         );
-  
+
 //         await target.save();
 //         await currentUser.save();
 //         return res.json({ subscribed: false, message: "Unsubscribed" });
@@ -323,7 +323,7 @@
 //         // 🔔 Subscribe
 //         target.subscribers.push(currentUser._id);
 //         currentUser.subscribedTo.push(target._id);
-  
+
 //         await target.save();
 //         await currentUser.save();
 //         return res.json({ subscribed: true, message: "Subscribed" });
@@ -619,44 +619,44 @@ router.post("/subscribe/:id", auth, async (req, res) => {
       await target.save();
       await currentUser.save();
       return res.json({ subscribed: false, message: "Unsubscribed" });
-    // } else {
-    //   // 🔔 Subscribe
-    //   target.subscribers.push(currentUser._id);
-    //   currentUser.subscribedTo.push(target._id);
+      // } else {
+      //   // 🔔 Subscribe
+      //   target.subscribers.push(currentUser._id);
+      //   currentUser.subscribedTo.push(target._id);
 
-    //   await target.save();
-    //   await currentUser.save();
-    //   return res.json({ subscribed: true, message: "Subscribed" });
-    // }
-  } else {
-    // 🔔 Subscribe
-    target.subscribers.push(currentUser._id);
-    currentUser.subscribedTo.push(target._id);
+      //   await target.save();
+      //   await currentUser.save();
+      //   return res.json({ subscribed: true, message: "Subscribed" });
+      // }
+    } else {
+      // 🔔 Subscribe
+      target.subscribers.push(currentUser._id);
+      currentUser.subscribedTo.push(target._id);
 
-    await target.save();
-    await currentUser.save();
+      await target.save();
+      await currentUser.save();
 
-    // 🔔 CREATE NOTIFICATION FOR CHANNEL OWNER
-    try {
-      await Notification.create({
-        user: target._id,
-        sender: currentUser._id,
-        type: "subscribe",
-        video: null,
-        message: `${currentUser.name} subscribed to your channel`,
-        isRead: false
+      // 🔔 CREATE NOTIFICATION FOR CHANNEL OWNER
+      try {
+        await Notification.create({
+          user: target._id,
+          sender: currentUser._id,
+          type: "subscribe",
+          video: null,
+          message: `${currentUser.name} subscribed to your channel`,
+          isRead: false
+        });
+        console.log("✅ Subscribe notification sent");
+      } catch (notifErr) {
+        console.error("⚠️ Subscribe notification failed:", notifErr);
+      }
+
+      return res.json({
+        subscribed: true,
+        message: "Subscribed",
+        subscribers: target.subscribers
       });
-      console.log("✅ Subscribe notification sent");
-    } catch (notifErr) {
-      console.error("⚠️ Subscribe notification failed:", notifErr);
     }
-
-    return res.json({ 
-      subscribed: true, 
-      message: "Subscribed",
-      subscribers: target.subscribers 
-    });
-  }
   } catch (err) {
     console.error("Subscribe Error:", err);
     res.status(500).json({
@@ -752,6 +752,75 @@ router.delete("/watch-history", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+// ===========================
+// 💾 SAVED VIDEOS ROUTES
+// ===========================
+
+// 📌 9) CHECK IF VIDEO IS SAVED
+router.get("/saved/:videoId", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isSaved = user.savedVideos && user.savedVideos.includes(req.params.videoId);
+    res.json({ isSaved });
+  } catch (err) {
+    console.error("Check saved error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// 📌 10) SAVE/UNSAVE VIDEO
+router.post("/save/:videoId", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const video = await Video.findById(req.params.videoId);
+
+    if (!video) return res.status(404).json({ message: "Video not found" });
+
+    if (!user.savedVideos) user.savedVideos = [];
+
+    const isSaved = user.savedVideos.includes(video._id.toString());
+
+    if (isSaved) {
+      // Remove from saved
+      user.savedVideos = user.savedVideos.filter(id => id.toString() !== video._id.toString());
+      await user.save();
+      res.json({ saved: false, message: "Removed from saved videos" });
+    } else {
+      // Add to saved
+      user.savedVideos.push(video._id);
+      await user.save();
+      res.json({ saved: true, message: "Added to saved videos" });
+    }
+  } catch (err) {
+    console.error("Save video error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// 📌 11) GET ALL SAVED VIDEOS
+router.get("/saved-videos", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate({
+        path: "savedVideos",
+        populate: { path: "uploadedBy", select: "name avatar" }
+      });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user.savedVideos || []);
+  } catch (err) {
+    console.error("Get saved videos error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ===========================
+// 👤 AVATAR/PROFILE UPLOAD
+// ===========================
 
 const storage = multer.diskStorage({
   destination: "uploads/avatars/",

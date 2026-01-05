@@ -10,6 +10,7 @@
     "axios": "^1.13.2",
     "firebase": "^12.7.0",
     "hls.js": "^1.6.15",
+    "http-proxy-middleware": "^3.0.5",
     "razorpay": "^2.9.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -25,6 +26,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": [
       "react-app",

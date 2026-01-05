@@ -1,7 +1,7 @@
 
 
 // import React, { useState, useContext } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function Upload() {
@@ -34,8 +34,8 @@
 //     try {
 //       setUploading(true);
 
-//       const res = await axios.post(
-//         "http://localhost:5000/api/videos/upload",
+//       const res = await api.post(
+//         "/api/videos/upload",
 //         formData,
 //         {
 //           headers: {
@@ -118,7 +118,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function Upload() {
@@ -137,7 +137,7 @@
 //   // LOAD VIDEOS (hook placed before any early return)
 //   const fetchVideos = async () => {
 //     try {
-//       const res = await axios.get("http://localhost:5000/api/videos/all");
+//       const res = await api.get("/api/videos/all");
 //       setVideos(res.data || []);
 //     } catch (err) {
 //       console.error("Failed to fetch videos", err);
@@ -178,8 +178,8 @@
 //     try {
 //       setUploading(true);
 
-//       await axios.post("http://localhost:5000/api/videos/upload", formData, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/videos/upload", formData, {
+//         
 //       });
 
 //       alert("Video Uploaded ✔");
@@ -200,8 +200,8 @@
 //     if (!window.confirm("Delete this video?")) return;
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.delete(`/api/videos/delete/${id}`, {
+//         
 //       });
 //       fetchVideos();
 //     } catch (err) {
@@ -215,10 +215,10 @@
 //     if (!editTitle) return alert("Title required");
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.put(
-//         `http://localhost:5000/api/videos/update/${editId}`,
+//       await api.put(
+//         `/api/videos/update/${editId}`,
 //         { title: editTitle },
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 //       setEditId(null);
 //       setEditTitle("");
@@ -328,7 +328,7 @@
 //       {videos.map((v) => (
 //         <div key={v._id} style={styles.listCard}>
 //           <img
-//             src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//             src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
 //             style={styles.thumb}
 //             alt=""
 //             onError={(e) => {
@@ -392,7 +392,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function Upload() {
@@ -411,7 +411,7 @@
 
 //   // Fetch videos
 //   const fetchVideos = async () => {
-//     const res = await axios.get("http://localhost:5000/api/videos/all");
+//     const res = await api.get("/api/videos/all");
 //     setVideos(res.data);
 //   };
 
@@ -440,8 +440,8 @@
 //     try {
 //       setUploading(true);
 
-//       await axios.post("http://localhost:5000/api/videos/upload", fd, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/videos/upload", fd, {
+//         
 //       });
 
 //       alert("Uploaded ✔");
@@ -460,8 +460,8 @@
 //   const deleteVideo = async (id) => {
 //     if (!window.confirm("Delete permanently?")) return;
 
-//     await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.delete(`/api/videos/delete/${id}`, {
+//       
 //     });
 
 //     fetchVideos();
@@ -469,10 +469,10 @@
 
 //   // Update Title
 //   const updateTitle = async () => {
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update/${editId}`,
+//     await api.put(
+//       `/api/videos/update/${editId}`,
 //       { title: editTitle },
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 
 //     setEditId(null);
@@ -486,10 +486,10 @@
 //     const fd = new FormData();
 //     fd.append("thumbnail", file);
 
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-thumbnail/${id}`,
+//     await api.put(
+//       `/api/videos/update-thumbnail/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 
 //     fetchVideos();
@@ -502,10 +502,10 @@
 //     const fd = new FormData();
 //     fd.append("video", file);
 
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-video/${id}`,
+//     await api.put(
+//       `/api/videos/update-video/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 
 //     fetchVideos();
@@ -596,7 +596,7 @@
 //         >
 //           {/* Thumbnail */}
 //           <img
-//             src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//             src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
 //             width="130"
 //             height="80"
 //             style={{ borderRadius: "8px", objectFit: "cover" }}
@@ -659,7 +659,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function Upload() {
@@ -675,7 +675,7 @@
 //   const [editTitle, setEditTitle] = useState("");
 
 //   const fetchVideos = async () => {
-//     const res = await axios.get("http://localhost:5000/api/videos/all");
+//     const res = await api.get("/api/videos/all");
 //     setVideos(res.data);
 //   };
 
@@ -705,8 +705,8 @@
 
 //     try {
 //       setUploading(true);
-//       await axios.post("http://localhost:5000/api/videos/upload", fd, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/videos/upload", fd, {
+//         
 //       });
 
 //       alert("Video uploaded successfully!");
@@ -723,18 +723,18 @@
 
 //   const deleteVideo = async (id) => {
 //     if (!window.confirm("Delete this video permanently?")) return;
-//     await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.delete(`/api/videos/delete/${id}`, {
+//       
 //     });
 //     fetchVideos();
 //   };
 
 //   const updateTitle = async () => {
 //     if (!editTitle.trim()) return;
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update/${editId}`,
+//     await api.put(
+//       `/api/videos/update/${editId}`,
 //       { title: editTitle },
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     setEditId(null);
 //     fetchVideos();
@@ -744,10 +744,10 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("thumbnail", file);
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-thumbnail/${id}`,
+//     await api.put(
+//       `/api/videos/update-thumbnail/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     fetchVideos();
 //   };
@@ -756,10 +756,10 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("video", file);
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-video/${id}`,
+//     await api.put(
+//       `/api/videos/update-video/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     fetchVideos();
 //   };
@@ -825,7 +825,7 @@
 //             <div key={v._id} className="video-manage-card">
 //               <div className="thumb-container">
 //                 <img
-//                   src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                   src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
 //                   alt="thumb"
 //                   className="manage-thumb"
 //                 />
@@ -1183,7 +1183,7 @@
 //   );
 // }
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function Upload() {
@@ -1213,7 +1213,7 @@
 
 //   // Fetch videos for management
 //   const fetchVideos = async () => {
-//     const res = await axios.get("http://localhost:5000/api/videos/all");
+//     const res = await api.get("/api/videos/all");
 //     setVideos(res.data);
 //   };
 
@@ -1247,8 +1247,8 @@
 
 //     try {
 //       setUploading(true);
-//       await axios.post("http://localhost:5000/api/videos/upload", fd, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/videos/upload", fd, {
+//         
 //       });
 
 //       alert("🎉 Video Uploaded Successfully!");
@@ -1267,8 +1267,8 @@
 //   // 🗑 Delete Video
 //   const deleteVideo = async (id) => {
 //     if (!window.confirm("⚠ Delete this video permanently?")) return;
-//     await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.delete(`/api/videos/delete/${id}`, {
+//       
 //     });
 //     fetchVideos();
 //   };
@@ -1276,10 +1276,10 @@
 //   // ✏ Update Title
 //   const updateTitle = async () => {
 //     if (!editTitle.trim()) return;
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update/${editId}`,
+//     await api.put(
+//       `/api/videos/update/${editId}`,
 //       { title: editTitle },
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     setEditId(null);
 //     fetchVideos();
@@ -1290,10 +1290,10 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("thumbnail", file);
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-thumbnail/${id}`,
+//     await api.put(
+//       `/api/videos/update-thumbnail/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     fetchVideos();
 //   };
@@ -1303,10 +1303,10 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("video", file);
-//     await axios.put(
-//       `http://localhost:5000/api/videos/update-video/${id}`,
+//     await api.put(
+//       `/api/videos/update-video/${id}`,
 //       fd,
-//       { headers: { Authorization: `Bearer ${token}` } }
+//       {  }
 //     );
 //     fetchVideos();
 //   };
@@ -1317,7 +1317,7 @@
 //       <div className="upload-card">
 //         <h2>📤 Upload New Video</h2>
 //         <form onSubmit={handleUpload} className="upload-form">
-          
+
 //           <input
 //             type="text"
 //             placeholder="Enter video title *"
@@ -1360,7 +1360,7 @@
 //         <div className="videos-grid">
 //           {videos.map((v) => (
 //             <div key={v._id} className="video-manage-card">
-//               <img src={`http://localhost:5000/uploads/${v.thumbnail}`} alt="thumb"/>
+//               <img src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`} alt="thumb"/>
 
 //               {editId === v._id ? (
 //                 <div className="edit-title">
@@ -1410,7 +1410,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 
 // export default function AdminDashboard() {
@@ -1441,7 +1441,7 @@
 //   // Fetch all videos
 //   const fetchVideos = async () => {
 //     try {
-//       const res = await axios.get("http://localhost:5000/api/videos/all");
+//       const res = await api.get("/api/videos/all");
 //       setVideos(res.data);
 //     } catch (err) {
 //       console.error(err);
@@ -1484,8 +1484,8 @@
 //       setUploading(true);
 //       setProgress(0);
 
-//       await axios.post("http://localhost:5000/api/videos/upload", fd, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/videos/upload", fd, {
+//         
 //         onUploadProgress: (e) => {
 //           setProgress(Math.round((e.loaded * 100) / e.total));
 //         },
@@ -1513,8 +1513,8 @@
 //   const deleteVideo = async (id) => {
 //     if (!window.confirm("Permanently delete this video? This cannot be undone.")) return;
 //     try {
-//       await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.delete(`/api/videos/delete/${id}`, {
+//         
 //       });
 //       fetchVideos();
 //     } catch (err) {
@@ -1526,8 +1526,8 @@
 //   const updateTitle = async () => {
 //     if (!editTitle.trim()) return;
 //     try {
-//       await axios.put(`http://localhost:5000/api/videos/update/${editId}`, { title: editTitle }, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.put(`/api/videos/update/${editId}`, { title: editTitle }, {
+//         
 //       });
 //       setEditId(null);
 //       fetchVideos();
@@ -1541,8 +1541,8 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("thumbnail", file);
-//     await axios.put(`http://localhost:5000/api/videos/update-thumbnail/${id}`, fd, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.put(`/api/videos/update-thumbnail/${id}`, fd, {
+//       
 //     });
 //     fetchVideos();
 //   };
@@ -1552,8 +1552,8 @@
 //     if (!file) return;
 //     const fd = new FormData();
 //     fd.append("video", file);
-//     await axios.put(`http://localhost:5000/api/videos/update-video/${id}`, fd, {
-//       headers: { Authorization: `Bearer ${token}` },
+//     await api.put(`/api/videos/update-video/${id}`, fd, {
+//       
 //     });
 //     fetchVideos();
 //   };
@@ -1632,7 +1632,7 @@
 //           {videos.map((v) => (
 //             <div key={v._id} className="video-card">
 //               <div className="thumbnail">
-//                 <img src={`http://localhost:5000/uploads/${v.thumbnail}`} alt={v.title} />
+//                 <img src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`} alt={v.title} />
 //                 <div className="duration">{v.duration || "0:00"}</div>
 //               </div>
 
@@ -1970,7 +1970,7 @@
 
 
 // import React, { useState, useContext, useEffect } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 // import {
@@ -2001,7 +2001,7 @@
 //   const [editTitle, setEditTitle] = useState("");
 //   const [searchQuery, setSearchQuery] = useState("");
 //   const [filterCategory, setFilterCategory] = useState("All");
-  
+
 //   // UI states
 //   const [activeTab, setActiveTab] = useState("dashboard");
 //   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -2017,7 +2017,7 @@
 //   // Fetch all videos
 //   const fetchVideos = async () => {
 //     try {
-//       const res = await axios.get("http://localhost:5000/api/videos/all");
+//       const res = await api.get("/api/videos/all");
 //       setVideos(res.data);
 //     } catch (err) {
 //       console.error(err);
@@ -2039,7 +2039,7 @@
 //   // Upload handler
 //   const handleUpload = async (e) => {
 //     e.preventDefault();
-    
+
 //     if (!user) {
 //       alert("⚠️ Please login first to upload videos");
 //       navigate("/login");
@@ -2063,8 +2063,8 @@
 //       setUploading(true);
 //       setProgress(0);
 
-//       await axios.post("http://localhost:5000/api/ads/upload", fd, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.post("/api/ads/upload", fd, {
+//         
 //         onUploadProgress: (e) => {
 //           setProgress(Math.round((e.loaded * 100) / e.total));
 //         },
@@ -2122,12 +2122,12 @@
 //       alert("⚠️ Please login first");
 //       return;
 //     }
-    
+
 //     if (!window.confirm("🗑️ Delete this video permanently?")) return;
-    
+
 //     try {
-//       await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
+//       await api.delete(`/api/videos/delete/${id}`, {
+//         
 //       });
 //       fetchVideos();
 //       alert("✅ Video deleted successfully");
@@ -2142,14 +2142,14 @@
 //       alert("⚠️ Please login first");
 //       return;
 //     }
-    
+
 //     if (!editTitle.trim()) return;
-    
+
 //     try {
-//       await axios.put(
-//         `http://localhost:5000/api/videos/update/${editId}`,
+//       await api.put(
+//         `/api/videos/update/${editId}`,
 //         { title: editTitle },
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 //       setEditId(null);
 //       fetchVideos();
@@ -2165,17 +2165,17 @@
 //       alert("⚠️ Please login first");
 //       return;
 //     }
-    
+
 //     if (!file) return;
-    
+
 //     const fd = new FormData();
 //     fd.append("thumbnail", file);
-    
+
 //     try {
-//       await axios.put(
-//         `http://localhost:5000/api/videos/update-thumbnail/${id}`,
+//       await api.put(
+//         `/api/videos/update-thumbnail/${id}`,
 //         fd,
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 //       fetchVideos();
 //       alert("✅ Thumbnail updated");
@@ -2190,17 +2190,17 @@
 //       alert("⚠️ Please login first");
 //       return;
 //     }
-    
+
 //     if (!file) return;
-    
+
 //     const fd = new FormData();
 //     fd.append("video", file);
-    
+
 //     try {
-//       await axios.put(
-//         `http://localhost:5000/api/videos/update-video/${id}`,
+//       await api.put(
+//         `/api/videos/update-video/${id}`,
 //         fd,
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
 //       fetchVideos();
 //       alert("✅ Video updated");
@@ -2276,7 +2276,7 @@
 //           </button>
 
 //           <button style={styles.navItem} onClick={() => navigate("/admin/upload-ad")}>
-            
+
 //                 <FiSettings size={22} />
 //                 {sidebarOpen && <span>Upload-Ad</span>}
 //               </button>
@@ -2312,7 +2312,7 @@
 //                 <FiSettings size={22} />
 //                 {sidebarOpen && <span>Settings</span>}
 //               </button>
-             
+
 //               <button style={styles.navItem} onClick={logout}>
 //                 <FiLogOut size={22} />
 //                 {sidebarOpen && <span>Logout</span>}
@@ -2323,7 +2323,7 @@
 //               <FiLogOut size={22} />
 //               {sidebarOpen && <span>Login</span>}
 //             </button>
-            
+
 //           )}
 //         </nav>
 
@@ -2417,7 +2417,7 @@
 //                 {videos.slice(0, 5).map((v) => (
 //                   <div key={v._id} style={styles.recentVideoCard}>
 //                     <img 
-//                       src={`http://localhost:5000/uploads/${v.thumbnail}`} 
+//                       src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`} 
 //                       alt={v.title}
 //                       style={styles.recentVideoThumb}
 //                     />
@@ -2620,7 +2620,7 @@
 //                 <div key={v._id} style={styles.videoCard}>
 //                   <div style={styles.videoThumbContainer}>
 //                     <img
-//                       src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                       src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
 //                       alt={v.title}
 //                       style={styles.videoThumb}
 //                     />
@@ -2740,7 +2740,7 @@
 //                       <div key={v._id} style={styles.topVideoItem}>
 //                         <span style={styles.rank}>#{i + 1}</span>
 //                         <img
-//                           src={`http://localhost:5000/uploads/${v.thumbnail}`}
+//                           src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
 //                           alt={v.title}
 //                           style={styles.topVideoThumb}
 //                         />
@@ -3495,45 +3495,43 @@
 // };
 
 import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   FiUpload, FiVideo, FiSettings, FiLogOut, FiEdit2, FiTrash2,
-  FiImage, FiPlayCircle, FiEye, FiThumbsUp, FiTrendingUp,
-  FiHome, FiMenu, FiX, FiSearch, FiFilter, FiDownload,
+  FiPlayCircle, FiEye, FiThumbsUp, FiTrendingUp,
+  FiHome, FiMenu, FiX, FiSearch, FiDownload,
   FiDollarSign, FiMousePointer, FiBarChart2, FiActivity,
-  FiUsers, FiCheckCircle, FiXCircle, FiClock, FiRefreshCw,
-  FiPieChart, FiTarget, FiAlertCircle, FiZap, FiTrendingDown,
-  FiCalendar, FiCreditCard, FiGlobe, FiMonitor, FiPercent
+  FiUsers, FiCheckCircle, FiClock, FiRefreshCw,
+  FiPieChart, FiTarget, FiAlertCircle, FiZap, FiPercent
 } from "react-icons/fi";
-import { MdDashboard, MdVideoLibrary, MdAnalytics, MdMonetizationOn } from "react-icons/md";
+import { MdDashboard, MdVideoLibrary, MdAnalytics } from "react-icons/md";
 
 export default function AdvancedAdminDashboard() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   // ==================== STATE MANAGEMENT ====================
-  
+
   // UI States
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   // Data States
   const [videos, setVideos] = useState([]);
   const [ads, setAds] = useState([]);
   const [creators, setCreators] = useState([]);
   const [revenueData, setRevenueData] = useState(null);
-  
+
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [dateRange, setDateRange] = useState("all"); // all, today, week, month
   const [sortBy, setSortBy] = useState("recent"); // recent, views, revenue, engagement
-  
+
   // Upload States
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -3577,7 +3575,7 @@ export default function AdvancedAdminDashboard() {
 
   const fetchVideos = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/videos/all");
+      const res = await api.get("/api/videos/all");
       setVideos(res.data);
     } catch (err) {
       console.error("Failed to fetch videos:", err);
@@ -3586,8 +3584,8 @@ export default function AdvancedAdminDashboard() {
 
   const fetchAds = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/ads", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/ads", {
+
       });
       setAds(res.data);
     } catch (err) {
@@ -3597,8 +3595,8 @@ export default function AdvancedAdminDashboard() {
 
   const fetchCreators = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/monetization/admin/creators", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/monetization/admin/creators", {
+
       });
       setCreators(res.data);
     } catch (err) {
@@ -3608,8 +3606,8 @@ export default function AdvancedAdminDashboard() {
 
   const fetchRevenueData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/ads/dashboard/revenue", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/ads/dashboard/revenue", {
+
       });
       setRevenueData(res.data);
     } catch (err) {
@@ -3630,24 +3628,24 @@ export default function AdvancedAdminDashboard() {
     const totalViews = videos.reduce((sum, v) => sum + (v.views || 0), 0);
     const totalLikes = videos.reduce((sum, v) => sum + (v.likes?.length || 0), 0);
     const avgViews = totalVideos > 0 ? Math.round(totalViews / totalVideos) : 0;
-    
+
     const totalAds = ads.length;
     const activeAds = ads.filter(a => a.active).length;
     const totalAdViews = ads.reduce((sum, a) => sum + (a.views || 0), 0);
     const totalAdClicks = ads.reduce((sum, a) => sum + (a.clicks || 0), 0);
     const avgCTR = totalAdViews > 0 ? ((totalAdClicks / totalAdViews) * 100).toFixed(2) : 0;
-    
+
     const totalRevenue = revenueData?.overview?.totalRevenue || 0;
     const pendingPayouts = creators.reduce((sum, c) => sum + (c.earnings?.pendingBalance || 0), 0);
-    
+
     const approvedCreators = creators.filter(c => c.monetizationStatus === "approved").length;
     const pendingCreators = creators.filter(c => c.monetizationStatus === "pending").length;
-    
+
     // Growth calculations (mock - in production, compare with previous period)
     const viewsGrowth = 12.5;
     const revenueGrowth = 8.3;
     const creatorsGrowth = 15.7;
-    
+
     return {
       videos: { total: totalVideos, views: totalViews, likes: totalLikes, avgViews, growth: viewsGrowth },
       ads: { total: totalAds, active: activeAds, views: totalAdViews, clicks: totalAdClicks, ctr: avgCTR },
@@ -3667,7 +3665,7 @@ export default function AdvancedAdminDashboard() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    
+
     if (!user) {
       alert("⚠️ Please login first to upload videos");
       navigate("/login");
@@ -3691,8 +3689,8 @@ export default function AdvancedAdminDashboard() {
       setUploading(true);
       setProgress(0);
 
-      await axios.post("http://localhost:5000/api/ads/upload", fd, {
-        headers: { Authorization: `Bearer ${token}` },
+      await api.post("/api/ads/upload", fd, {
+
         onUploadProgress: (e) => {
           setProgress(Math.round((e.loaded * 100) / e.total));
         },
@@ -3748,12 +3746,12 @@ export default function AdvancedAdminDashboard() {
       alert("⚠️ Please login first");
       return;
     }
-    
+
     if (!window.confirm("🗑️ Delete this video permanently?")) return;
-    
+
     try {
-      await axios.delete(`http://localhost:5000/api/videos/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      await api.delete(`/api/videos/delete/${id}`, {
+
       });
       fetchVideos();
       alert("✅ Video deleted successfully");
@@ -3767,14 +3765,14 @@ export default function AdvancedAdminDashboard() {
       alert("⚠️ Please login first");
       return;
     }
-    
+
     if (!editTitle.trim()) return;
-    
+
     try {
-      await axios.put(
-        `http://localhost:5000/api/videos/update/${editId}`,
+      await api.put(
+        `/api/videos/update/${editId}`,
         { title: editTitle },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {}
       );
       setEditId(null);
       fetchVideos();
@@ -3793,7 +3791,7 @@ export default function AdvancedAdminDashboard() {
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
-      switch(sortBy) {
+      switch (sortBy) {
         case "views":
           return (b.views || 0) - (a.views || 0);
         case "revenue":
@@ -3814,9 +3812,9 @@ export default function AdvancedAdminDashboard() {
   };
 
   const formatCurrency = (amount) => {
-    return "₹" + (amount || 0).toLocaleString("en-IN", { 
-      minimumFractionDigits: 2, 
-      maximumFractionDigits: 2 
+    return "₹" + (amount || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     });
   };
 
@@ -3849,8 +3847,8 @@ export default function AdvancedAdminDashboard() {
   return (
     <div style={styles.container}>
       {/* Sidebar */}
-      <aside style={{ 
-        ...styles.sidebar, 
+      <aside style={{
+        ...styles.sidebar,
         width: sidebarOpen ? '280px' : '80px',
         transform: sidebarOpen ? 'translateX(0)' : 'translateX(0)'
       }}>
@@ -3866,8 +3864,8 @@ export default function AdvancedAdminDashboard() {
               </div>
             </div>
           )}
-          <button 
-            style={styles.toggleBtn} 
+          <button
+            style={styles.toggleBtn}
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
@@ -3877,7 +3875,7 @@ export default function AdvancedAdminDashboard() {
         <nav style={styles.nav}>
           <div style={styles.navSection}>
             {sidebarOpen && <div style={styles.navSectionTitle}>Main</div>}
-            
+
             <button
               style={{
                 ...styles.navItem,
@@ -3961,7 +3959,7 @@ export default function AdvancedAdminDashboard() {
 
           <div style={styles.navSection}>
             {sidebarOpen && <div style={styles.navSectionTitle}>System</div>}
-            
+
             <button style={styles.navItem} onClick={() => navigate("/")}>
               <FiHome size={22} />
               {sidebarOpen && <span>Home</span>}
@@ -4004,8 +4002,8 @@ export default function AdvancedAdminDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main style={{ 
-        ...styles.main, 
+      <main style={{
+        ...styles.main,
         marginLeft: sidebarOpen ? '280px' : '80px',
         transition: 'margin-left 0.3s ease'
       }}>
@@ -4028,22 +4026,22 @@ export default function AdvancedAdminDashboard() {
               </span>
             </div>
           </div>
-          
+
           <div style={styles.topBarRight}>
-            <button 
-              style={styles.refreshButton} 
+            <button
+              style={styles.refreshButton}
               onClick={handleRefresh}
               disabled={refreshing}
             >
               <FiRefreshCw size={18} className={refreshing ? 'spinning' : ''} />
               {!refreshing && <span>Refresh</span>}
             </button>
-            
+
             <button style={styles.exportButton}>
               <FiDownload size={18} />
               <span>Export</span>
             </button>
-            
+
             <div style={styles.notificationBadge}>
               <FiAlertCircle size={20} />
               {metrics.creators.pending > 0 && (
@@ -4210,7 +4208,7 @@ export default function AdvancedAdminDashboard() {
                             {metrics.creators.pending} creators waiting for approval
                           </div>
                         </div>
-                        <button 
+                        <button
                           style={styles.alertButton}
                           onClick={() => setActiveTab('creators')}
                         >
@@ -4218,7 +4216,7 @@ export default function AdvancedAdminDashboard() {
                         </button>
                       </div>
                     )}
-                    
+
                     {metrics.revenue.pending > 1000 && (
                       <div style={styles.alertItem}>
                         <div style={styles.alertIcon} className="alert-info">
@@ -4230,7 +4228,7 @@ export default function AdvancedAdminDashboard() {
                             {formatCurrency(metrics.revenue.pending)} awaiting payout
                           </div>
                         </div>
-                        <button 
+                        <button
                           style={styles.alertButton}
                           onClick={() => setActiveTab('revenue')}
                         >
@@ -4263,8 +4261,8 @@ export default function AdvancedAdminDashboard() {
                 <div style={styles.activityGrid}>
                   {videos.slice(0, 5).map((v) => (
                     <div key={v._id} style={styles.activityCard}>
-                      <img 
-                        src={`http://localhost:5000/uploads/${v.thumbnail}`} 
+                      <img
+                        src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                         alt={v.title}
                         style={styles.activityThumb}
                       />
@@ -4323,7 +4321,7 @@ export default function AdvancedAdminDashboard() {
                         <div key={v._id} style={styles.topItem}>
                           <div style={styles.topRank}>#{i + 1}</div>
                           <img
-                            src={`http://localhost:5000/uploads/${v.thumbnail}`}
+                            src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                             alt={v.title}
                             style={styles.topThumb}
                           />
@@ -4350,8 +4348,8 @@ export default function AdvancedAdminDashboard() {
                   <div style={styles.categoryList}>
                     {categories.map((cat) => {
                       const count = videos.filter(v => v.category === cat).length;
-                      const percentage = metrics.videos.total > 0 
-                        ? (count / metrics.videos.total * 100).toFixed(1) 
+                      const percentage = metrics.videos.total > 0
+                        ? (count / metrics.videos.total * 100).toFixed(1)
                         : 0;
                       if (count === 0) return null;
                       return (
@@ -4471,7 +4469,7 @@ export default function AdvancedAdminDashboard() {
                   />
                 </div>
 
-                <select 
+                <select
                   style={styles.filterSelect}
                   value={filterCategory}
                   onChange={(e) => setFilterCategory(e.target.value)}
@@ -4482,7 +4480,7 @@ export default function AdvancedAdminDashboard() {
                   ))}
                 </select>
 
-                <select 
+                <select
                   style={styles.filterSelect}
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
@@ -4492,7 +4490,7 @@ export default function AdvancedAdminDashboard() {
                   <option value="engagement">Most Engaging</option>
                 </select>
 
-                <button 
+                <button
                   style={styles.uploadButton}
                   onClick={() => setActiveTab('upload')}
                 >
@@ -4507,7 +4505,7 @@ export default function AdvancedAdminDashboard() {
                   <div key={v._id} style={styles.videoCard}>
                     <div style={styles.videoThumbContainer}>
                       <img
-                        src={`http://localhost:5000/uploads/${v.thumbnail}`}
+                        src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                         alt={v.title}
                         style={styles.videoThumb}
                       />
@@ -4593,7 +4591,7 @@ export default function AdvancedAdminDashboard() {
               <FiTarget size={64} color="#667eea" />
               <h2>Ad Management</h2>
               <p>Manage your advertisements from the dedicated Ad Management panel</p>
-              <button 
+              <button
                 style={styles.primaryButton}
                 onClick={() => navigate("/admin/upload-ad")}
               >
@@ -4608,7 +4606,7 @@ export default function AdvancedAdminDashboard() {
               <FiDollarSign size={64} color="#10b981" />
               <h2>Revenue Dashboard</h2>
               <p>View detailed revenue analytics and reports</p>
-              <button 
+              <button
                 style={styles.primaryButton}
                 onClick={() => navigate("/revenue-dashboard")}
               >
@@ -4623,7 +4621,7 @@ export default function AdvancedAdminDashboard() {
               <FiUsers size={64} color="#f59e0b" />
               <h2>Creator Management</h2>
               <p>Manage creator applications and monetization</p>
-              <button 
+              <button
                 style={styles.primaryButton}
                 onClick={() => navigate("/AdminMonetizationPanel")}
               >
@@ -4708,7 +4706,7 @@ const styles = {
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
     color: '#fff',
   },
-  
+
   // Loading Screen
   loadingScreen: {
     display: 'flex',

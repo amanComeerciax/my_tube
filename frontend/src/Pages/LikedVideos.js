@@ -1,5 +1,5 @@
 // import React, { useEffect, useState } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { useNavigate } from "react-router-dom";
 // import { FiThumbsUp, FiPlay } from "react-icons/fi";
 
@@ -12,8 +12,8 @@
 //     const fetchLikedVideos = async () => {
 //       try {
 //         const token = localStorage.getItem("token");
-//         const res = await axios.get("http://localhost:5000/api/videos/liked-videos", {
-//           headers: { Authorization: `Bearer ${token}` }
+//         const res = await api.get("/api/videos/liked-videos", {
+//           
 //         });
 //         setVideos(res.data);
 //       } catch (err) {
@@ -42,7 +42,7 @@
 //             <div key={v._id} style={styles.videoRow} onClick={() => navigate(`/watch/${v.filename}`)}>
 //               <span style={styles.index}>{index + 1}</span>
 //               <div style={styles.thumbnailWrapper}>
-//                 <img src={`http://localhost:5000/uploads/${v.thumbnail}`} alt={v.title} style={styles.thumb} />
+//                 <img src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`} alt={v.title} style={styles.thumb} />
 //                 <div style={styles.overlay}><FiPlay /></div>
 //               </div>
 //               <div style={styles.info}>
@@ -75,7 +75,7 @@
 // };
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { FiThumbsUp, FiPlay, FiClock } from "react-icons/fi";
 
@@ -87,9 +87,8 @@ export default function LikedVideos() {
   useEffect(() => {
     const fetchLikedVideos = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/videos/liked-videos", {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await api.get("/api/videos/liked-videos", {
+          
         });
         setVideos(res.data);
       } catch (err) {
@@ -153,7 +152,7 @@ export default function LikedVideos() {
                 {/* Thumbnail */}
                 <div style={styles.thumbnailContainer}>
                   <img 
-                    src={`http://localhost:5000/uploads/${video.thumbnail}`} 
+                    src={`${process.env.REACT_APP_API_URL}/uploads/${video.thumbnail}`} 
                     alt={video.title} 
                     style={styles.thumbnail}
                   />

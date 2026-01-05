@@ -1,5 +1,5 @@
 // import React, { useState } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { useNavigate } from "react-router-dom";
 
 // export default function Signup() {
@@ -57,7 +57,7 @@
 //     e.preventDefault();
 
 //     try {
-//       await axios.post("http://localhost:5000/api/auth/register", {
+//       await api.post("/api/auth/register", {
 //         name,
 //         email,
 //         password,
@@ -120,7 +120,7 @@
 // }
 
 // import React, { useState, useEffect, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { useNavigate } from "react-router-dom";
 // // Assuming you have an icon library like 'react-icons' installed
 // import { FiUserPlus, FiEye, FiEyeOff, FiCheckCircle, FiLoader, FiMail, FiUser } from "react-icons/fi";
@@ -203,7 +203,7 @@
 //     setLoading(true);
 
 //     try {
-//       await axios.post("http://localhost:5000/api/auth/register", {
+//       await api.post("/api/auth/register", {
 //         name,
 //         email,
 //         password,
@@ -591,7 +591,7 @@
 // }
 
 import React, { useState, useEffect, useRef, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 // Icons
@@ -657,7 +657,7 @@ export default function CyberpunkSignupCard() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/register", { name, email, password });
+      await api.post("/api/auth/register", { name, email, password });
       alert("Registration successful 🎉");
       navigate("/login");
     } catch (err) {
@@ -673,7 +673,7 @@ export default function CyberpunkSignupCard() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      const res = await axios.post("http://localhost:5000/api/auth/google-login", {
+      const res = await api.post("/api/auth/google-login", {
         email: user.email,
         name: user.displayName,
         avatar: user.photoURL,

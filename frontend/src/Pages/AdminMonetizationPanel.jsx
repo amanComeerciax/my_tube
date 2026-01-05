@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -35,9 +35,8 @@ export default function AdminMonetizationPanel() {
   /* ================= FETCH ALL CREATORS ================= */
   const fetchCreators = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/monetization/admin/creators", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/monetization/admin/creators", {
+        
       });
       setCreators(res.data);
       setLoading(false);
@@ -74,11 +73,10 @@ export default function AdminMonetizationPanel() {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `http://localhost:5000/api/monetization/admin/review/${creatorId}`,
+      await api.post(
+        `/api/monetization/admin/review/${creatorId}`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {  }
       );
       
       alert(`✅ Application ${status}`);
@@ -96,10 +94,10 @@ export default function AdminMonetizationPanel() {
 
 //     try {
 //       const token = localStorage.getItem("token");
-//       await axios.post(
-//         `http://localhost:5000/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
+//       await api.post(
+//         `/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
 //         { transactionId },
-//         { headers: { Authorization: `Bearer ${token}` } }
+//         {  }
 //       );
       
 //       alert("✅ Payout processed successfully");
@@ -114,12 +112,11 @@ const handleProcessPayout = async (earningsId, paymentId) => {
     if (!window.confirm("Send payout via Razorpay?")) return;
   
     try {
-      const token = localStorage.getItem("token");
   
-      await axios.post(
-        `http://localhost:5000/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
+      await api.post(
+        `/api/monetization/admin/process-payout/${earningsId}/${paymentId}`,
         {}, // ❌ no transactionId
-        { headers: { Authorization: `Bearer ${token}` } }
+        {  }
       );
   
       alert("✅ Payout sent via Razorpay");

@@ -158,7 +158,7 @@
 // //     captions: {
 // //       type: String, // example: 64af...e12.vtt
 // //     },
-    
+
 // //     captionsStatus: {
 // //       type: String,
 // //       enum: ["pending", "ready", "no-audio", "error"],
@@ -303,7 +303,7 @@
 //     // captions: {
 //     //   type: String, // example: 66f1c9a9c2.vtt
 //     // },
-    
+
 //     captions: {
 //       base: { type: String },           // 693fd.vtt
 //       languages: {
@@ -367,6 +367,14 @@ const videoSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    hlsPath: {
+      type: String,
+      default: null,
+    },
+    hlsGenerated: {
+      type: Boolean,
+      default: false,
     },
     thumbnail: {
       type: String,
@@ -444,7 +452,7 @@ const videoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    
+
     // 🔥 SHORTS FIELDS
     isShort: {
       type: Boolean,
@@ -468,7 +476,7 @@ const videoSchema = new mongoose.Schema(
     },
 
 
-    
+
 
     // 🤖 AI SUMMARY FIELDS
     aiSummary: {

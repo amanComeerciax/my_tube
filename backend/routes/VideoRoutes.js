@@ -100,7 +100,7 @@
 // const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, description, category, tags, thumbnailFilename, uploadedBy) => {
 //     const tempDir = path.join('temp_chunks', uploadId);
 //     const finalVideoPath = path.join('uploads', finalFilename);
-    
+
 //     try {
 //         // 1. चंक्स को जोड़ें (Append) 
 //         for (let i = 0; i < totalChunks; i++) {
@@ -113,10 +113,10 @@
 //         // 2. अस्थायी अपलोड फ़ोल्डर को हटा दें
 //         // ❌ FIX: fs.rmdir({ recursive: true }) के बजाय fs.rm का उपयोग करें 
 //         await fs.rm(tempDir, { recursive: true, force: true });
-        
+
 //         // 3. डेटाबेस में वीडियो एंट्री बनाएं
 //         const tagArray = tags ? tags.split(",").map(t => t.trim().toLowerCase()).filter(Boolean) : [];
-        
+
 //         // const video = await Video.create({
 //         //     title,
 //         //     description: description || "",
@@ -236,7 +236,7 @@
 //   worker.on("message", async (msg) => {
 //     console.log("📝 Caption Worker:", msg);
 
-    
+
 
 //     if (msg.success && msg.captionFile) {
 //       await Video.findByIdAndUpdate(video._id, {
@@ -286,12 +286,12 @@
 //         if (!req.file) {
 //             return res.status(400).json({ message: "No chunk file received." });
 //         }
-        
+
 //         const { 
 //             chunkIndex, totalChunks, uploadId,
 //             title, description, category, tags, thumbnailFilename
 //         } = req.body;
-        
+
 //         // if (!chunkIndex || !totalChunks || !uploadId || !title || !thumbnailFilename) {
 //         //     return res.status(400).json({ message: "Missing required metadata." });
 //         // }
@@ -304,14 +304,14 @@
 //         ) {
 //           return res.status(400).json({ message: "Missing required metadata." });
 //         }
-        
+
 //         const chunkIndexInt = parseInt(chunkIndex);
 //         const totalChunksInt = parseInt(totalChunks);
 //         const tempDir = path.join('temp_chunks', uploadId);
-        
+
 //         // अंतिम filename (वीडियो के लिए) uploadId से सुनिश्चित करें
 //         const finalFilename = `${uploadId}_${path.parse(req.file.originalname).name}${path.extname(req.file.originalname)}`;
-        
+
 //         // अस्थायी फ़ोल्डर बनाएं
 //         if (!fsSync.existsSync(tempDir)) {
 //             await fs.mkdir(tempDir, { recursive: true });
@@ -320,14 +320,14 @@
 //         // प्राप्त चंक को उसके इंडेक्स नाम से सहेजें
 //         const chunkSavePath = path.join(tempDir, `${chunkIndexInt}`);
 //         await fs.rename(req.file.path, chunkSavePath); 
-        
+
 //         // यदि यह अंतिम चंक है, तो फ़ाइल को जोड़ें और डेटाबेस अपडेट करें
 //         // if (chunkIndexInt === totalChunksInt - 1) {
 //         //     const video = await reassembleChunks(
 //         //         uploadId, finalFilename, totalChunksInt, 
 //         //         title, description, category, tags, thumbnailFilename, req.user.id
 //         //     );
-            
+
 //         //     return res.json({ message: "Upload complete and file assembled.", video });
 //         // }
 //         if (chunkIndexInt === totalChunksInt - 1) {
@@ -342,7 +342,7 @@
 //             thumbnailFilename,
 //             req.user.id
 //           );
-        
+
 //           // 🧠 START MULTITHREADING HERE
 //           startVideoProcessingWorker(video);
 
@@ -363,14 +363,14 @@
 // //   );
 // // }
 
-        
+
 //           return res.json({
 //             message: "Upload complete. Video processing started in background.",
 //             video
 //           });
 //         }
-        
-        
+
+
 //         res.json({ message: `Chunk ${chunkIndexInt}/${totalChunksInt} received.`, uploadId, filename: finalFilename });
 
 //     } catch (err) {
@@ -641,7 +641,7 @@
 //       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 //       const chunksize = (end - start) + 1;
 //       const file = fsSync.createReadStream(finalPath, { start, end });
-      
+
 //       res.writeHead(206, {
 //         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 //         'Accept-Ranges': 'bytes',
@@ -780,7 +780,7 @@
 //   try {
 //     const { title, category, description } = req.body;
 //     const update = { title, category, description };
-    
+
 //     if (req.file) {
 //         // फाइल 'temp_chunks' में है, उसे 'uploads' में ले जाएँ
 //         const newFilename = Date.now() + "_" + req.file.originalname;
@@ -827,7 +827,7 @@
 //     // नई फ़ाइल को 'uploads' में ले जाएँ
 //     const newFilename = Date.now() + "_" + req.file.originalname;
 //     await fs.rename(req.file.path, path.join("uploads", newFilename));
-    
+
 //     video.filename = newFilename;
 //     video.url = `${req.protocol}://${req.get("host")}/uploads/${newFilename}`;
 //     video.size = req.file.size;
@@ -857,6 +857,9 @@ const User = require("../models/User");
 const auth = require("../middleware/auth");
 const Ad = require("../models/Ad");
 const Notification = require("../models/Notification");
+
+const BASE_URL = require("../utils/baseUrl");
+
 
 
 // PRE-BUILT SIMILARITY MATRIX
@@ -894,7 +897,12 @@ const chunkStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
-const chunkUpload = multer({ storage: chunkStorage });
+// const chunkUpload = multer({ storage: chunkStorage });
+const chunkUpload = multer({
+  storage: chunkStorage,
+  limits: { fileSize: 1024 * 1024 * 100 } // 100MB per chunk
+});
+
 
 // Ensure directories exist
 if (!fsSync.existsSync('temp_chunks')) {
@@ -922,7 +930,9 @@ router.get("/ad/:videoId", async (req, res) => {
     if (!ad) return res.json(null);
 
     res.json({
-      videoUrl: `http://localhost:5000/uploads/ads/${ad.videoFile}`,
+      // videoUrl: `http://localhost:5000/uploads/ads/${ad.videoFile}`,
+      videoUrl: `${BASE_URL}/uploads/ads/${ad.videoFile}`,
+
       skipAfter: ad.skipAfter,
       adId: ad._id
     });
@@ -968,26 +978,26 @@ const reassembleChunks = async (uploadId, finalFilename, totalChunks, title, des
     });
 
 
-    
+
 
     // 🔔 NOTIFY SUBSCRIBERS ABOUT NEW VIDEO
-const uploader = await User.findById(uploadedBy).select("subscribers name");
+    const uploader = await User.findById(uploadedBy).select("subscribers name");
 
-if (uploader?.subscribers?.length > 0) {
-  const notifications = uploader.subscribers
-    .filter(subId => subId.toString() !== uploadedBy.toString()) // self notify avoid
-    .map(subscriberId => ({
-      user: subscriberId,          // receiver (subscriber)
-      sender: uploadedBy,           // channel owner
-      type: "new_video",
-      video: video._id,
-      message: `${uploader.name} uploaded a new video`
-    }));
+    if (uploader?.subscribers?.length > 0) {
+      const notifications = uploader.subscribers
+        .filter(subId => subId.toString() !== uploadedBy.toString()) // self notify avoid
+        .map(subscriberId => ({
+          user: subscriberId,          // receiver (subscriber)
+          sender: uploadedBy,           // channel owner
+          type: "new_video",
+          video: video._id,
+          message: `${uploader.name} uploaded a new video`
+        }));
 
-  if (notifications.length > 0) {
-    await Notification.insertMany(notifications);
-  }
-}
+      if (notifications.length > 0) {
+        await Notification.insertMany(notifications);
+      }
+    }
 
 
     console.log(`Video assembled and saved: ${finalFilename}`);
@@ -1071,8 +1081,8 @@ function startCaptionWorker(video) {
 // 🤖 AI SUMMARY WORKER - FIXED VERSION
 function startSummaryWorker(video) {
   // 🔥 Get MongoDB URI from environment or use default
-  const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/mytube";
-  
+  const MONGODB_URI = process.env.MONGO_URI || "mongodb://localhost:27017/mytube";
+
   const worker = new Worker(
     path.join(__dirname, "../workers/summaryWorker.js"),
     {
@@ -1201,8 +1211,25 @@ router.post("/upload/chunk", auth, chunkUpload.single('chunk'), async (req, res)
 // GET ALL VIDEOS
 router.get("/all", async (req, res) => {
   try {
-    const videos = await Video.find().populate("uploadedBy", "name").sort({ createdAt: -1 });
-    res.json(videos);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20; // Default 20 videos
+    const skip = (page - 1) * limit;
+
+    const videos = await Video.find()
+      .populate("uploadedBy", "name avatar")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Video.countDocuments();
+
+    res.json({
+      videos,
+      page,
+      totalPages: Math.ceil(total / limit),
+      hasMore: skip + videos.length < total,
+      total
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed" });
   }
@@ -1475,7 +1502,7 @@ router.post("/like/:id", auth, async (req, res) => {
     const userId = req.user.id;
     video.dislikes = video.dislikes?.filter(d => d.toString() !== userId) || [];
     const liked = video.likes.includes(userId);
-    
+
     if (liked) {
       // Unlike
       video.likes.pull(userId);

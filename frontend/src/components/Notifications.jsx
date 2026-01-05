@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -18,9 +18,8 @@ export default function Notifications() {
     
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/notifications", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/notifications", {
+        
       });
       
       setNotifications(res.data);
@@ -38,11 +37,10 @@ export default function Notifications() {
   // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5000/api/notifications/read/${notificationId}`,
+      await api.put(
+        `/api/notifications/read/${notificationId}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {  }
       );
       
       setNotifications(prev =>
@@ -57,10 +55,9 @@ export default function Notifications() {
   // Delete notification
   const deleteNotification = async (notificationId) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(
-        `http://localhost:5000/api/notifications/${notificationId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      await api.delete(
+        `/api/notifications/${notificationId}`,
+        {  }
       );
       
       const deletedNotif = notifications.find(n => n._id === notificationId);

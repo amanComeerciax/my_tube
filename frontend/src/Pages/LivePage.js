@@ -15,14 +15,14 @@
 // export default function LivePage() {
 //   const { user } = useContext(AuthContext);
 //   const { roomId } = useParams();
-  
+
 //   const videoRef = useRef(null);
 //   const socketRef = useRef(null);
 //   const peerConnectionRef = useRef(null);
 //   const localStreamRef = useRef(null);
 //   const peerConnectionsRef = useRef({});
 
-  
+
 //   const [messages, setMessages] = useState([]);
 //   const [inputText, setInputText] = useState("");
 //   const [streamActive, setStreamActive] = useState(false);
@@ -72,16 +72,16 @@
 
 //     socket.on("new-viewer", async ({ viewerId }) => {
 //         if (!localStreamRef.current) return;
-      
+
 //         console.log("📤 New viewer joined:", viewerId);
-      
+
 //         const pc = new RTCPeerConnection(ICE_SERVERS);
 //         peerConnectionsRef.current[viewerId] = pc;
-      
+
 //         localStreamRef.current.getTracks().forEach(track => {
 //           pc.addTrack(track, localStreamRef.current);
 //         });
-      
+
 //         pc.onicecandidate = (e) => {
 //           if (e.candidate) {
 //             socket.emit("ice-candidate", {
@@ -91,19 +91,19 @@
 //             });
 //           }
 //         };
-      
+
 //         const offer = await pc.createOffer();
 //         await pc.setLocalDescription(offer);
-      
+
 //         socket.emit("offer", {
 //           offer,
 //           roomId,
 //           to: viewerId
 //         });
-      
+
 //         console.log("✅ Offer sent to viewer");
 //       });
-      
+
 
 //     // Listen for messages
 //     socket.on("receive-message", (msg) => {
@@ -131,7 +131,7 @@
 //     //   }
 //     // });
 
-    
+
 
 //     // socket.on("ice-candidate", async (candidate) => {
 //     //   console.log("🧊 Received ICE candidate");
@@ -155,14 +155,14 @@
 //       await pc.setRemoteDescription(new RTCSessionDescription(answer));
 //     }
 //   });
-  
+
 //   socket.on("ice-candidate", async ({ candidate, from }) => {
 //     console.log("🧊 Received ICE candidate from:", from);
 //     // Find the specific connection this candidate belongs to
 //     const pc = isBroadcaster 
 //       ? peerConnectionsRef.current[from] 
 //       : peerConnectionRef.current;
-  
+
 //     if (pc && candidate) {
 //       try {
 //         await pc.addIceCandidate(new RTCIceCandidate(candidate));
@@ -190,7 +190,7 @@
 //   // Initialize broadcaster stream
 //   useEffect(() => {
 //     const isBroadcaster = user && String(user._id) === String(roomId);
-    
+
 //     if (isBroadcaster && connectionStatus === "connected") {
 //       console.log("🎥 Initializing broadcaster mode...");
 //       initBroadcaster();
@@ -210,7 +210,7 @@
 //     try {
 //       setError(null);
 //       console.log("📹 Requesting camera and microphone access...");
-      
+
 //       const stream = await navigator.mediaDevices.getUserMedia({
 //         video: {
 //           width: { ideal: 1280 },
@@ -240,7 +240,7 @@
 //     } catch (err) {
 //       console.error("❌ Media access error:", err);
 //       let errorMsg = "Unable to access camera/microphone. ";
-      
+
 //       if (err.name === "NotAllowedError") {
 //         errorMsg += "Please grant permission to access your camera and microphone.";
 //       } else if (err.name === "NotFoundError") {
@@ -250,7 +250,7 @@
 //       } else {
 //         errorMsg += err.message;
 //       }
-      
+
 //       setError(errorMsg);
 //       setStreamActive(false);
 //     }
@@ -259,7 +259,7 @@
 //   const createViewerConnection = async (broadcasterId) => {
 //     try {
 //       console.log("🔗 Creating peer connection as viewer...");
-      
+
 //       const pc = new RTCPeerConnection(ICE_SERVERS);
 //       peerConnectionRef.current = pc;
 
@@ -281,9 +281,9 @@
 //       //         .catch(() => {
 //       //           setError("Click anywhere on screen to start audio");
 //       //         });
-            
+
 //       //       setStreamActive(true);
-            
+
 //       //   }
 //       // };
 //       pc.ontrack = (event) => {
@@ -294,7 +294,7 @@
 //           setStreamActive(true);
 //         }
 //       };
-      
+
 
 //       // Handle ICE candidates
 //       pc.onicecandidate = (event) => {
@@ -334,7 +334,7 @@
 
 //       const pc = peerConnectionRef.current;
 //       await pc.setRemoteDescription(new RTCSessionDescription(offer));
-      
+
 //       const answer = await pc.createAnswer();
 //       await pc.setLocalDescription(answer);
 
@@ -368,7 +368,7 @@
 //   const handleSendMessage = (e, isSuper = false) => {
 //     e.preventDefault();
 //     if (!inputText.trim()) return;
-    
+
 //     const data = {
 //       roomId,
 //       text: inputText,
@@ -377,7 +377,7 @@
 //       isSuperChat: isSuper,
 //       amount: isSuper ? 100 : 0
 //     };
-    
+
 //     socketRef.current.emit("send-message", data);
 //     setInputText("");
 //   };
@@ -393,7 +393,7 @@
 //           playsInline
 //           className="live-feed"
 //         />
-        
+
 //         {streamActive && (
 //           <div className="live-status">
 //             <span className="pulse"></span>
@@ -446,7 +446,7 @@
 //             {connectionStatus === "connected" ? "🟢" : "🔴"}
 //           </span>
 //         </div>
-        
+
 //         <div className="chat-messages">
 //           {messages.length === 0 && (
 //             <div className="empty-chat">No messages yet. Be the first to say hi! 👋</div>
@@ -1006,7 +1006,7 @@ export default function LivePage() {
         if (videoRef.current && event.streams[0]) {
           videoRef.current.srcObject = event.streams[0];
           videoRef.current.muted = isMuted;
-          videoRef.current.play().catch(() => {});
+          videoRef.current.play().catch(() => { });
           setStreamActive(true);
         }
       };

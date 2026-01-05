@@ -1,7 +1,7 @@
 
 
 // import React, { useState, useContext, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -81,7 +81,7 @@
 //       setUploadProgress(0);
 //       const token = localStorage.getItem("token");
 
-//       await axios.post("http://localhost:5000/api/videos/upload", formData, {
+//       await api.post("/api/videos/upload", formData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "multipart/form-data",
@@ -783,7 +783,7 @@
 // 
 
 // import React, { useState, useContext, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -863,7 +863,7 @@
 //       setUploadProgress(0);
 //       const token = localStorage.getItem("token");
 
-//       await axios.post("http://localhost:5000/api/videos/upload", formData, {
+//       await api.post("/api/videos/upload", formData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "multipart/form-data",
@@ -1563,7 +1563,7 @@
 // };
 
 // import React, { useState, useContext, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -1653,7 +1653,7 @@
 //       setUploadProgress(0);
 
 //       const token = localStorage.getItem("token");
-//       await axios.post("http://localhost:5000/api/videos/upload", formData, {
+//       await api.post("/api/videos/upload", formData, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "multipart/form-data",
@@ -1682,7 +1682,7 @@
 //       </div>
 
 //       <div style={styles.content}>
-        
+
 //         {/* STEP 1: Upload Video */}
 //         {currentStep === 1 && (
 //           <div style={styles.uploadArea}>
@@ -1916,7 +1916,7 @@
 // };
 
 // import React, { useState, useContext, useRef } from "react";
-// import axios from "axios";
+// import api from "../config/api";
 // import { AuthContext } from "../context/AuthContext";
 // import { useNavigate } from "react-router-dom";
 
@@ -1933,7 +1933,7 @@
 //   const [category, setCategory] = useState("");
 //   const [video, setVideo] = useState(null);
 //   const [thumbnail, setThumbnail] = useState(null);
-  
+
 //   // New state to hold the filename returned by the server for the thumbnail
 //   const [thumbnailFilename, setThumbnailFilename] = useState(null); 
 
@@ -2006,7 +2006,7 @@
 //     formData.append("chunkIndex", index);
 //     formData.append("totalChunks", totalChunks);
 //     formData.append("uploadId", uploadId);
-    
+
 //     // Send all video metadata with every chunk (essential for the final chunk)
 //     formData.append("title", title.trim());
 //     formData.append("description", description);
@@ -2014,8 +2014,8 @@
 //     formData.append("category", category);
 //     formData.append("thumbnailFilename", thumbnailFilename); // The key from the first step!
 
-//     const res = await axios.post(
-//       "http://localhost:5000/api/videos/upload/chunk", // 🎯 NEW CHUNK UPLOAD URL
+//     const res = await api.post(
+//       "/api/videos/upload/chunk", // 🎯 NEW CHUNK UPLOAD URL
 //       formData,
 //       {
 //         headers: {
@@ -2043,7 +2043,7 @@
 
 //       try {
 //         const data = await uploadChunk(chunk, i, totalChunks, token);
-        
+
 //         if (i === totalChunks - 1) {
 //           // Final check after the last chunk
 //           setUploadProgress(100);
@@ -2079,8 +2079,8 @@
 //       const thumbFormData = new FormData();
 //       thumbFormData.append("thumbnail", thumbnail);
 
-//       const thumbRes = await axios.post(
-//         "http://localhost:5000/api/videos/upload/thumbnail", // 🎯 NEW THUMBNAIL URL
+//       const thumbRes = await api.post(
+//         "/api/videos/upload/thumbnail", // 🎯 NEW THUMBNAIL URL
 //         thumbFormData,
 //         {
 //           headers: {
@@ -2089,7 +2089,7 @@
 //           },
 //         }
 //       );
-      
+
 //       const uploadedFilename = thumbRes.data.filename;
 //       setThumbnailFilename(uploadedFilename); // Save the filename for the video chunks
 
@@ -2121,7 +2121,7 @@
 //       </div>
 
 //       <div style={styles.content}>
-        
+
 //         {/* STEP 1: Upload Video */}
 //         {currentStep === 1 && (
 //           <div style={styles.uploadArea}>
@@ -2359,7 +2359,7 @@
 // };
 
 import React, { useState, useContext, useRef } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -2376,14 +2376,14 @@ export default function UserUpload() {
   const [category, setCategory] = useState("");
   const [video, setVideo] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
-  
-  const [thumbnailFilename, setThumbnailFilename] = useState(null); 
+
+  const [thumbnailFilename, setThumbnailFilename] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(1);
-  const [uploadId, setUploadId] = useState(null); 
+  const [uploadId, setUploadId] = useState(null);
 
   const videoInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
@@ -2427,7 +2427,7 @@ export default function UserUpload() {
   };
 
   // ✅ UPDATED: Added 'thumbName' parameter to sync with Step 1
-  const uploadChunk = async (chunk, index, totalChunks, token, thumbName) => {
+  const uploadChunk = async (chunk, index, totalChunks, thumbName) => {
     const formData = new FormData();
     formData.append("chunk", chunk);
     formData.append("chunkIndex", index);
@@ -2439,17 +2439,16 @@ export default function UserUpload() {
     formData.append("category", category);
     formData.append("thumbnailFilename", thumbName); // Using direct name from Step 1
 
-    const res = await axios.post(
-      "http://localhost:5000/api/videos/upload/chunk",
+    const res = await api.post(
+      "/api/videos/upload/chunk",
       formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (e) => {
           const percent = Math.round(((index * CHUNK_SIZE + e.loaded) * 100) / video.size);
-          setUploadProgress(Math.min(percent, 99)); 
+          setUploadProgress(Math.min(percent, 99));
         },
       }
     );
@@ -2457,7 +2456,7 @@ export default function UserUpload() {
   };
 
   // ✅ UPDATED: Pass 'thumbName' through the loop
-  const handleFullChunkUpload = async (token, thumbName) => {
+  const handleFullChunkUpload = async (thumbName) => {
     const totalChunks = Math.ceil(video.size / CHUNK_SIZE);
     for (let i = 0; i < totalChunks; i++) {
       const start = i * CHUNK_SIZE;
@@ -2465,11 +2464,11 @@ export default function UserUpload() {
       const chunk = video.slice(start, end);
 
       try {
-        const data = await uploadChunk(chunk, i, totalChunks, token, thumbName);
+        const data = await uploadChunk(chunk, i, totalChunks, thumbName);
         if (i === totalChunks - 1) {
           setUploadProgress(100);
           alert("🎉 Your video is uploaded and assembled!");
-          navigate(`/watch/${data.video.filename}`); 
+          navigate(`/watch/${data.video.filename}`);
         }
       } catch (chunkError) {
         alert(`Chunk ${i}/${totalChunks} Upload Failed ❌.`);
@@ -2489,29 +2488,22 @@ export default function UserUpload() {
 
     setLoading(true);
     setUploadProgress(0);
-    const token = localStorage.getItem("token");
 
     try {
       // STEP 1: UPLOAD THUMBNAIL
       const thumbFormData = new FormData();
       thumbFormData.append("thumbnail", thumbnail);
 
-      const thumbRes = await axios.post(
-        "http://localhost:5000/api/videos/upload/thumbnail",
-        thumbFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
+      const thumbRes = await api.post(
+        "/api/videos/upload/thumbnail",
+        thumbFormData
       );
-      
+
       const serverThumbName = thumbRes.data.filename; // Real filename from server
-      setThumbnailFilename(serverThumbName); 
+      setThumbnailFilename(serverThumbName);
 
       // STEP 2: UPLOAD VIDEO CHUNKS with the real name
-      await handleFullChunkUpload(token, serverThumbName);
+      await handleFullChunkUpload(serverThumbName);
 
     } catch (err) {
       alert("Upload Failed ❌ " + (err.response?.data?.message || err.message));
@@ -2575,7 +2567,7 @@ export default function UserUpload() {
               <div style={styles.actionButtons}>
                 <button style={styles.cancelButton} onClick={() => navigate(-1)}>Cancel</button>
                 <button style={styles.previewButton} onClick={() => setCurrentStep(3)} disabled={!title || !thumbnail || !category}>Preview</button>
-                <button style={{...styles.uploadButton, opacity: (!title || !thumbnail || !category) ? 0.5 : 1}} disabled={!title || !thumbnail || !category || loading} onClick={handleUpload}>
+                <button style={{ ...styles.uploadButton, opacity: (!title || !thumbnail || !category) ? 0.5 : 1 }} disabled={!title || !thumbnail || !category || loading} onClick={handleUpload}>
                   {loading ? `Uploading... ${uploadProgress}%` : "Upload"}
                 </button>
               </div>

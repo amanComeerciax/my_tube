@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -26,9 +26,8 @@ export default function RevenueDashboard() {
   /* ================= FETCH DASHBOARD DATA ================= */
   const fetchDashboardData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/ads/dashboard/revenue", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/ads/dashboard/revenue", {
+        
       });
       setDashboardData(res.data);
       setLoading(false);
@@ -41,9 +40,8 @@ export default function RevenueDashboard() {
   /* ================= FETCH CATEGORY DATA ================= */
   const fetchCategoryData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/ads/dashboard/category-revenue", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/api/ads/dashboard/category-revenue", {
+        
       });
       setCategoryData(res.data);
     } catch (err) {
