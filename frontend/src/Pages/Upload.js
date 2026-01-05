@@ -3586,23 +3586,21 @@ export default function AdvancedAdminDashboard() {
 
   const fetchAds = async () => {
     try {
-      const res = await api.get("/api/ads", {
-
-      });
-      setAds(res.data);
+      const res = await api.get("/api/ads");
+      setAds(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch ads:", err);
+      setAds([]);
     }
   };
 
   const fetchCreators = async () => {
     try {
-      const res = await api.get("/api/monetization/admin/creators", {
-
-      });
-      setCreators(res.data);
+      const res = await api.get("/api/monetization/admin/creators");
+      setCreators(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch creators:", err);
+      setCreators([]);
     }
   };
 
@@ -3632,17 +3630,20 @@ export default function AdvancedAdminDashboard() {
     const totalLikes = videoList.reduce((sum, v) => sum + (v.likes?.length || 0), 0);
     const avgViews = totalVideos > 0 ? Math.round(totalViews / totalVideos) : 0;
 
-    const totalAds = ads.length;
-    const activeAds = ads.filter(a => a.active).length;
-    const totalAdViews = ads.reduce((sum, a) => sum + (a.views || 0), 0);
-    const totalAdClicks = ads.reduce((sum, a) => sum + (a.clicks || 0), 0);
+    const adList = Array.isArray(ads) ? ads : [];
+    const creatorList = Array.isArray(creators) ? creators : [];
+
+    const totalAds = adList.length;
+    const activeAds = adList.filter(a => a.active).length;
+    const totalAdViews = adList.reduce((sum, a) => sum + (a.views || 0), 0);
+    const totalAdClicks = adList.reduce((sum, a) => sum + (a.clicks || 0), 0);
     const avgCTR = totalAdViews > 0 ? ((totalAdClicks / totalAdViews) * 100).toFixed(2) : 0;
 
     const totalRevenue = revenueData?.overview?.totalRevenue || 0;
-    const pendingPayouts = creators.reduce((sum, c) => sum + (c.earnings?.pendingBalance || 0), 0);
+    const pendingPayouts = creatorList.reduce((sum, c) => sum + (c.earnings?.pendingBalance || 0), 0);
 
-    const approvedCreators = creators.filter(c => c.monetizationStatus === "approved").length;
-    const pendingCreators = creators.filter(c => c.monetizationStatus === "pending").length;
+    const approvedCreators = creatorList.filter(c => c.monetizationStatus === "approved").length;
+    const pendingCreators = creatorList.filter(c => c.monetizationStatus === "pending").length;
 
     // Growth calculations (mock - in production, compare with previous period)
     const viewsGrowth = 12.5;
