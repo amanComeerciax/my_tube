@@ -3654,7 +3654,7 @@ export default function AdvancedAdminDashboard() {
       videos: { total: totalVideos, views: totalViews, likes: totalLikes, avgViews, growth: viewsGrowth },
       ads: { total: totalAds, active: activeAds, views: totalAdViews, clicks: totalAdClicks, ctr: avgCTR },
       revenue: { total: totalRevenue, pending: pendingPayouts, growth: revenueGrowth },
-      creators: { total: creators.length, approved: approvedCreators, pending: pendingCreators, growth: creatorsGrowth },
+      creators: { total: creatorList.length, approved: approvedCreators, pending: pendingCreators, growth: creatorsGrowth },
       engagement: {
         rate: totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(2) : 0,
         avgWatchTime: "8:32", // Mock - get from backend
