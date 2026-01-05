@@ -3576,9 +3576,11 @@ export default function AdvancedAdminDashboard() {
   const fetchVideos = async () => {
     try {
       const res = await api.get("/api/videos/all");
-      setVideos(res.data);
+      // res.data now contains { videos, total, page ... } due to pagination
+      setVideos(Array.isArray(res.data.videos) ? res.data.videos : (Array.isArray(res.data) ? res.data : []));
     } catch (err) {
       console.error("Failed to fetch videos:", err);
+      setVideos([]);
     }
   };
 
@@ -3624,9 +3626,10 @@ export default function AdvancedAdminDashboard() {
   // ==================== ANALYTICS CALCULATIONS ====================
 
   const calculateMetrics = () => {
-    const totalVideos = videos.length;
-    const totalViews = videos.reduce((sum, v) => sum + (v.views || 0), 0);
-    const totalLikes = videos.reduce((sum, v) => sum + (v.likes?.length || 0), 0);
+    const videoList = Array.isArray(videos) ? videos : [];
+    const totalVideos = videoList.length;
+    const totalViews = videoList.reduce((sum, v) => sum + (v.views || 0), 0);
+    const totalLikes = videoList.reduce((sum, v) => sum + (v.likes?.length || 0), 0);
     const avgViews = totalVideos > 0 ? Math.round(totalViews / totalVideos) : 0;
 
     const totalAds = ads.length;

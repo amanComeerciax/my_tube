@@ -230,7 +230,8 @@ export default function Home() {
 
       if (selectedCategory === "Trending") {
         const res = await api.get("/api/videos/all");
-        const scored = res.data
+        const videoList = Array.isArray(res.data.videos) ? res.data.videos : (Array.isArray(res.data) ? res.data : []);
+        const scored = videoList
           .map((v) => ({ ...v, score: computeTrendingScore(v) }))
           .sort((a, b) => b.score - a.score)
           .slice(0, TOP_N);
@@ -243,14 +244,9 @@ export default function Home() {
       let res;
       if (selectedCategory === "All") {
         res = await api.get("/api/videos/all?limit=20");
-        // Handle paginated response
-        if (res.data.videos) {
-          setVideos(res.data.videos);
-          setFiltered(res.data.videos);
-        } else {
-          setVideos(res.data);
-          setFiltered(res.data);
-        }
+        const videoList = Array.isArray(res.data.videos) ? res.data.videos : (Array.isArray(res.data) ? res.data : []);
+        setVideos(videoList);
+        setFiltered(videoList);
         setLoading(false);
         return;
       } else {
@@ -258,12 +254,14 @@ export default function Home() {
           res = await api.get(`/api/videos/category/${selectedCategory}`);
         } catch (err) {
           res = await api.get("/api/videos/all");
-          res.data = res.data.filter(v => v.category === selectedCategory);
+          const allVideos = Array.isArray(res.data.videos) ? res.data.videos : (Array.isArray(res.data) ? res.data : []);
+          res.data = allVideos.filter(v => v.category === selectedCategory);
         }
       }
 
-      setVideos(res.data);
-      setFiltered(res.data);
+      const finalVideos = Array.isArray(res.data) ? res.data : (res.data.videos || []);
+      setVideos(finalVideos);
+      setFiltered(finalVideos);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching videos:", err);

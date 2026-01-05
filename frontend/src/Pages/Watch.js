@@ -434,7 +434,8 @@ export default function Watch() {
     } catch (err) {
       try {
         const allRes = await api.get("/api/videos/all");
-        const popular = allRes.data
+        const videoList = Array.isArray(allRes.data.videos) ? allRes.data.videos : (Array.isArray(allRes.data) ? allRes.data : []);
+        const popular = videoList
           .filter(v => v.filename !== filename)
           .sort((a, b) => (b.views || 0) - (a.views || 0))
           .slice(0, 15);
