@@ -140,7 +140,7 @@
 // router.put("/:id", auth, async (req, res) => {
 //   try {
 //     const { title, target, targetValue, skipAfter, active } = req.body;
-    
+
 //     const ad = await Ad.findByIdAndUpdate(
 //       req.params.id,
 //       { title, target, targetValue, skipAfter, active },
@@ -287,14 +287,14 @@
 //     // 1️⃣ Premium user → no ads
 //     if (req.user) {
 //       const user = await User.findById(req.user.id);
-    
+
 //       if (user?.isPremium) {
 //         return res.json(null);
 //       }
-    
+
 //       // 2️⃣ User interest based ad
 //       const interest = await getUserTopInterest(user);
-    
+
 //       if (interest) {
 //         ad = await Ad.findOne({
 //           active: true,
@@ -303,7 +303,7 @@
 //         }).sort({ createdAt: -1 });
 //       }
 //     }
-    
+
 //     // 3️⃣ Video category fallback
 //     if (!ad) {
 //       ad = await Ad.findOne({
@@ -312,7 +312,7 @@
 //         targetValue: video.category
 //       }).sort({ createdAt: -1 });
 //     }
-    
+
 //     // 4️⃣ All users fallback
 //     if (!ad) {
 //       ad = await Ad.findOne({
@@ -320,7 +320,7 @@
 //         target: "all"
 //       }).sort({ createdAt: -1 });
 //     }
-    
+
 //     if (!ad) return res.json(null);
 
 
@@ -349,7 +349,7 @@
 //     const ads = await Ad.find()
 //       .populate("createdBy", "name email")
 //       .sort({ createdAt: -1 });
-    
+
 //     res.json(ads);
 //   } catch (err) {
 //     console.error(err);
@@ -379,7 +379,7 @@
 // router.put("/:id", auth, async (req, res) => {
 //   try {
 //     const { title, target, targetValue, skipAfter, active, cpm, cpc } = req.body;
-    
+
 //     const updateData = {
 //       title,
 //       target,
@@ -391,7 +391,7 @@
 //     // 🔥 Add revenue fields if provided
 //     if (cpm !== undefined) updateData.cpm = Number(cpm);
 //     if (cpc !== undefined) updateData.cpc = Number(cpc);
-    
+
 //     const ad = await Ad.findByIdAndUpdate(
 //       req.params.id,
 //       updateData,
@@ -641,13 +641,24 @@ const upload = multer({ storage });
 ========================= */
 router.post("/upload", auth, upload.single("adVideo"), async (req, res) => {
   try {
+    // Validate file upload
+    if (!req.file) {
+      console.error("❌ No file uploaded");
+      return res.status(400).json({ message: "Ad video file is required" });
+    }
+
     const { title, target, targetValue, skipAfter, cpm, cpc } = req.body;
+
+    // Validate required fields
+    if (!title) {
+      return res.status(400).json({ message: "Ad title is required" });
+    }
 
     const ad = await Ad.create({
       title,
       videoFile: req.file.filename,
-      target,
-      targetValue,
+      target: target || "all",
+      targetValue: targetValue || "",
       skipAfter: Number(skipAfter || 5),
       cpm: Number(cpm || 50),
       cpc: Number(cpc || 2),
@@ -684,14 +695,14 @@ router.get("/:videoId", authOptional, async (req, res) => {
     // 1️⃣ Premium user → no ads
     if (req.user) {
       const user = await User.findById(req.user.id);
-    
+
       if (user?.isPremium) {
         return res.json(null);
       }
-    
+
       // 2️⃣ User interest based ad
       const interest = await getUserTopInterest(user);
-    
+
       if (interest) {
         ad = await Ad.findOne({
           active: true,
@@ -700,7 +711,7 @@ router.get("/:videoId", authOptional, async (req, res) => {
         }).sort({ createdAt: -1 });
       }
     }
-    
+
     // 3️⃣ Video category fallback
     if (!ad) {
       ad = await Ad.findOne({
@@ -709,7 +720,7 @@ router.get("/:videoId", authOptional, async (req, res) => {
         targetValue: video.category
       }).sort({ createdAt: -1 });
     }
-    
+
     // 4️⃣ All users fallback
     if (!ad) {
       ad = await Ad.findOne({
@@ -717,7 +728,7 @@ router.get("/:videoId", authOptional, async (req, res) => {
         target: "all"
       }).sort({ createdAt: -1 });
     }
-    
+
     if (!ad) return res.json(null);
 
     console.log("✅ Ad found:", ad.title);
@@ -883,7 +894,7 @@ router.post("/click/:id", authOptional, async (req, res) => {
         const ctr = earnings.adPerformance.totalAdViews > 0
           ? (earnings.adPerformance.totalAdClicks / earnings.adPerformance.totalAdViews) * 100
           : 0;
-        
+
         earnings.adPerformance.averageCTR = parseFloat(ctr.toFixed(2));
         await earnings.save();
       }
@@ -891,7 +902,7 @@ router.post("/click/:id", authOptional, async (req, res) => {
       console.log(`💰 Creator earned ₹${creatorShare.toFixed(2)} from ad click`);
     }
 
-    res.json({ 
+    res.json({
       message: "Click tracked",
       revenue: video.uploadedBy.isMonetized ? creatorShare : 0
     });
@@ -910,7 +921,7 @@ router.get("/", auth, async (req, res) => {
     const ads = await Ad.find()
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
-    
+
     res.json(ads);
   } catch (err) {
     console.error(err);
@@ -940,7 +951,7 @@ router.delete("/:id", auth, async (req, res) => {
 router.put("/:id", auth, async (req, res) => {
   try {
     const { title, target, targetValue, skipAfter, active, cpm, cpc } = req.body;
-    
+
     const updateData = {
       title,
       target,
@@ -951,7 +962,7 @@ router.put("/:id", auth, async (req, res) => {
 
     if (cpm !== undefined) updateData.cpm = Number(cpm);
     if (cpc !== undefined) updateData.cpc = Number(cpc);
-    
+
     const ad = await Ad.findByIdAndUpdate(
       req.params.id,
       updateData,
@@ -1026,8 +1037,8 @@ router.get("/dashboard/revenue", auth, async (req, res) => {
     const totalClicks = ads.reduce((sum, ad) => sum + (ad.clicks || 0), 0);
     const totalRevenue = ads.reduce((sum, ad) => sum + ad.revenue, 0);
 
-    const averageCTR = totalViews > 0 
-      ? ((totalClicks / totalViews) * 100).toFixed(2) 
+    const averageCTR = totalViews > 0
+      ? ((totalClicks / totalViews) * 100).toFixed(2)
       : 0;
 
     // Get platform revenue (45% of total)
