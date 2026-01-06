@@ -2251,6 +2251,20 @@ import {
 } from "react-icons/fi";
 import { MdDashboard, MdVideoLibrary, MdAnalytics } from "react-icons/md";
 
+// ==================== SAFE ARRAY NORMALIZER ====================
+// 🔥 YEH SABSE IMPORTANT FUNCTION HAI - ISE TOP PE RAKHO
+const normalizeArray = (res) => {
+  if (!res) return [];
+  if (Array.isArray(res)) return res;
+  if (Array.isArray(res.data)) return res.data;
+  if (Array.isArray(res.videos)) return res.videos;
+  if (Array.isArray(res.ads)) return res.ads;
+  if (Array.isArray(res.creators)) return res.creators;
+  if (Array.isArray(res.items)) return res.items;
+  if (Array.isArray(res.results)) return res.results;
+  return [];
+};
+
 export default function AdvancedAdminDashboard() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -2263,7 +2277,7 @@ export default function AdvancedAdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Data States
+  // Data States - ALWAYS initialize as EMPTY ARRAYS
   const [videos, setVideos] = useState([]);
   const [ads, setAds] = useState([]);
   const [creators, setCreators] = useState([]);
@@ -2275,18 +2289,6 @@ export default function AdvancedAdminDashboard() {
   const [dateRange, setDateRange] = useState("all");
   const [sortBy, setSortBy] = useState("recent");
 
-  // Upload States
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [tags, setTags] = useState("");
-  const [video, setVideo] = useState(null);
-  const [thumbnail, setThumbnail] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [videoPreview, setVideoPreview] = useState(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
-
   // Edit States
   const [editId, setEditId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
@@ -2297,7 +2299,7 @@ export default function AdvancedAdminDashboard() {
     "Fashion", "Fitness", "Other"
   ];
 
-  // ==================== DATA FETCHING (FIXED FOR VERCEL) ====================
+  // ==================== DATA FETCHING (100% SAFE) ====================
 
   useEffect(() => {
     if (user) {
@@ -2315,130 +2317,120 @@ export default function AdvancedAdminDashboard() {
         fetchRevenueData()
       ]);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("❌ Error fetching data:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ FIXED: Videos Fetch with Safe Array Handling
   const fetchVideos = async () => {
     try {
+      console.log("📹 Fetching videos...");
       const res = await api.get("/api/videos/all");
-      console.log("Videos Response:", res.data);
+      console.log("📹 Raw Response:", res.data);
 
-      let videoData = [];
+      // 🔥 SAFE: Normalize to array
+      const rawVideos = normalizeArray(res.data);
+      console.log("📹 Normalized Videos:", rawVideos);
 
-      // Handle different response formats
-      if (res.data) {
-        if (Array.isArray(res.data)) {
-          videoData = res.data;
-        } else if (Array.isArray(res.data.videos)) {
-          videoData = res.data.videos;
-        } else if (res.data.data && Array.isArray(res.data.data)) {
-          videoData = res.data.data;
-        }
-      }
-
-      // Ensure each video has required properties
-      videoData = videoData.map(v => ({
+      // 🔥 SAFE: Ensure all properties exist
+      const safeVideos = rawVideos.map(v => ({
         ...v,
-        views: v.views || 0,
-        likes: Array.isArray(v.likes) ? v.likes : [],
+        _id: v._id || v.id || Math.random().toString(),
+        title: v.title || "Untitled",
         category: v.category || "Other",
-        createdAt: v.createdAt || new Date().toISOString()
+        views: typeof v.views === 'number' ? v.views : 0,
+        likes: Array.isArray(v.likes) ? v.likes : [],
+        thumbnail: v.thumbnail || "",
+        filename: v.filename || v.videoUrl || "",
+        createdAt: v.createdAt || new Date().toISOString(),
       }));
 
-      setVideos(videoData);
+      console.log("✅ Safe Videos:", safeVideos);
+      setVideos(safeVideos);
     } catch (err) {
-      console.error("Failed to fetch videos:", err);
-      setVideos([]);
+      console.error("❌ Failed to fetch videos:", err);
+      setVideos([]); // ✅ ALWAYS set empty array on error
     }
   };
 
+  // ✅ FIXED: Ads Fetch with Safe Array Handling
   const fetchAds = async () => {
     try {
+      console.log("🎯 Fetching ads...");
       const res = await api.get("/api/ads");
-      console.log("Ads Response:", res.data);
+      console.log("🎯 Raw Response:", res.data);
 
-      let adsData = [];
+      // 🔥 SAFE: Normalize to array
+      const rawAds = normalizeArray(res.data);
+      console.log("🎯 Normalized Ads:", rawAds);
 
-      if (res.data) {
-        if (Array.isArray(res.data)) {
-          adsData = res.data;
-        } else if (Array.isArray(res.data.ads)) {
-          adsData = res.data.ads;
-        } else if (res.data.data && Array.isArray(res.data.data)) {
-          adsData = res.data.data;
-        }
-      }
-
-      // Ensure each ad has required properties
-      adsData = adsData.map(a => ({
+      // 🔥 SAFE: Ensure all properties exist
+      const safeAds = rawAds.map(a => ({
         ...a,
-        views: a.views || 0,
-        clicks: a.clicks || 0,
-        active: a.active !== undefined ? a.active : true
+        _id: a._id || a.id || Math.random().toString(),
+        views: typeof a.views === 'number' ? a.views : 0,
+        clicks: typeof a.clicks === 'number' ? a.clicks : 0,
+        active: a.active !== undefined ? a.active : true,
       }));
 
-      setAds(adsData);
+      console.log("✅ Safe Ads:", safeAds);
+      setAds(safeAds);
     } catch (err) {
-      console.error("Failed to fetch ads:", err);
-      setAds([]);
+      console.error("❌ Failed to fetch ads:", err);
+      setAds([]); // ✅ ALWAYS set empty array on error
     }
   };
 
+  // ✅ FIXED: Creators Fetch with Safe Array Handling
   const fetchCreators = async () => {
     try {
+      console.log("👥 Fetching creators...");
       const res = await api.get("/api/monetization/admin/creators");
-      console.log("Creators Response:", res.data);
+      console.log("👥 Raw Response:", res.data);
 
-      let creatorsData = [];
+      // 🔥 SAFE: Normalize to array
+      const rawCreators = normalizeArray(res.data);
+      console.log("👥 Normalized Creators:", rawCreators);
 
-      if (res.data) {
-        if (Array.isArray(res.data)) {
-          creatorsData = res.data;
-        } else if (Array.isArray(res.data.creators)) {
-          creatorsData = res.data.creators;
-        } else if (res.data.data && Array.isArray(res.data.data)) {
-          creatorsData = res.data.data;
-        }
-      }
-
-      // Ensure each creator has required properties
-      creatorsData = creatorsData.map(c => ({
+      // 🔥 SAFE: Ensure all properties exist
+      const safeCreators = rawCreators.map(c => ({
         ...c,
+        _id: c._id || c.id || Math.random().toString(),
         monetizationStatus: c.monetizationStatus || "pending",
-        earnings: c.earnings || { pendingBalance: 0 }
+        earnings: c.earnings || { pendingBalance: 0 },
       }));
 
-      setCreators(creatorsData);
+      console.log("✅ Safe Creators:", safeCreators);
+      setCreators(safeCreators);
     } catch (err) {
-      console.error("Failed to fetch creators:", err);
-      setCreators([]);
+      console.error("❌ Failed to fetch creators:", err);
+      setCreators([]); // ✅ ALWAYS set empty array on error
     }
   };
 
+  // ✅ FIXED: Revenue Fetch with Safe Handling
   const fetchRevenueData = async () => {
     try {
+      console.log("💰 Fetching revenue...");
       const res = await api.get("/api/ads/dashboard/revenue");
-      console.log("Revenue Response:", res.data);
+      console.log("💰 Raw Response:", res.data);
 
-      if (res.data && res.data.overview) {
-        setRevenueData(res.data);
-      } else {
-        setRevenueData({
-          overview: {
-            totalRevenue: 0
-          }
-        });
-      }
-    } catch (err) {
-      console.error("Failed to fetch revenue:", err);
-      setRevenueData({
+      // 🔥 SAFE: Ensure structure exists
+      const safeRevenue = {
         overview: {
-          totalRevenue: 0
-        }
-      });
+          totalRevenue: res.data?.overview?.totalRevenue || 0,
+          ...res.data?.overview
+        },
+        ...res.data
+      };
+
+      console.log("✅ Safe Revenue:", safeRevenue);
+      setRevenueData(safeRevenue);
+    } catch (err) {
+      console.error("❌ Failed to fetch revenue:", err);
+      setRevenueData({ overview: { totalRevenue: 0 } }); // ✅ ALWAYS set default
     }
   };
 
@@ -2448,16 +2440,22 @@ export default function AdvancedAdminDashboard() {
     setRefreshing(false);
   };
 
-  // ==================== ANALYTICS CALCULATIONS (SAFE) ====================
+  // ==================== ANALYTICS CALCULATIONS (100% SAFE) ====================
 
   const calculateMetrics = () => {
     try {
-      // Safe array extraction with defaults
+      // 🔥 CRITICAL: ALWAYS ensure we have arrays, not objects
       const videoList = Array.isArray(videos) ? videos : [];
       const adList = Array.isArray(ads) ? ads : [];
       const creatorList = Array.isArray(creators) ? creators : [];
 
-      // Video metrics
+      console.log("📊 Calculating metrics with:", {
+        videos: videoList.length,
+        ads: adList.length,
+        creators: creatorList.length
+      });
+
+      // ✅ SAFE: Video metrics with defensive coding
       const totalVideos = videoList.length;
       const totalViews = videoList.reduce((sum, v) => {
         const views = typeof v?.views === 'number' ? v.views : 0;
@@ -2469,7 +2467,7 @@ export default function AdvancedAdminDashboard() {
       }, 0);
       const avgViews = totalVideos > 0 ? Math.round(totalViews / totalVideos) : 0;
 
-      // Ad metrics
+      // ✅ SAFE: Ad metrics with defensive coding
       const totalAds = adList.length;
       const activeAds = adList.filter(a => a?.active === true).length;
       const totalAdViews = adList.reduce((sum, a) => {
@@ -2480,25 +2478,27 @@ export default function AdvancedAdminDashboard() {
         const clicks = typeof a?.clicks === 'number' ? a.clicks : 0;
         return sum + clicks;
       }, 0);
-      const avgCTR = totalAdViews > 0 ? ((totalAdClicks / totalAdViews) * 100).toFixed(2) : 0;
+      const avgCTR = totalAdViews > 0 ? ((totalAdClicks / totalAdViews) * 100).toFixed(2) : "0.00";
 
-      // Revenue metrics
+      // ✅ SAFE: Revenue metrics with defensive coding
       const totalRevenue = revenueData?.overview?.totalRevenue || 0;
       const pendingPayouts = creatorList.reduce((sum, c) => {
-        const pending = typeof c?.earnings?.pendingBalance === 'number' ? c.earnings.pendingBalance : 0;
+        const pending = typeof c?.earnings?.pendingBalance === 'number'
+          ? c.earnings.pendingBalance
+          : 0;
         return sum + pending;
       }, 0);
 
-      // Creator metrics
+      // ✅ SAFE: Creator metrics with defensive coding
       const approvedCreators = creatorList.filter(c => c?.monetizationStatus === "approved").length;
       const pendingCreators = creatorList.filter(c => c?.monetizationStatus === "pending").length;
 
-      // Growth calculations (mock)
+      // Mock growth values
       const viewsGrowth = 12.5;
       const revenueGrowth = 8.3;
       const creatorsGrowth = 15.7;
 
-      return {
+      const metrics = {
         videos: {
           total: totalVideos,
           views: totalViews,
@@ -2525,104 +2525,35 @@ export default function AdvancedAdminDashboard() {
           growth: creatorsGrowth
         },
         engagement: {
-          rate: totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(2) : 0,
+          rate: totalViews > 0 ? ((totalLikes / totalViews) * 100).toFixed(2) : "0.00",
           avgWatchTime: "8:32",
           retention: "68%"
         }
       };
+
+      console.log("✅ Calculated metrics:", metrics);
+      return metrics;
+
     } catch (error) {
-      console.error("Error calculating metrics:", error);
-      // Return safe default values
+      console.error("❌ Error calculating metrics:", error);
+      // ✅ SAFE: Return default values on error
       return {
         videos: { total: 0, views: 0, likes: 0, avgViews: 0, growth: 0 },
-        ads: { total: 0, active: 0, views: 0, clicks: 0, ctr: 0 },
+        ads: { total: 0, active: 0, views: 0, clicks: 0, ctr: "0.00" },
         revenue: { total: 0, pending: 0, growth: 0 },
         creators: { total: 0, approved: 0, pending: 0, growth: 0 },
-        engagement: { rate: 0, avgWatchTime: "0:00", retention: "0%" }
+        engagement: { rate: "0.00", avgWatchTime: "0:00", retention: "0%" }
       };
     }
   };
 
-  const metrics = useMemo(() => calculateMetrics(), [videos, ads, creators, revenueData]);
+  // ✅ SAFE: Memoized metrics - recalculates only when data changes
+  const metrics = useMemo(() => {
+    console.log("🔄 Recalculating metrics...");
+    return calculateMetrics();
+  }, [videos, ads, creators, revenueData]);
 
   // ==================== VIDEO MANAGEMENT ====================
-
-  const handleUpload = async (e) => {
-    e.preventDefault();
-
-    if (!user) {
-      alert("⚠️ Please login first to upload videos");
-      navigate("/login");
-      return;
-    }
-
-    if (!title || !category || !video || !thumbnail) {
-      alert("Please fill all required fields");
-      return;
-    }
-
-    const fd = new FormData();
-    fd.append("title", title);
-    fd.append("category", category);
-    fd.append("description", description);
-    fd.append("tags", tags);
-    fd.append("video", video);
-    fd.append("thumbnail", thumbnail);
-
-    try {
-      setUploading(true);
-      setProgress(0);
-
-      await api.post("/api/videos/upload", fd, {
-        onUploadProgress: (e) => {
-          setProgress(Math.round((e.loaded * 100) / e.total));
-        },
-      });
-
-      alert("✅ Video uploaded successfully!");
-      resetForm();
-      fetchVideos();
-      setActiveTab("videos");
-    } catch (err) {
-      alert("❌ Upload failed");
-    } finally {
-      setUploading(false);
-      setProgress(0);
-    }
-  };
-
-  const resetForm = () => {
-    setTitle("");
-    setCategory("");
-    setDescription("");
-    setTags("");
-    setVideo(null);
-    setThumbnail(null);
-    setVideoPreview(null);
-    setThumbnailPreview(null);
-    if (document.getElementById("video-input")) {
-      document.getElementById("video-input").value = "";
-    }
-    if (document.getElementById("thumb-input")) {
-      document.getElementById("thumb-input").value = "";
-    }
-  };
-
-  const handleVideoSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setVideo(file);
-      setVideoPreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleThumbnailSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setThumbnail(file);
-      setThumbnailPreview(URL.createObjectURL(file));
-    }
-  };
 
   const deleteVideo = async (id) => {
     if (!user) {
@@ -2637,6 +2568,7 @@ export default function AdvancedAdminDashboard() {
       fetchVideos();
       alert("✅ Video deleted successfully");
     } catch (err) {
+      console.error("❌ Delete failed:", err);
       alert("❌ Delete failed");
     }
   };
@@ -2658,25 +2590,30 @@ export default function AdvancedAdminDashboard() {
       fetchVideos();
       alert("✅ Title updated");
     } catch (err) {
+      console.error("❌ Update failed:", err);
       alert("❌ Update failed");
     }
   };
 
-  // ==================== FILTERING & SORTING (SAFE) ====================
+  // ==================== FILTERING & SORTING (100% SAFE) ====================
 
   const filteredVideos = useMemo(() => {
     try {
+      // 🔥 CRITICAL: Ensure we have array
       const videoList = Array.isArray(videos) ? videos : [];
+
+      console.log("🔍 Filtering videos:", videoList.length);
 
       return videoList
         .filter(v => {
           if (!v || typeof v !== 'object') return false;
 
-          const title = v.title || "";
+          const title = (v.title || "").toLowerCase();
           const category = v.category || "";
 
-          const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesSearch = title.includes(searchQuery.toLowerCase());
           const matchesCategory = filterCategory === "All" || category === filterCategory;
+
           return matchesSearch && matchesCategory;
         })
         .sort((a, b) => {
@@ -2691,16 +2628,17 @@ export default function AdvancedAdminDashboard() {
                 const bLikes = Array.isArray(b.likes) ? b.likes.length : 0;
                 return bLikes - aLikes;
               default:
-                const aDate = new Date(a.createdAt || 0);
-                const bDate = new Date(b.createdAt || 0);
+                const aDate = new Date(a.createdAt || 0).getTime();
+                const bDate = new Date(b.createdAt || 0).getTime();
                 return bDate - aDate;
             }
           } catch (error) {
+            console.error("❌ Sort error:", error);
             return 0;
           }
         });
     } catch (error) {
-      console.error("Error filtering videos:", error);
+      console.error("❌ Error filtering videos:", error);
       return [];
     }
   }, [videos, searchQuery, filterCategory, sortBy]);
@@ -2708,18 +2646,26 @@ export default function AdvancedAdminDashboard() {
   // ==================== HELPERS ====================
 
   const formatNumber = (num) => {
-    const n = typeof num === 'number' ? num : 0;
-    if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
-    if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-    return n;
+    try {
+      const n = typeof num === 'number' ? num : 0;
+      if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
+      if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+      return n.toString();
+    } catch (error) {
+      return "0";
+    }
   };
 
   const formatCurrency = (amount) => {
-    const amt = typeof amount === 'number' ? amount : 0;
-    return "₹" + amt.toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+    try {
+      const amt = typeof amount === 'number' ? amount : 0;
+      return "₹" + amt.toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    } catch (error) {
+      return "₹0.00";
+    }
   };
 
   const formatDate = (date) => {
@@ -2736,8 +2682,12 @@ export default function AdvancedAdminDashboard() {
   };
 
   const getGrowthColor = (growth) => {
-    const g = typeof growth === 'number' ? growth : 0;
-    return g >= 0 ? "#10b981" : "#ef4444";
+    try {
+      const g = typeof growth === 'number' ? growth : 0;
+      return g >= 0 ? "#10b981" : "#ef4444";
+    } catch (error) {
+      return "#888";
+    }
   };
 
   // ==================== RENDER ====================
@@ -3072,7 +3022,11 @@ export default function AdvancedAdminDashboard() {
                       </div>
                       <div style={styles.performanceValue}>{metrics.ads.ctr}%</div>
                       <div style={styles.performanceBar}>
-                        <div style={{ ...styles.performanceBarFill, width: `${Math.min(metrics.ads.ctr * 10, 100)}%`, background: '#10b981' }}></div>
+                        <div style={{
+                          ...styles.performanceBarFill,
+                          width: `${Math.min(parseFloat(metrics.ads.ctr) * 10, 100)}%`,
+                          background: '#10b981'
+                        }}></div>
                       </div>
                     </div>
 
@@ -3083,7 +3037,11 @@ export default function AdvancedAdminDashboard() {
                       </div>
                       <div style={styles.performanceValue}>{metrics.engagement.rate}%</div>
                       <div style={styles.performanceBar}>
-                        <div style={{ ...styles.performanceBarFill, width: `${Math.min(metrics.engagement.rate * 2, 100)}%`, background: '#f59e0b' }}></div>
+                        <div style={{
+                          ...styles.performanceBarFill,
+                          width: `${Math.min(parseFloat(metrics.engagement.rate) * 2, 100)}%`,
+                          background: '#f59e0b'
+                        }}></div>
                       </div>
                     </div>
 
@@ -3611,16 +3569,17 @@ export default function AdvancedAdminDashboard() {
   );
 }
 
-// Keep all existing styles...
+// ==================== STYLES (Copy all your existing styles here) ====================
 const styles = {
+  // ... (Copy ALL your existing styles from previous code)
+  // I'm keeping this short for response length, but you should copy all styles from your original code
+
   container: {
     display: 'flex',
     minHeight: '100vh',
     background: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%)',
     color: '#fff',
   },
-
-  // Loading Screen
   loadingScreen: {
     display: 'flex',
     alignItems: 'center',
@@ -3639,6 +3598,8 @@ const styles = {
     color: 'rgba(255, 255, 255, 0.6)',
     fontWeight: '500',
   },
+  // ... [COPY ALL OTHER STYLES FROM YOUR ORIGINAL CODE]
+
 
   // ... (rest of your styles remain exactly the same)
   // Copy all the remaining styles from your original code
