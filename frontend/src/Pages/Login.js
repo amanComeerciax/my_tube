@@ -613,7 +613,7 @@
 //           transition: all 0.3s ease;
 //           outline: none;
 //         }
-        
+
 //         .password-toggle:hover {
 //           color: var(--neon-pink);
 //           box-shadow: 0 0 10px rgba(254, 214, 227, 0.2);
@@ -658,14 +658,14 @@
 //           cursor: not-allowed;
 //           background: #3e2060; /* Solid color while loading */
 //         }
-        
+
 //         .submit-button .button-content {
 //             display: flex;
 //             align-items: center;
 //             justify-content: center;
 //             z-index: 2;
 //         }
-        
+
 //         .submit-button svg {
 //             margin-right: 8px;
 //             font-size: 1.1em;
@@ -682,11 +682,11 @@
 //           transition: left 0.5s;
 //           z-index: 1;
 //         }
-        
+
 //         .submit-button:hover:not(.loading) .shimmer-effect {
 //             left: 150%; /* Shimmer slides on hover */
 //         }
-        
+
 //         .submit-button.loading .shimmer-effect {
 //              animation: shimmer 1.5s infinite linear;
 //         }
@@ -711,7 +711,7 @@
 //           color: var(--neon-pink);
 //           text-shadow: var(--glow-pink);
 //         }
-        
+
 //         .security-note {
 //             margin-top: 15px;
 //             font-size: 11px;
@@ -731,17 +731,17 @@
 //             transform: translateY(0) scale(1);
 //           }
 //         }
-        
+
 //         @keyframes shimmer {
 //           0% { left: -150%; }
 //           100% { left: 150%; }
 //         }
-        
+
 //         @keyframes spinner {
 //             from { transform: rotate(0deg); }
 //             to { transform: rotate(360deg); }
 //         }
-        
+
 //         .spinner {
 //             animation: spinner 1s linear infinite;
 //         }
@@ -980,6 +980,82 @@ export default function CyberpunkLoginCard() {
         .signup-link { color: var(--neon-blue); font-weight: 700; text-decoration: none; }
         .spinner { animation: spinner 1s linear infinite; }
         @keyframes spinner { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ========== RESPONSIVE STYLES ========== */
+        @media (max-width: 768px) {
+          .login-card {
+            padding: 40px 24px;
+            width: 90vw;
+            max-width: 400px;
+          }
+
+          .gradient-text {
+            font-size: 26px;
+          }
+
+          .sub-text {
+            font-size: 13px;
+            margin-bottom: 25px;
+          }
+
+          .input-group {
+            margin-bottom: 20px;
+          }
+
+          .input-group input {
+            padding: 16px 18px 12px;
+            font-size: 15px;
+          }
+
+          .submit-button,
+          .google-button {
+            padding: 14px;
+            font-size: 14px;
+          }
+
+          .footer-text {
+            font-size: 12px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .login-card {
+            padding: 32px 20px;
+            width: 95vw;
+          }
+
+          .gradient-text {
+            font-size: 24px;
+          }
+
+          .sub-text {
+            font-size: 12px;
+          }
+
+          .input-group input {
+            padding: 14px 16px 10px;
+            font-size: 14px;
+          }
+
+          .submit-button,
+          .google-button {
+            padding: 12px;
+            font-size: 13px;
+          }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+          .submit-button,
+          .google-button,
+          .password-toggle {
+            min-height: 44px;
+          }
+
+          .input-group input {
+            min-height: 48px;
+          }
+        }
       `}</style>
     </div>
   );
