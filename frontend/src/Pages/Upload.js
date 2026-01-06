@@ -2573,7 +2573,7 @@ export default function AdvancedAdminDashboard() {
       setUploading(true);
       setProgress(0);
 
-      await api.post("/api/ads/upload", fd, {
+      await api.post("/api/videos/upload", fd, {
         onUploadProgress: (e) => {
           setProgress(Math.round((e.loaded * 100) / e.total));
         },
