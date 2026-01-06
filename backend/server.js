@@ -19,6 +19,7 @@ const monetizationRoutes = require("./routes/monetizationRoutes");
 const walletRoutes = require("./routes/walletRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const adRoutes = require("./routes/adRoutes");
+const cloudinaryUpload = require("./routes/cloudinaryUpload");
 
 /* ================= UTILS ================= */
 const BloomFilter = require("./utils/bloomFilter");
@@ -51,6 +52,7 @@ app.use("/captions", express.static(path.join(__dirname, "captions")));
 
 /* ================= API ROUTES ================= */
 app.use("/api/videos", videosRoutes);
+app.use("/api/videos", cloudinaryUpload); // Cloudinary upload route
 app.use("/api/stream", streamRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/search", searchRoutes);

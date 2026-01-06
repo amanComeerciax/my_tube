@@ -384,6 +384,14 @@ const videoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    videoUrl: {
+      type: String,
+      default: null, // Cloudinary video URL
+    },
+    thumbnailUrl: {
+      type: String,
+      default: null, // Cloudinary thumbnail URL
+    },
     category: {
       type: String,
       enum: [

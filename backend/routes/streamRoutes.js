@@ -47,6 +47,7 @@ const express = require("express");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const path = require("path");
+const Video = require("../models/Video");
 
 const router = express.Router();
 
@@ -58,6 +59,17 @@ router.get("/:filename", async (req, res) => {
   console.log(`🚀 Stream Request: ${filename} | Quality: ${q || 'Original'}`);
 
   try {
+    // ✅ CHECK FOR CLOUDINARY VIDEO FIRST
+    const video = await Video.findOne({ filename });
+
+    if (video && video.videoUrl) {
+      console.log("☁️ Cloudinary video found, redirecting to:", video.videoUrl);
+      return res.redirect(video.videoUrl);
+    }
+
+    // ⬇️ FALLBACK TO LOCAL FILE STREAMING
+    console.log("📁 Streaming from local storage");
+
     // process.cwd() backend ke root (main) folder ka path deta hai
     const uploadsDir = path.join(process.cwd(), "uploads");
     let videoPath = path.join(uploadsDir, filename);
