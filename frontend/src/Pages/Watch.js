@@ -5843,6 +5843,7 @@ export default function Watch() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   // Ad States
   const [ad, setAd] = useState(null);
@@ -5894,6 +5895,7 @@ export default function Watch() {
   /* ================= RESPONSIVE ================= */
   useEffect(() => {
     const handleResize = () => {
+      setWindowWidth(window.innerWidth);
       if (window.innerWidth > 768) {
         setShowMobileSearch(false);
       }
@@ -6722,7 +6724,9 @@ export default function Watch() {
       <div style={styles.pageWrapper}>
         <div style={{
           ...styles.contentGrid,
-          gridTemplateColumns: isTheaterMode ? "1fr" : "1fr 400px",
+          gridTemplateColumns: (isTheaterMode || window.innerWidth < 1024) ? "1fr" : "1fr 400px",
+          display: "grid",
+          gap: "24px"
         }}>
           {/* MAIN CONTENT */}
           <div style={styles.mainContent}>
