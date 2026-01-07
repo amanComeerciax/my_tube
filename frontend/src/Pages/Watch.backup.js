@@ -1444,8 +1444,6 @@ export default function Watch() {
         @media (max-width: 1024px) {
           .contentGrid {
             grid-template-columns: 1fr !important;
-            padding: 0 16px !important;
-            gap: 16px !important;
           }
         }
 
@@ -1473,11 +1471,6 @@ export default function Watch() {
 
           .sort-label-class {
             display: none !important;
-          }
-
-          .contentGrid {
-            padding: 0 12px !important;
-            gap: 12px !important;
           }
         }
 
@@ -1749,14 +1742,13 @@ const styles = {
 
   // Page Layout
   pageWrapper: {
-    paddingTop: '56px',
-    paddingBottom: '24px',
+    paddingTop: '70px',
+    paddingBottom: '32px',
     minHeight: '100vh',
     background: '#0f0f0f',
   },
   contentGrid: {
     display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1fr) 402px',
     gap: '24px',
     maxWidth: '1920px',
     margin: '0 auto',
@@ -1774,7 +1766,7 @@ const styles = {
     background: '#000',
     borderRadius: '12px',
     overflow: 'hidden',
-    marginBottom: '12px',
+    marginBottom: '16px',
   },
   videoElement: {
     width: '100%',
@@ -1901,10 +1893,10 @@ const styles = {
   // Video Info
   videoTitle: {
     color: '#fff',
-    fontSize: '20px',
+    fontSize: '22px',
     fontWeight: 700,
     marginBottom: '12px',
-    lineHeight: 1.4,
+    lineHeight: 1.3,
   },
   statsBar: {
     display: 'flex',
@@ -2055,12 +2047,11 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: '12px',
+    gap: '16px',
     marginBottom: '16px',
-    padding: '12px 0',
+    padding: '16px 0',
     borderTop: '1px solid #3f3f3f',
     borderBottom: '1px solid #3f3f3f',
-    flexWrap: 'wrap',
   },
   channelSection: {
     display: 'flex',
@@ -2128,7 +2119,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    flexWrap: 'wrap',
   },
   actionBtn: {
     display: 'flex',

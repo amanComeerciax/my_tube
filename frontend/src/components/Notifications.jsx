@@ -15,15 +15,15 @@ export default function Notifications() {
   // Fetch notifications
   const fetchNotifications = async () => {
     if (!user) return;
-    
+
     try {
       setLoading(true);
       const res = await api.get("/api/notifications", {
-        
+
       });
-      
+
       setNotifications(res.data);
-      
+
       // Count unread
       const unread = res.data.filter(n => !n.isRead).length;
       setUnreadCount(unread);
@@ -40,9 +40,9 @@ export default function Notifications() {
       await api.put(
         `/api/notifications/read/${notificationId}`,
         {},
-        {  }
+        {}
       );
-      
+
       setNotifications(prev =>
         prev.map(n => n._id === notificationId ? { ...n, isRead: true } : n)
       );
@@ -57,14 +57,14 @@ export default function Notifications() {
     try {
       await api.delete(
         `/api/notifications/${notificationId}`,
-        {  }
+        {}
       );
-      
+
       const deletedNotif = notifications.find(n => n._id === notificationId);
       if (deletedNotif && !deletedNotif.isRead) {
         setUnreadCount(prev => Math.max(0, prev - 1));
       }
-      
+
       setNotifications(prev => prev.filter(n => n._id !== notificationId));
     } catch (err) {
       console.error("Error deleting notification:", err);
@@ -74,7 +74,7 @@ export default function Notifications() {
   // Handle notification click
   const handleNotificationClick = (notification) => {
     markAsRead(notification._id);
-    
+
     // Navigate based on notification type
     if (notification.type === "new_video" && notification.video?.filename) {
       navigate(`/watch/${notification.video.filename}`);
@@ -83,7 +83,7 @@ export default function Notifications() {
     } else if ((notification.type === "like" || notification.type === "comment") && notification.video?.filename) {
       navigate(`/watch/${notification.video.filename}`);
     }
-    
+
     setShowDropdown(false);
   };
 
@@ -137,7 +137,7 @@ export default function Notifications() {
   const getTimeAgo = (date) => {
     if (!date) return "Just now";
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    
+
     const intervals = {
       year: 31536000,
       month: 2592000,
@@ -172,7 +172,7 @@ export default function Notifications() {
   useEffect(() => {
     if (user) {
       fetchNotifications();
-      
+
       // Poll for new notifications every 30 seconds
       const interval = setInterval(fetchNotifications, 30000);
       return () => clearInterval(interval);
@@ -222,7 +222,7 @@ export default function Notifications() {
                   onClick={() => handleNotificationClick(notif)}
                 >
                   {getNotificationIcon(notif.type)}
-                  
+
                   <div className="notif-content">
                     <p className="notif-message">{notif.message}</p>
                     <span className="notif-time">{getTimeAgo(notif.createdAt)}</span>
@@ -248,7 +248,7 @@ export default function Notifications() {
         </div>
       )}
 
-      <style jsx>{`
+      <style jsx="true">{`
         .notifications-wrapper {
           position: relative;
         }

@@ -1419,12 +1419,24 @@ router.get("/stream/:filename", async (req, res) => {
   const { filename } = req.params;
   const { q } = req.query;
 
-  console.log(`\n--- Quality Request ---`);
+  console.log(`\n--- Quality Request (VideoRoutes) ---`);
   console.log(`Original: ${filename} | Q: ${q}`);
 
   try {
     const uploadsDir = path.join(process.cwd(), "uploads");
     let finalPath = path.join(uploadsDir, filename);
+
+    // 1. Check if exact file exists
+    if (!fsSync.existsSync(finalPath)) {
+      // 2. Try adding .mp4 extension
+      if (fsSync.existsSync(finalPath + ".mp4")) {
+        finalPath += ".mp4";
+        console.log(`✅ Found with .mp4 extension: ${finalPath}`);
+      } else {
+        console.log(`❌ File not found: ${finalPath}`);
+        return res.status(404).send("Video not found");
+      }
+    }
 
     if (q && q !== 'auto' && q !== 'original') {
       const parsed = path.parse(filename);
@@ -1432,13 +1444,13 @@ router.get("/stream/:filename", async (req, res) => {
       const qualityFileName = `${q}_${cleanName}.mp4`;
       const qualityPath = path.join(uploadsDir, qualityFileName);
 
-      console.log(`🔍 Searching for: ${qualityFileName}`);
+      console.log(`🔍 Searching for quality: ${qualityFileName}`);
 
       if (fsSync.existsSync(qualityPath)) {
         finalPath = qualityPath;
         console.log(`✅ MATCH FOUND: Serving ${q}`);
       } else {
-        console.log(`❌ NOT FOUND: File missing in folder. Serving original.`);
+        console.log(`❌ Quality file missing. Serving original.`);
       }
     }
 
@@ -1469,7 +1481,8 @@ router.get("/stream/:filename", async (req, res) => {
     }
   } catch (err) {
     console.error("🔥 Stream Error:", err.message);
-    res.status(500).send("Streaming error");
+    // Don't crash 500 if client disconnects, but here stick to 404 if possible?
+    if (!res.headersSent) res.status(500).send("Streaming error");
   }
 });
 
