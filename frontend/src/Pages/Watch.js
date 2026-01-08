@@ -1394,7 +1394,7 @@ export default function Watch() {
                 >
                   <div style={styles.recThumb}>
                     <img
-                      src={`${process.env.REACT_APP_API_URL}/thumbnails/${v.thumbnail}`}
+                      src={v.thumbnailUrl || `${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                       alt={v.title}
                       style={styles.recThumbImg}
                     />
