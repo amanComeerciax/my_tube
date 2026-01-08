@@ -1033,7 +1033,7 @@ export default function Watch() {
                 </div>
               )}
 
-              <div style={styles.videoControls}>
+              <div style={styles.videoControls} className="video-controls-overlay">
                 <button
                   onClick={toggleVoiceControl}
                   style={{
@@ -1481,7 +1481,7 @@ export default function Watch() {
           }
 
           /* Hide video controls overlay on mobile - use native controls */
-          div[style*="videoControls"] {
+          .video-controls-overlay {
             display: none !important;
           }
         }
