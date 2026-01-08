@@ -664,7 +664,7 @@ export default function Home() {
 
                     <video
                       ref={el => videoRefs.current[v._id] = el}
-                      src={`/api/videos/stream/${v.filename}`}
+                      src={v.videoUrl || `/api/videos/stream/${v.filename}`}
                       className={`yt-video-preview ${hoveredVideo === v._id ? "visible" : ""}`}
                       muted
                       loop
