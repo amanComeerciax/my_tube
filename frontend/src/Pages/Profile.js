@@ -1876,7 +1876,7 @@ export default function Profile() {
                     onClick={() => navigate(`/watch/${v.filename}`)}
                   >
                     <img
-                      src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
+                      src={v.thumbnailUrl || `${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                       alt={v.title}
                       style={styles.thumbnail}
                       onError={(e) => {
@@ -1977,7 +1977,7 @@ export default function Profile() {
                   >
                     <div style={styles.historyThumbnail}>
                       <img
-                        src={`${process.env.REACT_APP_API_URL}/uploads/${item.video.thumbnail}`}
+                        src={item.video.thumbnailUrl || `${process.env.REACT_APP_API_URL}/uploads/${item.video.thumbnail}`}
                         alt={item.video.title}
                         style={styles.historyThumbImg}
                       />
