@@ -1479,6 +1479,33 @@ export default function Watch() {
             padding: 0 12px !important;
             gap: 12px !important;
           }
+
+          /* Video Controls Mobile Adjustments */
+          div[style*="videoControls"] {
+            top: 8px !important;
+            right: 8px !important;
+            gap: 4px !important;
+            flex-wrap: wrap !important;
+            max-width: calc(100% - 16px) !important;
+          }
+
+          button[style*="controlBtn"],
+          div[style*="controlBtn"] > button {
+            padding: 8px 10px !important;
+            font-size: 11px !important;
+            border-radius: 6px !important;
+          }
+
+          button[style*="controlBtn"] svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+
+          /* Hide some controls on very small screens */
+          button[title*="Theater mode"],
+          button[title*="Voice Control"] {
+            display: none !important;
+          }
         }
 
         /* ========== RESPONSIVE - SMALL MOBILE ========== */
