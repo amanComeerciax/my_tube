@@ -654,7 +654,7 @@ export default function Home() {
                 >
                   <div className="yt-thumbnail">
                     <img
-                      src={`${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
+                      src={v.thumbnailUrl || `${process.env.REACT_APP_API_URL}/uploads/${v.thumbnail}`}
                       alt={v.title}
                       className={`yt-thumbnail-img ${hoveredVideo === v._id ? "hidden" : ""}`}
                       onError={(e) => {

@@ -1045,7 +1045,8 @@ function startCaptionWorker(video) {
     {
       workerData: {
         videoId: video._id.toString(),
-        filename: video.filename
+        filename: video.filename,
+        videoUrl: video.videoUrl || video.url // Pass Cloudinary URL if available
       }
     }
   );

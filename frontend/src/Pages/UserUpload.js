@@ -2363,9 +2363,6 @@ import api from "../config/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// Configuration for Chunking
-const CHUNK_SIZE = 1024 * 1024 * 5; // 5MB per chunk
-
 export default function UserUpload() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -2377,13 +2374,11 @@ export default function UserUpload() {
   const [video, setVideo] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
 
-  const [thumbnailFilename, setThumbnailFilename] = useState(null);
   const [videoPreview, setVideoPreview] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(1);
-  const [uploadId, setUploadId] = useState(null);
 
   const videoInputRef = useRef(null);
   const thumbnailInputRef = useRef(null);
@@ -2411,7 +2406,6 @@ export default function UserUpload() {
     if (file) {
       setVideo(file);
       setVideoPreview(URL.createObjectURL(file));
-      setUploadId(Date.now().toString() + '-' + file.name.replace(/[^a-zA-Z0-9]/g, ''));
       setCurrentStep(2);
       e.target.value = "";
     }
@@ -2426,60 +2420,7 @@ export default function UserUpload() {
     }
   };
 
-  // ✅ UPDATED: Added 'thumbName' parameter to sync with Step 1
-  const uploadChunk = async (chunk, index, totalChunks, thumbName) => {
-    const formData = new FormData();
-    formData.append("chunk", chunk);
-    formData.append("chunkIndex", index);
-    formData.append("totalChunks", totalChunks);
-    formData.append("uploadId", uploadId);
-    formData.append("title", title.trim());
-    formData.append("description", description);
-    formData.append("tags", tags);
-    formData.append("category", category);
-    formData.append("thumbnailFilename", thumbName); // Using direct name from Step 1
-
-    const res = await api.post(
-      "/api/videos/upload/chunk",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (e) => {
-          const percent = Math.round(((index * CHUNK_SIZE + e.loaded) * 100) / video.size);
-          setUploadProgress(Math.min(percent, 99));
-        },
-      }
-    );
-    return res.data;
-  };
-
-  // ✅ UPDATED: Pass 'thumbName' through the loop
-  const handleFullChunkUpload = async (thumbName) => {
-    const totalChunks = Math.ceil(video.size / CHUNK_SIZE);
-    for (let i = 0; i < totalChunks; i++) {
-      const start = i * CHUNK_SIZE;
-      const end = Math.min(start + CHUNK_SIZE, video.size);
-      const chunk = video.slice(start, end);
-
-      try {
-        const data = await uploadChunk(chunk, i, totalChunks, thumbName);
-        if (i === totalChunks - 1) {
-          setUploadProgress(100);
-          alert("🎉 Your video is uploaded and assembled!");
-          navigate(`/watch/${data.video.filename}`);
-        }
-      } catch (chunkError) {
-        alert(`Chunk ${i}/${totalChunks} Upload Failed ❌.`);
-        setLoading(false);
-        setUploadProgress(0);
-        return;
-      }
-    }
-  };
-
-  // ✅ UPDATED: Capture server filename directly
+  // ☁️ CLOUDINARY UPLOAD - Single FormData submission
   const handleUpload = async () => {
     if (!title.trim() || !video || !thumbnail || !category) {
       alert("⚠ Title, category, video & thumbnail are required!");
@@ -2490,24 +2431,43 @@ export default function UserUpload() {
     setUploadProgress(0);
 
     try {
-      // STEP 1: UPLOAD THUMBNAIL
-      const thumbFormData = new FormData();
-      thumbFormData.append("thumbnail", thumbnail);
+      // Create FormData with both video and thumbnail
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      formData.append("description", description);
+      formData.append("category", category);
+      formData.append("tags", tags);
+      formData.append("video", video);
+      formData.append("thumbnail", thumbnail);
 
-      const thumbRes = await api.post(
-        "/api/videos/upload/thumbnail",
-        thumbFormData
+      console.log("🚀 Uploading to Cloudinary...");
+
+      const response = await api.post(
+        "/api/videos/cloudinary-upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percent);
+          },
+        }
       );
 
-      const serverThumbName = thumbRes.data.filename; // Real filename from server
-      setThumbnailFilename(serverThumbName);
+      console.log("✅ Upload successful:", response.data);
+      setUploadProgress(100);
+      alert("🎉 Video uploaded successfully to Cloudinary!");
 
-      // STEP 2: UPLOAD VIDEO CHUNKS with the real name
-      await handleFullChunkUpload(serverThumbName);
+      // Navigate to the uploaded video
+      navigate(`/watch/${response.data.video.filename}`);
 
     } catch (err) {
+      console.error("❌ Upload failed:", err);
       alert("Upload Failed ❌ " + (err.response?.data?.message || err.message));
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
