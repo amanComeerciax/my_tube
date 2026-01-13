@@ -188,11 +188,11 @@
 // // Main Worker Function
 // (async () => {
 //   let Video;
-  
+
 //   try {
 //     // Get MongoDB URI from workerData or use default
 //     const MONGO_URI = workerData.mongoUri || process.env.MONGO_URI;
-    
+
 //     console.log("🤖 Connecting to MongoDB...");
 //     await mongoose.connect(MONGO_URI);
 //     console.log("🤖 Summary Worker: DB connected");
@@ -245,7 +245,7 @@
 
 //     // Find video with proper ObjectId handling
 //     console.log("🔍 Looking for video with ID:", workerData.videoId);
-    
+
 //     let video;
 //     try {
 //       video = await Video.findById(workerData.videoId);
@@ -258,7 +258,7 @@
 //     if (!video) {
 //       console.log("❌ Video not found in database");
 //       console.log("📊 Total videos in DB:", await Video.countDocuments());
-      
+
 //       parentPort.postMessage({
 //         success: false,
 //         reason: "video-not-found",
@@ -284,7 +284,7 @@
 //     // Convert VTT to text
 //     const vttPath = path.join(process.cwd(), video.captions);
 //     console.log("📁 VTT Path:", vttPath);
-    
+
 //     const transcriptText = vttToText(vttPath);
 
 //     if (!transcriptText || transcriptText.length < 10) {
@@ -338,11 +338,11 @@
 
 //     await mongoose.disconnect();
 //     console.log("🔌 Disconnected from MongoDB");
-    
+
 //   } catch (err) {
 //     console.error("❌ Summary Worker Fatal Error:", err);
 //     console.error("Stack trace:", err.stack);
-    
+
 //     parentPort.postMessage({
 //       success: false,
 //       error: err.message,
@@ -400,7 +400,7 @@ function vttToText(vttPath) {
   }
 }
 
-// Generate Summary using Ollama
+// Generate Summary using Groq AI
 async function generateSummary(text) {
   try {
     const prompt = `
@@ -429,29 +429,36 @@ ${text.slice(0, 8000)}
 OUTPUT ONLY THE BULLET POINTS.
 `;
 
-    console.log("🤖 Calling Ollama API...");
+    console.log("🤖 Calling Groq API for summary...");
 
-    const res = await axios.post(
-      "http://localhost:11434/api/generate",
-      {
-        model: "dolphin-llama3",
-        prompt,
-        stream: false,
-      },
-      {
-        timeout: 120000, // 2 minute timeout
-      }
-    );
+    // Use Groq via OpenAI SDK
+    const { OpenAI } = require("openai");
 
-    console.log("✅ Ollama response received");
-    return res.data.response || "Summary generation failed";
+    const client = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1"
+    });
+
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile", // Fast and smart
+      messages: [
+        { role: "system", content: "You are an expert content summarizer. Always provide concise, professional bullet points." },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.3,
+      max_tokens: 500
+    });
+
+    const summary = response.choices[0]?.message?.content || "Summary generation failed";
+    console.log("✅ Groq summary received");
+    return summary;
   } catch (err) {
-    console.error("❌ Ollama API Error:", err.message);
+    console.error("❌ Groq API Error:", err.message);
     throw err;
   }
 }
 
-// Analyze Sentiment
+// Analyze Sentiment using Groq AI
 async function analyzeSentiment(text) {
   try {
     const prompt = `Analyze the overall sentiment/tone of this video transcript. Reply with ONLY ONE WORD from these options: Positive, Negative, Neutral, Educational, Entertaining, Informative, Inspirational, Critical.
@@ -461,20 +468,25 @@ ${text.slice(0, 3000)}
 
 Sentiment (one word):`;
 
-    const res = await axios.post(
-      "http://localhost:11434/api/generate",
-      {
-        model: "dolphin-llama3",
-        prompt,
-        stream: false,
-      },
-      {
-        timeout: 60000,
-      }
-    );
+    // Use Groq via OpenAI SDK
+    const { OpenAI } = require("openai");
 
-    const sentiment = res.data.response.trim().split("\n")[0];
-    return sentiment || "Neutral";
+    const client = new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1"
+    });
+
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.1,
+      max_tokens: 10
+    });
+
+    const sentiment = response.choices[0]?.message?.content?.trim().split("\n")[0] || "Neutral";
+    return sentiment;
   } catch (err) {
     console.error("❌ Sentiment Analysis Error:", err.message);
     return "Neutral";
@@ -484,11 +496,11 @@ Sentiment (one word):`;
 // Main Worker Function
 (async () => {
   let Video;
-  
+
   try {
     // Get MongoDB URI from workerData or use default
     const MONGO_URI = workerData.mongoUri || process.env.MONGO_URI;
-    
+
     console.log("🤖 Connecting to MongoDB...");
     await mongoose.connect(MONGO_URI);
     console.log("🤖 Summary Worker: DB connected");
@@ -541,7 +553,7 @@ Sentiment (one word):`;
 
     // Find video with proper ObjectId handling
     console.log("🔍 Looking for video with ID:", workerData.videoId);
-    
+
     let video;
     try {
       video = await Video.findById(workerData.videoId);
@@ -554,7 +566,7 @@ Sentiment (one word):`;
     if (!video) {
       console.log("❌ Video not found in database");
       console.log("📊 Total videos in DB:", await Video.countDocuments());
-      
+
       parentPort.postMessage({
         success: false,
         reason: "video-not-found",
@@ -581,16 +593,16 @@ Sentiment (one word):`;
     // Caption Worker saves to: backend/captions/
     // So we read from: backend/captions/
     const vttPath = path.join(
-        process.cwd(),
-        "captions",  // Changed from "uploads/captions" to just "captions"
-        video.captions
+      process.cwd(),
+      "captions",  // Changed from "uploads/captions" to just "captions"
+      video.captions
     );
-      
+
     console.log("📁 VTT Path:", vttPath);
-    
+
     // Debug: Check if file exists
     console.log("📁 File exists?", fs.existsSync(vttPath));
-    
+
     const transcriptText = vttToText(vttPath);
 
     if (!transcriptText || transcriptText.length < 10) {
@@ -640,11 +652,11 @@ Sentiment (one word):`;
 
     await mongoose.disconnect();
     console.log("🔌 Disconnected from MongoDB");
-    
+
   } catch (err) {
     console.error("❌ Summary Worker Fatal Error:", err);
     console.error("Stack trace:", err.stack);
-    
+
     parentPort.postMessage({
       success: false,
       error: err.message,
