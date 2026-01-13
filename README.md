@@ -1,4 +1,4 @@
-<h1 align="center">🎬 MyTube — Full-Featured YouTube Clone (MERN Stack)</h1>
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/542c4b6b-0044-4121-b976-edfc0db2856d" /><h1 align="center"> MyTube — Full-Featured YouTube Clone (MERN Stack)</h1>
 
 <p align="center">
   <strong>A modern, scalable video streaming platform</strong><br/>
