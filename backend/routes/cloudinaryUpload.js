@@ -21,8 +21,10 @@ const upload = multer({
 
 // ==================== CAPTION WORKER FUNCTION ====================
 function startCaptionWorker(video) {
+    // Using Groq AI Whisper for cloud-based caption generation
+    // Works in production (Vercel + Render) - no Python needed!
     const worker = new Worker(
-        path.join(__dirname, "../workers/captionWorker.js"),
+        path.join(__dirname, "../workers/groqCaptionWorker.js"),
         {
             workerData: {
                 videoId: video._id.toString(),
