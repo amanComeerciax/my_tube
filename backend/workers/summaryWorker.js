@@ -485,7 +485,7 @@ Sentiment (one word):`;
       max_tokens: 10
     });
 
-    const sentiment = response.choices[0]?.message?.content?.trim().split("\n")[0] || "Neutral";
+    const sentiment = response.choices[0]?.message?.content?.trim().split("\n")[0].replace(/[.,!?;:]/g, '') || "Neutral";
     return sentiment;
   } catch (err) {
     console.error("❌ Sentiment Analysis Error:", err.message);
